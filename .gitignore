@@ -10,7 +10,7 @@ __pycache__/
 
 # Flask cache
 instance/
-*.db
+# *.db
 *.sqlite3
 
 # OS/Temp files
