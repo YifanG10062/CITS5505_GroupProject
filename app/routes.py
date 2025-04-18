@@ -79,10 +79,35 @@ def cumulative():
     cum_returns = (1 + result["returns"]).cumprod()
     labels = [str(d.date()) for d in cum_returns.index]
     values = [round(v, 2) for v in cum_returns]
+
+    from sqlalchemy.orm import sessionmaker
+    Session = sessionmaker(bind=db.engine)
+    session = Session()
+
+    spy_records = session.query(Price).filter(
+        Price.asset_code == "SPY",
+        Price.date >= data["start_date"]
+    ).order_by(Price.date.asc()).all()
+    session.close()
+
+    if spy_records:
+        spy_df = pd.DataFrame([{
+            "date": r.date,
+            "close_price": r.close_price
+        } for r in spy_records])
+        spy_df["date"] = pd.to_datetime(spy_df["date"])
+        spy_df.set_index("date", inplace=True)
+        spy_returns = spy_df["close_price"].pct_change().dropna()
+        spy_cum_returns = (1 + spy_returns).cumprod()
+        spy_cum_returns = spy_cum_returns.loc[cum_returns.index.intersection(spy_cum_returns.index)]
+        benchmark_values = [round(v, 2) for v in spy_cum_returns]
+    else:
+        benchmark_values = []
+
     return jsonify({
         "labels": labels,
         "strategy": values,
-        "benchmark": []
+        "benchmark": benchmark_values
     })
 
 @main.route("/api/backtest", methods=["POST"])
