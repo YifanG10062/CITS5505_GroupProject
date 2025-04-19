@@ -1,132 +1,62 @@
-# app/routes.py
 from flask import Blueprint, request, jsonify, render_template
-from app.models import Price
-from app import db
-from sqlalchemy.orm import sessionmaker
+from app.models import db, Price
+from app.calculation import calculate_portfolio_metrics, get_portfolio_timeseries, get_spy_cumulative_returns
 import pandas as pd
-import quantstats as qs
 
 main = Blueprint("main", __name__)
-
-def run_backtest(weights, start_date, initial_investment):
-    Session = sessionmaker(bind=db.engine)
-    session = Session()
-    all_df = []
-
-    for asset in weights:
-        records = session.query(Price).filter(
-            Price.asset_code == asset,
-            Price.date >= start_date
-        ).order_by(Price.date.asc()).all()
-
-        if not records:
-            continue
-
-        df = pd.DataFrame([{
-            "date": r.date,
-            "close_price": r.close_price
-        } for r in records])
-        df["date"] = pd.to_datetime(df["date"])
-        df.set_index("date", inplace=True)
-        df.rename(columns={"close_price": asset}, inplace=True)
-        all_df.append(df)
-
-    session.close()
-
-    combined = pd.concat(all_df, axis=1, join="inner").dropna()
-    start_prices = combined.iloc[0]
-    shares = {a: (initial_investment * w) / start_prices[a] for a, w in weights.items()}
-
-    portfolio_value = pd.Series(0.0, index=combined.index)
-    for asset in weights:
-        portfolio_value += combined[asset] * shares[asset]
-
-    returns = portfolio_value.pct_change().dropna()
-    stats = qs.reports.metrics(returns, mode="full")
-
-    return {
-        "portfolio_value": portfolio_value,
-        "returns": returns,
-        "stats": stats,
-        "initial": initial_investment
-    }
 
 @main.route("/")
 def home():
     return render_template("dashboard.html")
 
+# 1. Summary statistics
 @main.route("/api/portfolio-summary", methods=["POST"])
 def portfolio_summary():
     data = request.json
-    result = run_backtest(data["weights"], data["start_date"], data["initial_investment"])
-    final = result["portfolio_value"].iloc[-1]
+    result = calculate_portfolio_metrics(
+        allocation=data["weights"],
+        start_date=data["start_date"],
+        initial_amount=data["initial_investment"]
+    )
+
+    if not result:
+        return jsonify({"error": "No valid price data"}), 400
+
     summary = {
-        "netWorth": round(final, 2),
-        "initial": result["initial"],
-        "profit": round(final - result["initial"], 2),
-        "cumulativeReturn": round((final - result["initial"]) / result["initial"] * 100, 2),
-        "cagr": float(result["stats"].loc["CAGR (%)"]),
-        "volatility": float(result["stats"].loc["Volatility (ann.)"]),
-        "maxDrawdown": float(result["stats"].loc["Max Drawdown (%)"]),
-        "longestDD": int(result["stats"].loc["Longest DD Days"])
+        "netWorth": result["current_value"],
+        "initial": data["initial_investment"],
+        "profit": result["profit"],
+        "cumulativeReturn": result["return_percent"], 
+        "cagr": result["cagr"],                      
+        "volatility": result["volatility"],          
+        "maxDrawdown": result["max_drawdown"]          
     }
     return jsonify(summary)
 
-@main.route("/api/cumulative", methods=["POST"])
-def cumulative():
+# 2. Time series data for plotting
+@main.route("/api/timeseries", methods=["POST"])
+def timeseries():
     data = request.json
-    result = run_backtest(data["weights"], data["start_date"], data["initial_investment"])
-    cum_returns = (1 + result["returns"]).cumprod()
-    labels = [str(d.date()) for d in cum_returns.index]
-    values = [round(v, 2) for v in cum_returns]
 
-    from sqlalchemy.orm import sessionmaker
-    Session = sessionmaker(bind=db.engine)
-    session = Session()
+    ts_data = get_portfolio_timeseries(
+        allocation=data["weights"],
+        start_date=data["start_date"],
+        initial_amount=data["initial_investment"]
+    )
 
-    spy_records = session.query(Price).filter(
-        Price.asset_code == "SPY",
-        Price.date >= data["start_date"]
-    ).order_by(Price.date.asc()).all()
-    session.close()
+    if not ts_data or "cumulative_returns_series" not in ts_data:
+        return jsonify({"error": "No time series data"}), 400
 
-    if spy_records:
-        spy_df = pd.DataFrame([{
-            "date": r.date,
-            "close_price": r.close_price
-        } for r in spy_records])
-        spy_df["date"] = pd.to_datetime(spy_df["date"])
-        spy_df.set_index("date", inplace=True)
-        spy_returns = spy_df["close_price"].pct_change().dropna()
-        spy_cum_returns = (1 + spy_returns).cumprod()
-        spy_cum_returns = spy_cum_returns.loc[cum_returns.index.intersection(spy_cum_returns.index)]
-        benchmark_values = [round(v, 2) for v in spy_cum_returns]
-    else:
-        benchmark_values = []
+    labels = list(ts_data["cumulative_returns_series"].keys())
+    strategy = list(ts_data["cumulative_returns_series"].values())
+
+    benchmark = get_spy_cumulative_returns(
+        start_date=data["start_date"],
+        match_dates=labels
+    )
 
     return jsonify({
         "labels": labels,
-        "strategy": values,
-        "benchmark": benchmark_values
-    })
-
-@main.route("/api/backtest", methods=["POST"])
-def backtest():
-    data = request.json
-    result = run_backtest(data["weights"], data["start_date"], data["initial_investment"])
-    final = result["portfolio_value"].iloc[-1]
-    return jsonify({
-        "summary": {
-            "netWorth": round(final, 2),
-            "initial": result["initial"],
-            "profit": round(final - result["initial"], 2),
-            "cumulativeReturn": round((final - result["initial"]) / result["initial"] * 100, 2),
-            "cagr": float(result["stats"].loc["CAGR (%)"]),
-            "volatility": float(result["stats"].loc["Volatility (ann.)"]),
-            "maxDrawdown": float(result["stats"].loc["Max Drawdown (%)"]),
-            "longestDD": int(result["stats"].loc["Longest DD Days"])
-        },
-        "cumulative_returns": (1 + result["returns"]).cumprod().tolist(),
-        "daily_returns": result["returns"].tolist(),
-        "monthly_returns": qs.stats.monthly_returns(result["returns"]).to_dict()
+        "strategy": strategy,   
+        "benchmark": benchmark   
     })
