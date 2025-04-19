@@ -3,7 +3,17 @@ function renderCumulativeChart() {
   const chartEl = document.getElementById("cumulativeChart");
   if (!chartEl) return; // Avoid error if the element doesn't exist
 
-  fetch("/api/cumulative")
+  fetch("/api/timeseries", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      weights: { "MSFT": 0.6, "TSLA": 0.4 },
+      start_date: "2020-01-01",
+      initial_investment: 10000
+    })
+  })
     .then((res) => res.json())
     .then(({ labels, strategy, benchmark }) => {
       const ctx = chartEl.getContext("2d");
