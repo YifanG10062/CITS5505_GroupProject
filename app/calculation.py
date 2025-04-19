@@ -74,17 +74,17 @@ def calculate_portfolio_metrics(allocation: dict[str, float], start_date: str, i
     if fields is None or "calculated_at" in fields:
         result["calculated_at"] = calculated_at
     if fields is None or "current_value" in fields:
-        result["current_value"] = round(float(current_value), 6)
+        result["current_value"] = float(current_value)
     if fields is None or "profit" in fields:
-        result["profit"] = round(float(profit), 6)
+        result["profit"] = float(profit)
     if fields is None or "return_percent" in fields:
-        result["return_percent"] = round(float(return_percent), 6)
+        result["return_percent"] = float(return_percent)
     if fields is None or "cagr" in fields:
-        result["cagr"] = round(float(stats.loc['CAGR﹪'].iloc[0]) / 100, 6)
+        result["cagr"] = float(stats.loc['CAGR﹪'].iloc[0]) / 100
     if fields is None or "volatility" in fields:
-        result["volatility"] = round(float(stats.loc['Volatility (ann.)'].iloc[0]), 6)
+        result["volatility"] = float(stats.loc['Volatility (ann.)'].iloc[0])
     if fields is None or "max_drawdown" in fields:
-        result["max_drawdown"] = round(float(stats.loc['Max Drawdown'].iloc[0]), 6)
+        result["max_drawdown"] = float(stats.loc['Max Drawdown'].iloc[0])
 
     return result
 
@@ -129,13 +129,10 @@ def get_portfolio_timeseries(allocation: dict[str, float], start_date: str, init
     cum_returns = (1 + returns).cumprod()
 
     return {
-        "portfolio_value_series": portfolio_value.round(6).to_dict(),
-        "daily_returns_series": returns.round(6).to_dict(),
-        "cumulative_returns_series": cum_returns.round(6).to_dict(),
+        "portfolio_value_series": portfolio_value.to_dict(),
+        "daily_returns_series": returns.to_dict(),
+        "cumulative_returns_series": cum_returns.to_dict(),
     }
-
-from app.models import db, Price
-import pandas as pd
 
 
 # This function returns the cumulative returns of SPY from a given start date.
@@ -159,4 +156,4 @@ def get_spy_cumulative_returns(start_date: str, match_dates: list[str]) -> list[
     cum_returns = (1 + returns).cumprod()
     cum_returns = cum_returns.loc[cum_returns.index.intersection(pd.to_datetime(match_dates))]
 
-    return cum_returns.round(6).tolist()
+    return cum_returns.tolist()
