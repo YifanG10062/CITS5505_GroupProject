@@ -1,5 +1,4 @@
 from flask import Blueprint, request, jsonify, render_template
-from app.models import db, Price
 from app.calculation import calculate_portfolio_metrics, get_portfolio_timeseries, get_spy_cumulative_returns
 import pandas as pd
 
