@@ -28,7 +28,8 @@ def portfolio_summary():
         "cumulativeReturn": result["return_percent"], 
         "cagr": result["cagr"],                      
         "volatility": result["volatility"],          
-        "maxDrawdown": result["max_drawdown"]          
+        "maxDrawdown": result["max_drawdown"],
+        "longestDD": result["longestDD"]        
     }
     return jsonify(summary)
 
