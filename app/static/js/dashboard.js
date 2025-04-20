@@ -1,4 +1,3 @@
-// Import the function to render the cumulative chart
 import { renderCumulativeChart } from "./charts/cumulativeChart.js";
 import { renderPortfolioSummary } from "./charts/summary.js";
 
