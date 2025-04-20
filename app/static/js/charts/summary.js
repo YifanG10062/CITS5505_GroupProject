@@ -1,4 +1,4 @@
-//Loads and displays portfolio summary metrics into the dashboard header.
+
 export function renderPortfolioSummary(
   weights,
   start_date,
@@ -11,7 +11,6 @@ export function renderPortfolioSummary(
   })
     .then((res) => res.json())
     .then((data) => {
-      // Helper to update text content of HTML elements
       const set = (id, value, prefix = "", suffix = "") => {
         const el = document.getElementById(id);
         if (el) el.textContent = `${prefix}${value}${suffix}`;
@@ -20,11 +19,21 @@ export function renderPortfolioSummary(
       set("netWorth", data.netWorth.toLocaleString(), "$");
       set("initial", data.initial.toLocaleString(), "$");
       set("profit", data.profit.toLocaleString(), "$");
-      set("cumulativeReturn", data.cumulativeReturn, "", "%");
-      set("cagr", data.cagr, "", "%");
-      set("volatility", data.volatility, "", "%");
-      set("maxDrawdown", data.maxDrawdown, "", "%");
-      set("longestDD", data.longestDD);
+
+      // Correctly convert decimal values to percentages
+      set(
+        "cumulativeReturn",
+        (data.cumulativeReturn * 100).toFixed(2),
+        "",
+        "%"
+      );
+      set("cagr", (data.cagr * 100).toFixed(2), "", "%");
+      set("maxDrawdown", (data.maxDrawdown * 100).toFixed(2), "", "%");
+
+      // Leave volatility as raw number unless confirmed to be %
+      set("volatility", data.volatility.toFixed(2));
+
+      set("longestDD", data.longestDD || "0");
     })
     .catch((err) => {
       console.error("Failed to load portfolio summary:", err);
