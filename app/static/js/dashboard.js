@@ -1,4 +1,5 @@
 import { renderCumulativeChart } from "./charts/cumulativeChart.js";
+import { renderHeatmapChart } from "./charts/heatmapChart.js";
 import { renderPortfolioSummary } from "./charts/summary.js";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -7,5 +8,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const initial_investment = 10000;
 
   renderCumulativeChart(weights, start_date, initial_investment);
+  renderHeatmapChart(weights, start_date, initial_investment);
   renderPortfolioSummary(weights, start_date, initial_investment);
 });
