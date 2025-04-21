@@ -1,5 +1,13 @@
 // Loads performance summary into portfolio header
-fetch("/api/portfolio-summary")
+fetch("/api/portfolio-summary", {
+  method: "POST",                         
+  headers: { "Content-Type": "application/json" },  
+  body: JSON.stringify({                
+    weights: { "MSFT": 0.6, "TSLA": 0.4 },
+    start_date: "2020-01-01",
+    initial_investment: 10000
+  })
+})
   .then((res) => res.json())
   .then((data) => {
     const set = (id, value, prefix = "", suffix = "") => {
