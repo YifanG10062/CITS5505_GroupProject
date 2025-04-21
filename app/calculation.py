@@ -1,5 +1,5 @@
 import pandas as pd
-import quantstats as qs
+import quantstats.stats as qs_stats
 from app.models import db, Price
 
 # This function calculates key performance metrics for a given portfolio allocation.
@@ -59,9 +59,6 @@ def calculate_portfolio_metrics(allocation: dict[str, float], start_date: str, i
     # Compute daily returns
     returns = portfolio_value.pct_change().dropna()
 
-    # Generate performance metrics using QuantStats
-    stats = qs.reports.metrics(returns, mode="full", display=False)
-
     # Extract the final date and final value of the portfolio
     calculated_at = combined.index[-1].strftime("%Y-%m-%d")
     current_value = portfolio_value.iloc[-1]
@@ -80,13 +77,13 @@ def calculate_portfolio_metrics(allocation: dict[str, float], start_date: str, i
     if fields is None or "return_percent" in fields:
         result["return_percent"] = float(return_percent)
     if fields is None or "cagr" in fields:
-        result["cagr"] = float(stats.loc['CAGR﹪'].iloc[0]) / 100
+        result["cagr"] = qs_stats.cagr(returns)
     if fields is None or "volatility" in fields:
-        result["volatility"] = float(stats.loc['Volatility (ann.)'].iloc[0])
+        result["volatility"] = qs_stats.volatility(returns)
     if fields is None or "max_drawdown" in fields:
-        result["max_drawdown"] = float(stats.loc['Max Drawdown'].iloc[0])
+        result["max_drawdown"] = qs_stats.max_drawdown(returns)
     if fields is None or "longestDD" in fields:
-        drawdown = qs.stats.to_drawdown_series(returns)
+        drawdown = qs_stats.to_drawdown_series(returns)
         in_drawdown = (drawdown < 0).astype(int)
 
         longest_dd_day = 0
