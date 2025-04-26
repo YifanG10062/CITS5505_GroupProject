@@ -1,6 +1,6 @@
+import pandas as pd
 from flask import Blueprint, request, jsonify, render_template
 from app.calculation import calculate_portfolio_metrics, get_portfolio_timeseries, get_spy_cumulative_returns
-import pandas as pd
 
 main = Blueprint("main", __name__)
 
@@ -28,8 +28,8 @@ def portfolio_summary():
         "cumulativeReturn": result["return_percent"], 
         "cagr": result["cagr"],                      
         "volatility": result["volatility"],          
-        "maxDrawdown": result["max_drawdown"],   
-        "longestDD": result["longestDD"]       
+        "maxDrawdown": result["max_drawdown"],
+        "longestDD": result["longestDD"]        
     }
     return jsonify(summary)
 
