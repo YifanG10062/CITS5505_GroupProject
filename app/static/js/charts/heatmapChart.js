@@ -6,6 +6,7 @@ export function renderHeatmapChart(weights, start_date, initial_investment) {
   })
     .then((res) => res.json())
     .then((data) => {
+      console.log("API Response for Heatmap:", data);
       const monthlyReturns = data.monthlyReturns;
       if (
         !monthlyReturns ||
