@@ -1,4 +1,3 @@
-
 export function renderPortfolioSummary(
   weights,
   start_date,

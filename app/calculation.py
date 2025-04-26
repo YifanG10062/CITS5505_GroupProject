@@ -85,7 +85,19 @@ def calculate_portfolio_metrics(allocation: dict[str, float], start_date: str, i
         result["volatility"] = float(stats.loc['Volatility (ann.)'].iloc[0])
     if fields is None or "max_drawdown" in fields:
         result["max_drawdown"] = float(stats.loc['Max Drawdown'].iloc[0])
-
+    if fields is None or "longestDD" in fields:
+         drawdown = qs.stats.to_drawdown_series(returns)
+         in_drawdown = (drawdown < 0).astype(int)
+ 
+         longest_dd_day = 0
+         current_dd = 0
+         for val in in_drawdown:
+             if val == 1:
+                 current_dd += 1
+                 longest_dd_day = max(longest_dd_day, current_dd)
+             else:
+                 current_dd = 0
+         result["longestDD"] = longest_dd_day
     return result
 
 
