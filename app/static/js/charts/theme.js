@@ -11,7 +11,7 @@ export const chartTheme = {
       },
     },
     title: {
-      display: true,
+      display: false,
       text: "Cumulative Returns vs SPY",
       color: "#f3f4f6",
       font: {
