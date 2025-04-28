@@ -124,11 +124,11 @@ def get_assets():
             conn.close()
             return []
         
-        # Query all assets
+        # Query all assets except those with type='eft'
         cursor.execute("""
             SELECT asset_code, display_name, full_name, logo_url 
             FROM assets
-            ORDER BY display_name
+            WHERE type != 'etf'
         """)
         
         assets = []

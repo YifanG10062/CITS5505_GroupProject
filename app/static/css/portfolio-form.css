@@ -28,83 +28,98 @@
 /* Asset selection grid */
 .asset-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
 }
 
 /* Asset card styling */
 .asset-card {
   background-color: var(--card-bg);
   border: 1px solid var(--card-outline);
-  border-radius: 0.5rem;
-  padding: 1.25rem 0.75rem;
+  border-radius: 0.75rem;
+  padding: 1.5rem 0.75rem;
   text-align: center;
   cursor: pointer;
-  transition: all 0.15s ease-in-out;
+  transition: all 0.2s ease-in-out;
   position: relative;
+  margin: 3px;  
+  box-shadow: 0 0 0 0 transparent; 
+  transform: translateY(0);  
+  height: calc(100% - 6px);  
 }
 
 .asset-card:hover {
-  border-color: var(--primary);
+  border-color: var(--card-outline); 
+  box-shadow: 0 0 8px rgba(255, 167, 38, 0.4);
+  transform: translateY(-2px);
 }
 
 .asset-card.selected {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 1px var(--primary);
+  border: 1px solid var(--primary);
+  box-shadow: 0 0 16px rgba(255, 167, 38, 0.4);
+  margin: 2px;  
+}
+
+.asset-card.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: grayscale(60%);
+  border-color: var(--card-outline);
+  box-shadow: none;
+  transform: none;
+}
+
+.asset-card.disabled:hover {
+  transform: none;
+  border-color: var(--card-outline);
+  box-shadow: none;
 }
 
 .asset-card .asset-icon {
-  width: 3rem;
-  height: 3rem;
-  margin: 0 auto 0.75rem;
+  width: 4rem;
+  height: 4rem;
+  margin: 0 auto 1rem;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 50%;
+  overflow: hidden;
 }
 
 .asset-card .asset-icon img {
-  width: 75%;
-  height: 75%;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
 }
 
 .asset-card .asset-name {
+  font-family: 'Sora', sans-serif;
   font-weight: 600;
-  font-size: 0.875rem;
-  margin-bottom: 0.25rem;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
   color: var(--text-primary);
+  letter-spacing: 0.02em;
 }
 
 .asset-card .asset-company {
-  font-size: 0.75rem;
-  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  opacity: 0.7;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  height: 2.25rem;
+  height: 2.5rem;
 }
 
-/* Selection indicator */
+/* Selection indicator - hide but keep element in DOM */
 .asset-card .selection-indicator {
-  position: absolute;
-  top: -0.5rem;
-  right: -0.5rem;
-  width: 1.5rem;
-  height: 1.5rem;
-  background-color: var(--primary);
-  border-radius: 50%;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  color: #000;
-  font-weight: bold;
-}
-
-.asset-card.selected .selection-indicator {
-  display: flex;
+  display: none !important;
+  visibility: hidden;
+  opacity: 0;
 }
 
 /* Allocation section */
@@ -129,6 +144,18 @@
   width: 2rem;
   height: 2rem;
   margin-right: 0.75rem;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.allocation-asset .asset-icon-sm img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
 }
 
 .allocation-name {
