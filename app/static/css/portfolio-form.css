@@ -303,16 +303,148 @@
   color: var(--primary);
 }
 
-.portfolio-name-field .edit-icon {
+/* Portfolio name editing field */
+.portfolio-name-field .portfolio-name-display {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.portfolio-name-text {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--primary);
+  text-align: right;
+}
+
+/* Empty state styling for portfolio name */
+.portfolio-name-text.empty {
+  color: var(--text-primary);
+  font-weight: 400;
+}
+
+.portfolio-name-edit {
+  width: 100%;
+}
+
+.portfolio-name-edit input {
+  background-color: transparent;
+  border: none;
+  color: var(--primary);
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+  text-align: right;
+  width: 100%;
+  padding-right: 0;
+}
+
+.portfolio-name-edit input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Edit icon styling with states */
+.edit-icon {
+  width: 16px;
+  height: 16px;
+  filter: brightness(0) invert(1); /* Make icon white in normal state */
+  transition: filter 0.2s ease-in-out;
+  opacity: 0.8;
+  margin-right: 0.5rem; /* Add spacing between icon and text */
+}
+
+/* Hover state for edit icon */
+.portfolio-name-display:hover .edit-icon,
+.allocation-asset:hover .edit-icon {
+  filter: brightness(0) saturate(100%) invert(80%) sepia(55%) saturate(1000%) hue-rotate(340deg) brightness(101%) contrast(101%); /* Make icon primary color on hover */
+  opacity: 1;
+}
+
+/* Hover state for the text when hovering over the container */
+.portfolio-name-display:hover .portfolio-name-text {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+/* Edit icon styling with states */
+.edit-icon {
   width: 16px;
   height: 16px;
   margin-right: 0.5rem;
   opacity: 0.8;
+  filter: brightness(0) invert(1); /* Make icon white in normal state */
+  transition: filter 0.2s ease-in-out;
 }
 
-/* Action container layout */
+/* Hover state for edit icon container */
+.portfolio-name-field .d-flex:hover .edit-icon,
+.allocation-value:hover .edit-icon {
+  filter: brightness(0) saturate(100%) invert(80%) sepia(55%) saturate(1000%) hue-rotate(340deg) brightness(101%) contrast(101%); /* Make icon primary color on hover */
+  opacity: 1;
+}
+
+/* Active/focused state for edit icon */
+.portfolio-name-field input:focus + .edit-icon,
+.allocation-value.editing .edit-icon {
+  filter: brightness(0) saturate(100%) invert(80%) sepia(55%) saturate(1000%) hue-rotate(340deg) brightness(101%) contrast(101%); /* Keep primary color when editing */
+  opacity: 1;
+}
+
+/* Action container layout - update to align items to the right */
+.action-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* Change to flex-end to align to the right */
+  gap: 1rem; /* Reduce gap to make buttons closer */
+  margin-top: 1.5rem;
+}
+
+/* Fix for the old action-buttons class that is currently being used in the template */
 .action-buttons {
   display: flex;
-  gap: 1rem;
+  align-items: center;
+  justify-content: flex-end; /* Change to flex-end to align to the right */
+  gap: 1rem; /* Reduce gap to make buttons closer */
   margin-top: 1.5rem;
+}
+
+/* Make sure text-link is properly styled in the action-buttons container */
+.action-buttons .text-link, 
+.action-container .text-link {
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  box-shadow: none;
+  text-transform: capitalize; /* Capitalize first letter */
+  margin-right: 0.5rem; /* Add small margin to bring it closer to the button */
+}
+
+/* More specific selector for text-link in action-buttons */
+.portfolio-config .action-buttons .text-link {
+  background-color: transparent;
+  color: var(--text-secondary);
+  border: none;
+  font-weight: 400;
+  font-family: 'Inter', sans-serif;
+  text-decoration: none;
+  padding: 0;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+  cursor: pointer;
+  display: inline;
+  box-shadow: none;
+  border-radius: 0;
+  /* Reset any button-like properties */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.portfolio-config .action-buttons .text-link:hover {
+  color: var(--text-primary);
+  background-color: transparent;
+  text-decoration: none;
 }

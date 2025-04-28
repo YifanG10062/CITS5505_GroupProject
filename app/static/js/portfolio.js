@@ -15,6 +15,81 @@ document.addEventListener('DOMContentLoaded', function() {
     const createButton = document.getElementById('create-portfolio-btn');
     const portfolioForm = document.getElementById('portfolio-form');
     
+    // Portfolio name editing functionality
+    const portfolioNameDisplay = document.querySelector('.portfolio-name-display');
+    const portfolioNameEdit = document.querySelector('.portfolio-name-edit');
+    const portfolioNameText = document.querySelector('.portfolio-name-text');
+    const portfolioNameInput = document.getElementById('portfolio_name');
+    
+    if (portfolioNameDisplay && portfolioNameEdit && portfolioNameInput) {
+        // Click on display view to show edit view
+        portfolioNameDisplay.addEventListener('click', function() {
+            portfolioNameDisplay.style.display = 'none';
+            portfolioNameEdit.style.display = 'block';
+            
+            // Clear the input if it shows "click to edit"
+            if (portfolioNameText.textContent.trim() === 'click to edit') {
+                portfolioNameInput.value = '';
+            }
+            
+            portfolioNameInput.focus();
+            
+            // Store original value in case we need to revert
+            portfolioNameInput.dataset.originalValue = portfolioNameInput.value;
+        });
+        
+        // Handle saving on enter or blur
+        portfolioNameInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                savePortfolioName();
+            } else if (e.key === 'Escape') {
+                cancelPortfolioNameEdit();
+            }
+        });
+        
+        portfolioNameInput.addEventListener('blur', function() {
+            savePortfolioName();
+        });
+        
+        function savePortfolioName() {
+            const newValue = portfolioNameInput.value.trim();
+            
+            if (newValue) {
+                // If user entered a value, use it and update styling
+                portfolioNameText.textContent = newValue;
+                portfolioNameText.classList.remove('empty');
+            } else {
+                // When empty, show "click to edit" with proper styling
+                portfolioNameText.textContent = 'click to edit';
+                portfolioNameText.classList.add('empty');
+            }
+            
+            portfolioNameEdit.style.display = 'none';
+            portfolioNameDisplay.style.display = 'flex';
+        }
+        
+        function cancelPortfolioNameEdit() {
+            // Revert to original value or placeholder
+            if (portfolioNameInput.dataset.originalValue) {
+                portfolioNameInput.value = portfolioNameInput.dataset.originalValue;
+                if (portfolioNameInput.dataset.originalValue) {
+                    portfolioNameText.textContent = portfolioNameInput.dataset.originalValue;
+                    portfolioNameText.classList.remove('empty');
+                } else {
+                    portfolioNameText.textContent = 'click to edit';
+                    portfolioNameText.classList.add('empty');
+                }
+            } else {
+                portfolioNameInput.value = '';
+                portfolioNameText.textContent = 'click to edit';
+                portfolioNameText.classList.add('empty');
+            }
+            
+            portfolioNameEdit.style.display = 'none';
+            portfolioNameDisplay.style.display = 'flex';
+        }
+    }
+    
     // Exit early if required elements are not found (not on portfolio page)
     if (!allocationContainer || !noAssetsDiv || !totalAllocationDisplay) {
         console.log('Portfolio page elements not found, skipping portfolio.js initialization');
@@ -200,13 +275,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     allocationItem.className = 'allocation-item';
                     allocationItem.dataset.assetCode = asset.code;
                     
-                    // Create allocation item with design-matching markup using edit.svg
+                    // Create allocation item with edit icon on the left
                     allocationItem.innerHTML = `
                         <div class="allocation-asset">
+                            <img src="/static/icons/edit.svg" alt="Edit" class="edit-icon">
                             <div class="asset-code">${asset.code}</div>
                         </div>
                         <div class="allocation-value" data-asset-code="${asset.code}">
-                            <img src="${getStaticUrl('/static/icons/edit.svg')}" alt="Edit" class="edit-icon">
                             <span>${allocation}%</span>
                             <input type="hidden" name="allocation[${asset.code}]" value="${allocation}" required>
                         </div>
@@ -215,9 +290,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     allocationContainer.appendChild(allocationItem);
                     
                     // Add event listener to allocation value
-                    const allocationValueEl = allocationItem.querySelector('.allocation-value');
+                    const allocationValueEl = allocationItem.querySelector('.allocation-asset');
                     allocationValueEl.addEventListener('click', function() {
-                        enableDirectEdit(this, asset.code, allocation);
+                        const valueDiv = allocationItem.querySelector('.allocation-value');
+                        enableDirectEdit(valueDiv, asset.code, allocation);
                     });
                 });
             }
@@ -293,51 +369,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     /**
-     * Show allocation slider UI
-     */
-    function showAllocationSlider(assetCode, currentValue) {
-        // Create slider UI at bottom of screen
-        const sliderContainer = document.createElement('div');
-        sliderContainer.className = 'allocation-slider-container';
-        sliderContainer.innerHTML = `
-            <div class="allocation-slider-header">
-                <div class="allocation-slider-label">${assetCode} Allocation</div>
-                <div class="allocation-slider-value">${currentValue}%</div>
-            </div>
-            <div class="allocation-slider-bar">
-                <input type="range" class="form-range" min="0" max="100" value="${currentValue}" step="1">
-            </div>
-            <div class="allocation-slider-actions">
-                <button class="btn-cancel">Cancel</button>
-                <button class="btn-save">Save</button>
-            </div>
-        `;
-        
-        document.body.appendChild(sliderContainer);
-        
-        // Add event listeners
-        const rangeInput = sliderContainer.querySelector('input[type="range"]');
-        const valueDisplay = sliderContainer.querySelector('.allocation-slider-value');
-        
-        rangeInput.addEventListener('input', function() {
-            valueDisplay.textContent = `${this.value}%`;
-        });
-        
-        // Cancel button
-        sliderContainer.querySelector('.btn-cancel').addEventListener('click', function() {
-            document.body.removeChild(sliderContainer);
-        });
-        
-        // Save button
-        sliderContainer.querySelector('.btn-save').addEventListener('click', function() {
-            const newValue = parseInt(rangeInput.value);
-            allocations[assetCode] = newValue;
-            updateAllocationItems();
-            document.body.removeChild(sliderContainer);
-        });
-    }
-    
-    /**
      * Form validation
      */
     if (portfolioForm) {
@@ -366,4 +397,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize UI on page load
     updateCardStates();
+
+    // Look for code that might affect .text-link or action-buttons elements
 });
