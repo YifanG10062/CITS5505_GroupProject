@@ -17,3 +17,8 @@ instance/
 *.log
 *.tmp
 *.swp
+
+*.db-journal
+
+# Aoli local test files
+tests/test_calc.py
