@@ -138,6 +138,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.classList.remove('selected');
                 removeAssetAllocation(assetCode);
                 selectedAssets = selectedAssets.filter(asset => asset.code !== assetCode);
+                
+                // Check if all assets are removed and show no-assets div if needed
+                if (selectedAssets.length === 0) {
+                    updateAllocationItems(); // Make sure no-assets div is added back
+                }
             } else {
                 // Select asset if under limit
                 if (selectedAssets.length < MAX_ASSETS) {
@@ -202,6 +207,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Force complete recreation of allocation items
         updateAllocationItems();
+        
+        // Make sure to update the UI after removing assets
+        updateAllocationUI();
     }
     
     /**
@@ -209,7 +217,17 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function updateAllocationUI() {
         if (selectedAssets.length === 0) {
-            noAssetsDiv.style.display = 'block';
+            // Make sure no-assets div is visible when no assets are selected
+            if (noAssetsDiv) {
+                noAssetsDiv.style.display = 'block';
+                
+                // Make sure it's actually in the DOM
+                if (!allocationContainer.contains(noAssetsDiv)) {
+                    allocationContainer.innerHTML = ''; // Clear any existing content
+                    allocationContainer.appendChild(noAssetsDiv);
+                }
+            }
+            
             createButton.disabled = true;
             totalAllocationDisplay.textContent = '0%';
             
@@ -219,7 +237,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 totalAllocationDisplay.classList.add('invalid');
             }
         } else {
-            noAssetsDiv.style.display = 'none';
+            if (noAssetsDiv) {
+                noAssetsDiv.style.display = 'none';
+            }
+            
             const total = calculateTotalAllocation();
             totalAllocationDisplay.textContent = `${total}%`;
             
@@ -261,6 +282,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Re-add the no-assets div if needed
             if (selectedAssets.length === 0) {
                 allocationContainer.appendChild(noAssetsDiv);
+                noAssetsDiv.style.display = 'block'; // Ensure it's visible
             } else {
                 // Create items for each selected asset
                 selectedAssets.forEach(asset => {
@@ -397,5 +419,5 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize UI on page load
     updateCardStates();
 
-    // Look for code that might affect .text-link or action-buttons elements
+ 
 });
