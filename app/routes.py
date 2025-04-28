@@ -110,18 +110,19 @@ def list():
     portfolios_list = []
     return render_template("portfolio/portfolio_list.html", portfolios=portfolios_list)
 
-def get_assets_with_cache(app):
-    """Get assets from cache or database with TTL-based caching"""
-    current_time = time.time()
-    
-    # Return cached assets if valid
-    if app.assets_cache is not None and (current_time - app.assets_cache_time) < app.config.get('ASSETS_CACHE_TTL', 3600):
-        return app.assets_cache
-    
+def get_assets():
+    """Get assets directly from database without caching"""
     try:
-        # Connect to portfolio database
-        conn = sqlite3.connect('portfolio_data.db')
+        # Connect to portfolio database with correct path in db folder
+        conn = sqlite3.connect('db/portfolio_data.db')
         cursor = conn.cursor()
+        
+        # First check if the assets table exists
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='assets'")
+        if not cursor.fetchone():
+            print("Error: 'assets' table does not exist in the database")
+            conn.close()
+            return []
         
         # Query all assets
         cursor.execute("""
@@ -140,10 +141,6 @@ def get_assets_with_cache(app):
             })
         
         conn.close()
-        
-        # Update cache
-        app.assets_cache = assets
-        app.assets_cache_time = current_time
         return assets
         
     except Exception as db_error:
@@ -197,8 +194,8 @@ def create():
             
             return redirect(url_for('portfolios.list'))
         
-        # Get assets from cache or database
-        assets = get_assets_with_cache(current_app)
+        # Get assets directly from database
+        assets = get_assets()
         
         # Render form with assets data
         return render_template("portfolio/portfolio_form.html", portfolio=None, error=None, assets=assets)
@@ -261,7 +258,7 @@ def edit(portfolio_id):
         
     # Fetch assets from database
     try:
-        conn = sqlite3.connect('portfolio_data.db')
+        conn = sqlite3.connect('db/portfolio_data.db')
         cursor = conn.cursor()
         
         cursor.execute("""

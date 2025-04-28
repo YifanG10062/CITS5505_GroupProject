@@ -1,4 +1,4 @@
-from flask import Flask, render_template, g
+from flask import Flask, render_template, g, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from app.config import DeploymentConfig
 from flask_migrate import Migrate
@@ -40,11 +40,6 @@ def create_app(config_class=DeploymentConfig):
         app.config['SECRET_KEY'] = 'temporary-secret-key'  # Only for development
         print("WARNING: Using temporary secret key")
     
-    # Initialize cache
-    app.config['ASSETS_CACHE_TTL'] = 3600  # Cache assets for 1 hour
-    app.assets_cache = None
-    app.assets_cache_time = 0
-    
     # TEMPORARY: Add test user to app context
     @app.before_request
     def inject_user():
@@ -84,7 +79,7 @@ def create_app(config_class=DeploymentConfig):
                               subheading="Something went wrong on our end",
                               details="Our technical team has been notified. Please try again later."), 500
     
-    # Register blueprints
+        # Register blueprints
     from app.routes import main, portfolios, auth
     app.register_blueprint(main)
     app.register_blueprint(portfolios)
