@@ -293,45 +293,14 @@ def edit(portfolio_id):
 # =============================================================================
 auth = Blueprint("auth", __name__, url_prefix="/auth")
 
-@auth.route("/login")
-def login():
+@auth.route("/account")
+def account():
     return render_template("error.html", 
                           code=501, 
                           title="Not Implemented",
                           heading="Feature Not Implemented", 
-                          details="User authentication is not yet available.")
+                          details="User account is not yet available.")
 
-@auth.route("/register")
-def register():
-    return render_template("error.html", 
-                          code=501, 
-                          title="Not Implemented",
-                          heading="Feature Not Implemented", 
-                          details="User registration is not yet available.")
-
-@auth.route("/profile")
-def profile():
-    return render_template("error.html", 
-                          code=501, 
-                          title="Not Implemented",
-                          heading="Feature Not Implemented", 
-                          details="User profile is not yet available.")
-
-@auth.route("/settings")
-def settings():
-    return render_template("error.html", 
-                          code=501, 
-                          title="Not Implemented",
-                          heading="Feature Not Implemented", 
-                          details="User settings are not yet available.")
-
-@auth.route("/logout")
-def logout():
-    return render_template("error.html", 
-                          code=501, 
-                          title="Not Implemented",
-                          heading="Feature Not Implemented", 
-                          details="User logout is not yet available.")
 # =============================================================================
 # END OF TEMPORARY USER AUTHENTICATION MODULE
 # =============================================================================
