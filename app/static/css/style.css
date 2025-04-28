@@ -1,0 +1,20 @@
+/* Added a global theme for styling */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+body {
+  font-family: "Poppins", "Segoe UI", sans-serif;
+}
+
+.card-header {
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: #f3f4f6;
+  background-color: transparent;
+  border-bottom: none;
+}
+
+canvas {
+  max-width: 100%;
+}

@@ -1,3 +1,4 @@
+import pandas as pd
 from flask import Blueprint, request, jsonify, render_template
 from app.calculation import calculate_portfolio_metrics, get_portfolio_timeseries, get_spy_cumulative_returns
 
@@ -32,7 +33,7 @@ def portfolio_summary():
     }
     return jsonify(summary)
 
-# 2. Time series data for plotting
+# 2. Time series data for plotting + heatmap
 @main.route("/api/timeseries", methods=["POST"])
 def timeseries():
     data = request.json
@@ -54,8 +55,45 @@ def timeseries():
         match_dates=labels
     )
 
+    # Monthly returns for heatmap 
+    try:
+        daily_returns = pd.Series(ts_data["daily_returns_series"])
+        daily_returns.index = pd.to_datetime(daily_returns.index)
+
+        monthly = daily_returns.resample("M").apply(lambda x: (x + 1).prod() - 1)
+        monthly_df = monthly.reset_index()
+        monthly_df.columns = ["Date", "MonthlyReturn"]
+        monthly_df["Year"] = monthly_df["Date"].dt.year
+        monthly_df["Month"] = monthly_df["Date"].dt.strftime("%b")
+
+        month_order = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+        pivot = (
+            monthly_df.pivot(index="Year", columns="Month", values="MonthlyReturn")
+            .reindex(columns=month_order)
+            .fillna(0)
+        )
+
+        heatmap_labels = month_order
+        heatmap_datasets = [
+            {
+                "year": int(year),
+                "values": [round(val, 4) for val in row]
+            }
+            for year, row in pivot.iterrows()
+        ]
+    except Exception as e:
+        print("Monthly heatmap generation failed:", e)
+        heatmap_labels = []
+        heatmap_datasets = []
+
     return jsonify({
         "labels": labels,
-        "strategy": strategy,   
-        "benchmark": benchmark   
+        "strategy": strategy,
+        "benchmark": benchmark,
+        "monthlyReturns": {
+            "labels": heatmap_labels,
+            "datasets": heatmap_datasets
+        }
     })
