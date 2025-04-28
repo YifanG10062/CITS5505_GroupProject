@@ -275,13 +275,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     allocationItem.className = 'allocation-item';
                     allocationItem.dataset.assetCode = asset.code;
                     
-                    // Create allocation item with edit icon on the left
+                    // Create allocation item with edit icon on the left side of percentage
                     allocationItem.innerHTML = `
                         <div class="allocation-asset">
-                            <img src="/static/icons/edit.svg" alt="Edit" class="edit-icon">
                             <div class="asset-code">${asset.code}</div>
                         </div>
                         <div class="allocation-value" data-asset-code="${asset.code}">
+                            <img src="/static/icons/edit.svg" alt="Edit" class="edit-icon">
                             <span>${allocation}%</span>
                             <input type="hidden" name="allocation[${asset.code}]" value="${allocation}" required>
                         </div>
@@ -290,10 +290,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     allocationContainer.appendChild(allocationItem);
                     
                     // Add event listener to allocation value
-                    const allocationValueEl = allocationItem.querySelector('.allocation-asset');
+                    const allocationValueEl = allocationItem.querySelector('.allocation-value');
                     allocationValueEl.addEventListener('click', function() {
-                        const valueDiv = allocationItem.querySelector('.allocation-value');
-                        enableDirectEdit(valueDiv, asset.code, allocation);
+                        enableDirectEdit(this, asset.code, allocation);
                     });
                 });
             }
@@ -326,7 +325,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         element.innerHTML = `
             <div class="allocation-value-edit">
-                <input type="number" min="0" max="100" value="${currentValue}" class="allocation-edit-input">
+                <input type="number" min="0" max="100" value="${currentValue}" class="allocation-edit-input form-control">
                 <span class="percentage">%</span>
             </div>
         `;

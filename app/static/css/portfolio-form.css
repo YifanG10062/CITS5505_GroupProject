@@ -197,6 +197,7 @@
   justify-content: flex-end;
   gap: 0.5rem;
   cursor: pointer;
+  min-width: 80px;
 }
 
 .allocation-value .edit-icon {
@@ -216,23 +217,42 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  width: 100%;
 }
 
 .allocation-value-edit input {
-  width: 3rem;
+  width: 5rem; /* Increase width further for better display and margin */
   text-align: right;
-  background-color: rgba(31, 41, 55, 0.8);
-  border: 1px solid var(--primary);
+  background-color: transparent;
+  border: none;
   color: var(--primary);
-  border-radius: 0.25rem;
-  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem; /* Match the standard form-control border-radius */
+  padding: 0.375rem 0.75rem; /* Match standard form-control padding */
   font-weight: 600;
   font-family: 'Inter', sans-serif;
+  box-shadow: none;
+  margin-right: 0.25rem; /* Add margin between input and percentage sign */
+}
+
+.allocation-value-edit input:focus {
+  outline: none;
+  box-shadow: none;
+  background-color: transparent;
 }
 
 .allocation-value-edit .percentage {
   margin-left: 0.25rem;
   color: var(--primary);
+  padding-right: 0.5rem; /* Add padding to the right of percentage sign */
+}
+
+/* Override some bootstrap form-control styles to match our design */
+.allocation-value-edit .form-control {
+  background-color: transparent;
+  border: none;
+  height: auto;
+  padding: 0.375rem 0.75rem; /* Standard Bootstrap form-control padding */
+  border-radius: 0.375rem; /* Standard Bootstrap form-control border-radius */
 }
 
 /* Empty state when no assets are selected */
