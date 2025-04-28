@@ -96,12 +96,14 @@ document.addEventListener('DOMContentLoaded', function() {
             keys.forEach(key => allocations[key] = 50);
             allocations[assetCode] = 50;
         } else if (selectedAssets.length === 3) {
-            // Reset to 33/33/34
+            // Reset to 33/33/34 with the last asset getting 34%
             const keys = Object.keys(allocations);
-            keys.forEach((key, index) => {
-                allocations[key] = index === 2 ? 34 : 33;
-            });
-            allocations[assetCode] = 33;
+            
+            // First reset all to 33%
+            keys.forEach(key => allocations[key] = 33);
+            
+            // Then give the last added asset 34% to ensure total of 100%
+            allocations[assetCode] = 34;
         }
         
         // Create allocation items in UI
@@ -123,6 +125,7 @@ document.addEventListener('DOMContentLoaded', function() {
             allocations[remainingAssets[1]] = 50;
         }
         
+        // Force complete recreation of allocation items
         updateAllocationItems();
     }
     
@@ -175,59 +178,163 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function updateAllocationItems() {
         try {
-            // Clear existing items (except the no-assets div)
-            const existingItems = allocationContainer.querySelectorAll('.allocation-item');
-            existingItems.forEach(item => item.remove());
+            // Clear ALL existing items including the no-assets div
+            while (allocationContainer.firstChild) {
+                allocationContainer.removeChild(allocationContainer.firstChild);
+            }
             
-            // Create items for each selected asset
-            selectedAssets.forEach(asset => {
-                const allocation = allocations[asset.code];
-                
-                const allocationItem = document.createElement('div');
-                allocationItem.className = 'allocation-item';
-                allocationItem.dataset.assetCode = asset.code;
-                
-                allocationItem.innerHTML = `
-                    <div class="allocation-asset">
-                        <img src="${asset.logoSrc}" class="asset-icon-sm" alt="${asset.name}">
-                        <div class="allocation-name">${asset.name}</div>
-                    </div>
-                    <div class="allocation-control">
-                        <div class="allocation-input">
-                            <input type="range" class="form-range" min="0" max="100" step="1" 
-                                value="${allocation}" data-asset-code="${asset.code}">
-                            <input type="number" class="form-control" min="0" max="100" 
-                                name="allocation[${asset.code}]" value="${allocation}" required>
-                            <span class="percentage">%</span>
-                        </div>
-                    </div>
-                `;
-                
-                allocationContainer.appendChild(allocationItem);
-                
-                // Add event listeners to the new controls
-                const rangeInput = allocationItem.querySelector('.form-range');
-                const numberInput = allocationItem.querySelector('.form-control');
-                
-                if (rangeInput && numberInput) {
-                    rangeInput.addEventListener('input', function() {
-                        numberInput.value = this.value;
-                        allocations[asset.code] = parseInt(this.value);
-                        updateAllocationUI();
-                    });
+            // Re-add the no-assets div if needed
+            if (selectedAssets.length === 0) {
+                allocationContainer.appendChild(noAssetsDiv);
+            } else {
+                // Create items for each selected asset
+                selectedAssets.forEach(asset => {
+                    const allocation = allocations[asset.code];
                     
-                    numberInput.addEventListener('input', function() {
-                        rangeInput.value = this.value;
-                        allocations[asset.code] = parseInt(this.value);
-                        updateAllocationUI();
+                    // Skip assets that don't have an allocation or have 0 allocation
+                    if (!allocation || allocation <= 0) {
+                        return;
+                    }
+                    
+                    const allocationItem = document.createElement('div');
+                    allocationItem.className = 'allocation-item';
+                    allocationItem.dataset.assetCode = asset.code;
+                    
+                    // Create allocation item with design-matching markup using edit.svg
+                    allocationItem.innerHTML = `
+                        <div class="allocation-asset">
+                            <div class="asset-code">${asset.code}</div>
+                        </div>
+                        <div class="allocation-value" data-asset-code="${asset.code}">
+                            <img src="${getStaticUrl('/static/icons/edit.svg')}" alt="Edit" class="edit-icon">
+                            <span>${allocation}%</span>
+                            <input type="hidden" name="allocation[${asset.code}]" value="${allocation}" required>
+                        </div>
+                    `;
+                    
+                    allocationContainer.appendChild(allocationItem);
+                    
+                    // Add event listener to allocation value
+                    const allocationValueEl = allocationItem.querySelector('.allocation-value');
+                    allocationValueEl.addEventListener('click', function() {
+                        enableDirectEdit(this, asset.code, allocation);
                     });
-                }
-            });
+                });
+            }
             
             updateAllocationUI();
         } catch (error) {
             console.error('Error updating allocation items:', error);
         }
+    }
+    
+    /**
+     * Helper function to get static URL
+     */
+    function getStaticUrl(path) {
+        // Remove leading slash if present
+        if (path.startsWith('/')) {
+            path = path.substring(1);
+        }
+        // If we're in a Flask app, we should have a BASE_URL variable
+        // Otherwise, just return the path as is
+        return path;
+    }
+    
+    /**
+     * Enable direct editing of allocation value
+     */
+    function enableDirectEdit(element, assetCode, currentValue) {
+        // Replace the display with an input field
+        const originalHTML = element.innerHTML;
+        
+        element.innerHTML = `
+            <div class="allocation-value-edit">
+                <input type="number" min="0" max="100" value="${currentValue}" class="allocation-edit-input">
+                <span class="percentage">%</span>
+            </div>
+        `;
+        
+        const input = element.querySelector('input');
+        input.focus();
+        input.select();
+        
+        // Add primary color style to indicate edit mode
+        element.classList.add('editing');
+        
+        // Handle input changes
+        function handleInputChange() {
+            let newValue = parseInt(input.value);
+            
+            // Validate input
+            if (isNaN(newValue) || newValue < 0) {
+                newValue = 0;
+            } else if (newValue > 100) {
+                newValue = 100;
+            }
+            
+            // Update allocation
+            allocations[assetCode] = newValue;
+            
+            // Restore the original display with new value
+            updateAllocationItems();
+        }
+        
+        // Add event listeners
+        input.addEventListener('blur', handleInputChange);
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                handleInputChange();
+            } else if (e.key === 'Escape') {
+                // Restore original without changes
+                element.innerHTML = originalHTML;
+            }
+        });
+    }
+    
+    /**
+     * Show allocation slider UI
+     */
+    function showAllocationSlider(assetCode, currentValue) {
+        // Create slider UI at bottom of screen
+        const sliderContainer = document.createElement('div');
+        sliderContainer.className = 'allocation-slider-container';
+        sliderContainer.innerHTML = `
+            <div class="allocation-slider-header">
+                <div class="allocation-slider-label">${assetCode} Allocation</div>
+                <div class="allocation-slider-value">${currentValue}%</div>
+            </div>
+            <div class="allocation-slider-bar">
+                <input type="range" class="form-range" min="0" max="100" value="${currentValue}" step="1">
+            </div>
+            <div class="allocation-slider-actions">
+                <button class="btn-cancel">Cancel</button>
+                <button class="btn-save">Save</button>
+            </div>
+        `;
+        
+        document.body.appendChild(sliderContainer);
+        
+        // Add event listeners
+        const rangeInput = sliderContainer.querySelector('input[type="range"]');
+        const valueDisplay = sliderContainer.querySelector('.allocation-slider-value');
+        
+        rangeInput.addEventListener('input', function() {
+            valueDisplay.textContent = `${this.value}%`;
+        });
+        
+        // Cancel button
+        sliderContainer.querySelector('.btn-cancel').addEventListener('click', function() {
+            document.body.removeChild(sliderContainer);
+        });
+        
+        // Save button
+        sliderContainer.querySelector('.btn-save').addEventListener('click', function() {
+            const newValue = parseInt(rangeInput.value);
+            allocations[assetCode] = newValue;
+            updateAllocationItems();
+            document.body.removeChild(sliderContainer);
+        });
     }
     
     /**
