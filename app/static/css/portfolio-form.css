@@ -1,5 +1,30 @@
 /* Portfolio creation/editing specific styles */
 
+/* Portfolio form header styling */
+.page-heading {
+    font-weight: 600;
+    font-size: 20px;
+    font-family: 'Sora', sans-serif;
+    color: var(--text-primary);
+}
+
+.richverse-title {
+    color: var(--primary);
+    font-weight: 600; /* semi-bold */
+}
+
+.page-subheading {
+    font-size: 14px;
+    font-weight: 400;
+    font-family: 'Sora', sans-serif;
+    color: var(--text-primary);
+}
+
+.highlight {
+    font-weight: 600;
+    color: var(--primary);
+}
+
 /* Asset selection grid */
 .asset-grid {
   display: grid;
