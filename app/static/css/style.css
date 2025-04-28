@@ -1,10 +1,71 @@
 /* Added a global theme for styling */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap');
+
+/* Global color variables based on design specs */
+:root {
+  /* Background colors */
+  --bg-darker: #0B1120;
+  --bg-dark: #101827;
+  --card-bg: #1F2937;
+  --card-outline: #383D48;
+  
+  /* Text colors */
+  --text-primary: #F3F4F6;
+  --text-secondary: #9CA3AF;
+  
+  /* Accent colors */
+  --primary: #FFAA33;
+  --primary-hover: #F59E0B;
+  --primary-active: #D97706;
+  --green-up: #34D399;
+  --red-down: #F87171;
+  
+  /* Form elements */
+  --input-bg: #374151;
+  --input-border: #4B5563;
+}
+
+/* Base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
 body {
   font-family: "Poppins", "Segoe UI", sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
+  line-height: 1.5;
 }
 
+/* Navigation */
+.navbar {
+  background-color: var(--bg-dark);
+  border-bottom: 1px solid var(--card-outline);
+  padding: 0.75rem 1.5rem;
+}
+
+.navbar-brand {
+  font-family: "Sora", sans-serif;
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 1.25rem;
+}
+
+.navbar .nav-link {
+  font-family: "Sora", sans-serif;
+  color: var(--text-primary);
+  margin: 0 0.5rem;
+  font-weight: 500;
+}
+
+.navbar .nav-link.active {
+  color: var(--primary);
+}
+
+/* Keep the original card header style */
 .card-header {
   font-weight: 600;
   font-size: 1rem;
@@ -15,6 +76,109 @@ body {
   border-bottom: none;
 }
 
+/* Keep the original canvas style */
 canvas {
   max-width: 100%;
+}
+
+/* Card styles */
+.card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-outline);
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.card-body {
+  padding: 1.25rem;
+}
+
+/* Button styles */
+.btn {
+  font-family: "Sora", sans-serif;
+  font-weight: 500;
+  border-radius: 0.375rem;
+  padding: 0.625rem 1.25rem;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: #000;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+.btn-outline-secondary {
+  background-color: transparent;
+  border: 1px solid var(--card-outline);
+  color: var(--text-primary);
+}
+
+.btn-outline-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: var(--card-outline);
+  color: var(--text-primary);
+}
+
+/* Form controls */
+.form-control {
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--text-primary);
+  border-radius: 0.375rem;
+}
+
+.form-control:focus {
+  background-color: var(--input-bg);
+  border-color: var(--primary);
+  color: var(--text-primary);
+  box-shadow: 0 0 0 0.25rem rgba(255, 170, 51, 0.25);
+}
+
+.form-control::placeholder {
+  color: var(--text-secondary);
+}
+
+.input-group-text {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: #000;
+}
+
+/* Helper classes */
+.text-primary-custom {
+  color: var(--primary);
+}
+
+.text-secondary-custom {
+  color: var(--text-secondary);
+}
+
+.text-success {
+  color: var(--green-up);
+}
+
+.text-danger {
+  color: var(--red-down);
+}
+
+/* Table styles */
+.table {
+  color: var(--text-primary);
+}
+
+.table thead th {
+  color: var(--text-secondary);
+  border-color: var(--card-outline);
+  font-weight: 500;
+}
+
+.table td {
+  border-color: var(--card-outline);
+  vertical-align: middle;
 }

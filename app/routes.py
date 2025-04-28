@@ -1,8 +1,13 @@
+import traceback
 import pandas as pd
-from flask import Blueprint, request, jsonify, render_template, redirect
+import sqlite3
+import time
+from flask import Blueprint, request, jsonify, render_template, redirect, url_for, current_app, flash, g
 from app.calculation import calculate_portfolio_metrics, get_portfolio_timeseries, get_spy_cumulative_returns
 
+# Define main blueprint and portfolios blueprint
 main = Blueprint("main", __name__)
+portfolios = Blueprint("portfolios", __name__, url_prefix="/portfolios")
 
 @main.route("/")
 def home():
@@ -99,72 +104,237 @@ def timeseries():
     })
 
 # Portfolio List View
-@main.route("/portfolios")
-def portfolio_list():
+@portfolios.route("/")
+def list():
     # TODO: Retrieve portfolio data from database
-    portfolios = []
-    return render_template("portfolio_list.html", portfolios=portfolios)
+    portfolios_list = []
+    return render_template("portfolio/portfolio_list.html", portfolios=portfolios_list)
+
+def get_assets_with_cache(app):
+    """Get assets from cache or database with TTL-based caching"""
+    current_time = time.time()
+    
+    # Return cached assets if valid
+    if app.assets_cache is not None and (current_time - app.assets_cache_time) < app.config.get('ASSETS_CACHE_TTL', 3600):
+        return app.assets_cache
+    
+    try:
+        # Connect to portfolio database
+        conn = sqlite3.connect('portfolio_data.db')
+        cursor = conn.cursor()
+        
+        # Query all assets
+        cursor.execute("""
+            SELECT asset_code, display_name, full_name, logo_url 
+            FROM assets
+            ORDER BY display_name
+        """)
+        
+        assets = []
+        for row in cursor.fetchall():
+            assets.append({
+                'code': row[0],
+                'name': row[1],
+                'company': row[2],
+                'logo_url': row[3]
+            })
+        
+        conn.close()
+        
+        # Update cache
+        app.assets_cache = assets
+        app.assets_cache_time = current_time
+        return assets
+        
+    except Exception as db_error:
+        print(f"Database error when fetching assets: {str(db_error)}")
+        print(traceback.format_exc())
+        return []
 
 # Create New Portfolio
-@main.route("/portfolios/new", methods=["GET", "POST"])
-def portfolio_new():
-    if request.method == "POST":
-        portfolio_name = request.form.get("portfolio_name")
-        allocation_json = request.form.get("allocation_json")
+@portfolios.route("/new", methods=["GET", "POST"])
+def create():
+    try:
+        if request.method == "POST":
+            portfolio_name = request.form.get("portfolio_name")
+            
+            # Collect allocation data and convert to the correct format
+            allocation = {}
+            for key, value in request.form.items():
+                if key.startswith('allocation[') and key.endswith(']'):
+                    asset_code = key[11:-1]  # Extract asset_code
+                    try:
+                        # Convert percentage (e.g., 60) to decimal (e.g., 0.6)
+                        allocation[asset_code] = int(value) / 100.0
+                    except ValueError:
+                        # Return error message
+                        return render_template("portfolio/portfolio_form.html", portfolio=None, 
+                                              error="Invalid allocation values")
+            
+            # Fixed system defaults
+            initial_amount = 1000.0
+            start_date = "2015-01-01"
 
-        # TODO: Validate portfolio_name is unique for the current user
-        # TODO: Replace current_user.id with actual user id once integrated
-        user_id = 1  # placeholder user_id
-
-        # TODO: Check portfolio name uniqueness here
-
-        # Parse allocation
-        import json
-        allocation = json.loads(allocation_json)
-
-        # Fixed system defaults
-        initial_amount = 1000.0
-        start_date = "2015-01-01"
-
-        # Calculate financial metrics
-        metrics = calculate_portfolio_metrics(
-            allocation=allocation,
-            start_date=start_date,
-            initial_amount=initial_amount
-        )
-
-        # TODO: Insert new portfolio into database with calculated metrics
-
-        return redirect("/portfolios")
-    return render_template("portfolio_form.html", portfolio=None)
+            # Calculate metrics using the allocation dictionary
+            try:
+                metrics = calculate_portfolio_metrics(
+                    allocation=allocation,  # Now correctly formatted as {"AAPL": 0.6, "TSLA": 0.4}
+                    start_date=start_date,
+                    initial_amount=initial_amount
+                )
+                
+                # TODO: Create a new portfolio entry in the database with:
+                # - portfolio_name
+                # - user_id (current user)
+                # - allocation_json (store the JSON representation of the allocation dict)
+                # - metrics values from the calculation result
+                
+            except Exception as e:
+                # Handle calculation errors
+                print(f"Calculation error: {e}")
+                return render_template("portfolio/portfolio_form.html", portfolio=None, 
+                                      error="Error calculating portfolio metrics")
+            
+            return redirect(url_for('portfolios.list'))
+        
+        # Get assets from cache or database
+        assets = get_assets_with_cache(current_app)
+        
+        # Render form with assets data
+        return render_template("portfolio/portfolio_form.html", portfolio=None, error=None, assets=assets)
+            
+    except Exception as e:
+        # Log the full error with traceback
+        print(f"Error in portfolio create route: {str(e)}")
+        print(traceback.format_exc())
+        return f"Server error: {str(e)}", 500
 
 # Edit Existing Portfolio
-@main.route("/portfolios/<int:portfolio_id>/edit", methods=["GET", "POST"])
-def portfolio_edit(portfolio_id):
+@portfolios.route("/<int:portfolio_id>/edit", methods=["GET", "POST"])
+def edit(portfolio_id):
     # TODO: Retrieve portfolio data from database
-    portfolio = None
+    portfolio = None  # This should be a query result from database
+    
     if request.method == "POST":
         portfolio_name = request.form.get("portfolio_name")
-        allocation_json = request.form.get("allocation_json")
-
-        # TODO: Validate updated portfolio name is unique if changed
-
-        # Parse allocation
-        import json
-        allocation = json.loads(allocation_json)
-
+        
+        # Collect allocation data and convert to the correct format
+        allocation = {}
+        for key, value in request.form.items():
+            if key.startswith('allocation[') and key.endswith(']'):
+                asset_code = key[11:-1]  # Extract asset_code
+                try:
+                    # Convert percentage (e.g., 60) to decimal (e.g., 0.6)
+                    allocation[asset_code] = int(value) / 100.0
+                except ValueError:
+                    # Return error message
+                    return render_template("portfolio/portfolio_form.html", portfolio=portfolio, 
+                                          error="Invalid allocation values")
+        
         # Fixed system defaults
         initial_amount = 1000.0
         start_date = "2015-01-01"
 
-        # Recalculate financial metrics
-        metrics = calculate_portfolio_metrics(
-            allocation=allocation,
-            start_date=start_date,
-            initial_amount=initial_amount
-        )
+        # Calculate metrics using the allocation dictionary
+        try:
+            metrics = calculate_portfolio_metrics(
+                allocation=allocation,
+                start_date=start_date,
+                initial_amount=initial_amount
+            )
+            
+            # TODO: Update the existing portfolio in the database with:
+            # - Updated portfolio_name
+            # - New allocation_json (store the JSON representation of the allocation dict)
+            # - Updated metrics values from the calculation result
+            # - Update input_updated_at timestamp
+            
+            # TODO: Record changes in PortfolioVersion and PortfolioChangeLog tables
+            
+        except Exception as e:
+            # Handle calculation errors
+            print(f"Calculation error: {e}")
+            return render_template("portfolio/portfolio_form.html", portfolio=portfolio, 
+                                  error="Error calculating portfolio metrics")
+        
+        return redirect(url_for('portfolios.list'))
+        
+    # Fetch assets from database
+    try:
+        conn = sqlite3.connect('portfolio_data.db')
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            SELECT asset_code, display_name, full_name, logo_url 
+            FROM assets
+            ORDER BY display_name
+        """)
+        
+        assets = []
+        for row in cursor.fetchall():
+            assets.append({
+                'code': row[0],
+                'name': row[1],
+                'company': row[2],
+                'logo_url': row[3]
+            })
+        
+        conn.close()
+    except Exception as db_error:
+        print(f"Database error when fetching assets: {str(db_error)}")
+        assets = []
+    
+    # Show edit form for GET request
+    return render_template("portfolio/portfolio_form.html", portfolio=portfolio, assets=assets)
 
-        # TODO: Update portfolio in database with new allocation and recalculated metrics
+# =============================================================================
+# TEMPORARY USER AUTHENTICATION MODULE - TO BE REPLACED
+# =============================================================================
+# WARNING: This is a placeholder implementation that will be removed once 
+# the proper user management module is implemented.
+# It provides minimal routing to prevent template errors with current_user.
+# =============================================================================
+auth = Blueprint("auth", __name__, url_prefix="/auth")
 
-        return redirect("/portfolios")
-    return render_template("portfolio_form.html", portfolio=portfolio)
+@auth.route("/login")
+def login():
+    return render_template("error.html", 
+                          code=501, 
+                          title="Not Implemented",
+                          heading="Feature Not Implemented", 
+                          details="User authentication is not yet available.")
+
+@auth.route("/register")
+def register():
+    return render_template("error.html", 
+                          code=501, 
+                          title="Not Implemented",
+                          heading="Feature Not Implemented", 
+                          details="User registration is not yet available.")
+
+@auth.route("/profile")
+def profile():
+    return render_template("error.html", 
+                          code=501, 
+                          title="Not Implemented",
+                          heading="Feature Not Implemented", 
+                          details="User profile is not yet available.")
+
+@auth.route("/settings")
+def settings():
+    return render_template("error.html", 
+                          code=501, 
+                          title="Not Implemented",
+                          heading="Feature Not Implemented", 
+                          details="User settings are not yet available.")
+
+@auth.route("/logout")
+def logout():
+    return render_template("error.html", 
+                          code=501, 
+                          title="Not Implemented",
+                          heading="Feature Not Implemented", 
+                          details="User logout is not yet available.")
+# =============================================================================
+# END OF TEMPORARY USER AUTHENTICATION MODULE
+# =============================================================================

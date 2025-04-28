@@ -22,3 +22,4 @@ instance/
 
 # Aoli local test files
 test_calc.py
+.flaskenv
