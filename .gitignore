@@ -21,4 +21,4 @@ instance/
 *.db-journal
 
 # Aoli local test files
-tests/test_calc.py
+test_calc.py
