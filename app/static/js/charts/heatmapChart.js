@@ -27,14 +27,18 @@ export function renderHeatmapChart(weights, start_date, initial_investment) {
         });
       }
 
-      //shades of green for heatmap levels
-      const getGreenShade = (v) => {
-        if (v >= 0.2) return "#166534";
-        if (v >= 0.1) return "#22c55e";
-        if (v >= 0.05) return "#4ade80";
+      // Green for up, Red for down
+      const getShade = (v) => {
+        if (v > 0.2) return "#166534";
+        if (v > 0.1) return "#22c55e";
+        if (v > 0.05) return "#4ade80";
         if (v > 0.01) return "#86efac";
         if (v > 0) return "#d1fae5";
-        return "#1f2937";
+        if (v > -0.01) return "#fde3e3";
+        if (v > -0.05) return "#ef4444";
+        if (v > -0.1) return "#d73d3d";
+        if (v > -0.2) return "#bf3636";
+        return "#8f2929";
       };
 
       const ctx = document.getElementById("heatmapChart").getContext("2d");
@@ -47,7 +51,7 @@ export function renderHeatmapChart(weights, start_date, initial_investment) {
             {
               label: "Monthly Return",
               data: matrixData,
-              backgroundColor: (ctx) => getGreenShade(ctx.raw.v),
+              backgroundColor: (ctx) => getShade(ctx.raw.v),
               borderWidth: 0,
               width: () => 22,
               height: () => 22,
@@ -61,11 +65,14 @@ export function renderHeatmapChart(weights, start_date, initial_investment) {
             legend: { display: false },
             title: { display: false },
             tooltip: {
-              backgroundColor: "#111827",
-              titleColor: "#f8fafc",
-              bodyColor: "#e5e7eb",
-              borderColor: "#374151",
-              borderWidth: 1,
+              backgroundColor: "#1f1f1f",
+              titleColor: "#FFD700",
+              titleFont: { family: "Sora", weight: "600" },
+              bodyColor: "#f3f4f6",
+              bodyFont: { family: "Sora", weight: "500" },
+              borderColor: "#E69622",
+              borderWidth: 1.2,
+              padding: 10,
               callbacks: {
                 label: (ctx) => {
                   const { x, y, v } = ctx.raw;
@@ -82,7 +89,7 @@ export function renderHeatmapChart(weights, start_date, initial_investment) {
               grid: { display: false },
               ticks: {
                 color: "#d1d5db",
-                font: { family: "Poppins", size: 10 },
+                font: { family: "Sora", size: 10 },
               },
             },
             y: {
@@ -93,7 +100,7 @@ export function renderHeatmapChart(weights, start_date, initial_investment) {
               reverse: true,
               ticks: {
                 color: "#d1d5db",
-                font: { family: "Poppins", size: 10 },
+                font: { family: "Sora", size: 10 },
               },
             },
           },
@@ -103,13 +110,17 @@ export function renderHeatmapChart(weights, start_date, initial_investment) {
       const legendContainer = document.getElementById("heatmapLegend");
       if (legendContainer) {
         legendContainer.innerHTML = `
-          <div style="display: flex; justify-content: center; gap: 10px; font-family: Poppins; font-size: 11px; margin-top: 6px;">
-            <span style="color: #1f2937;">■ 0%</span>
-            <span style="color: #d1fae5;">■ > 0%</span>
-            <span style="color: #86efac;">■ > 1%</span>
-            <span style="color: #4ade80;">■ > 5%</span>
-            <span style="color: #22c55e;">■ > 10%</span>
-            <span style="color: #166534;">■ > 20%</span>
+          <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; font-family: Sora; font-size: 11px; margin-top: 6px;">
+            <span style="color: #8f2929;">■</span> <span>-20%</span>
+            <span style="color: #bf3636;">■</span> <span>-10%</span>
+            <span style="color: #d73d3d;">■</span> <span>-5%</span>
+            <span style="color: #ef4444;">■</span> <span>-1%</span>
+            <span style="color: #fde3e3;">■</span> <span>0%</span>
+            <span style="color: #d1fae5;">■</span> <span>+0%</span>
+            <span style="color: #86efac;">■</span> <span>+1%</span>
+            <span style="color: #4ade80;">■</span> <span>+5%</span>
+            <span style="color: #22c55e;">■</span> <span>+10%</span>
+            <span style="color: #166534;">■</span> <span>+20%</span>
           </div>
         `;
       }
