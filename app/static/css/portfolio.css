@@ -1,13 +1,11 @@
-/* Portfolio form specific styles */
+/* Portfolio specific styles */
 @import url('../css/main.css');
-
-/* Portfolio creation/editing specific styles */
 
 /* Portfolio form header styling */
 .page-heading {
     font-weight: 600;
     font-size: 20px;
-    font-family: 'Sora', sans-serif;
+    font-family: var(--font-nav);
     color: var(--text-primary);
 }
 
@@ -19,7 +17,7 @@
 .page-subheading {
     font-size: 14px;
     font-weight: 400;
-    font-family: 'Sora', sans-serif;
+    font-family: var(--font-nav);
     color: var(--text-primary);
 }
 
@@ -482,3 +480,6 @@
   background-color: transparent;
   text-decoration: none;
 }
+
+/* Portfolio List Page Styles */
+/* Add your portfolio-list specific styles here */

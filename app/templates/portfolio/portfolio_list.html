@@ -1,3 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Portfolios - The Richverse{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/portfolio.css') }}">
+{% endblock %}
+
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,7 +20,7 @@
     <!-- Page header -->
     <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
         <h1>My Portfolios</h1>
-        <a href="{{ url_for('main.portfolio_new') }}" class="btn btn-primary">Create New Portfolio</a>
+        <a href="{{ url_for('portfolios.create') }}" class="btn btn-primary">Create New Portfolio</a>
     </div>
 
     <!-- View toggle buttons -->
@@ -102,3 +111,4 @@
 
 </body>
 </html>
+{% endblock %}
