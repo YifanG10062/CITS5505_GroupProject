@@ -40,7 +40,7 @@ html {
 }
 
 body {
-  font-family: "Poppins", "Segoe UI", sans-serif;
+  font-family: "Sora", "Segoe UI", sans-serif;
   background-color: var(--bg-dark);
   color: var(--text-primary);
   line-height: 1.5;
@@ -96,7 +96,6 @@ body {
   color: var(--primary);
 }
 
-/* Keep the original card header style */
 .card-header {
   font-weight: 600;
   font-size: 1rem;
@@ -122,9 +121,8 @@ canvas {
 
 .card-body {
   padding: 1.25rem;
+  font-family: 'Sora', sans-serif;
 }
-
-/* Button styles - simplified to two main types */
 
 /* Standard Button - primary filled button */
 .btn {
@@ -196,13 +194,11 @@ canvas {
   margin-top: 1.5rem;
 }
 
-/* Any button or link in the action container should be properly aligned */
 .action-container .btn,
 .action-container .btn {
   flex: 1;
 }
 
-/* The text link in the action container should not grow */
 .action-container .text-link,
 .action-container .text-link {
   flex: 0;
@@ -309,4 +305,50 @@ canvas {
     font-weight: 300;
     font-size: 12px;
     color: rgba(148, 163, 184, 0.8); 
+}
+
+.card.dashboard-overview {
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary);
+  font-family: 'Sora', sans-serif;
+  border-radius: 0.75rem;
+  border: 1px solid var(--card-outline);
+  transition: all 0.2s ease-in-out;
+}
+
+.card.dashboard-overview .fw-bold.mb-1 {
+  color: var(--primary);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.card.dashboard-overview p {
+  font-size: 0.875rem;
+  font-family: 'Sora', sans-serif;
+  color: var(--text-secondary);
+}
+
+.card.dashboard-overview .col-6 {
+  font-family: 'Sora', sans-serif;
+}
+
+.card.dashboard-overview .fw-bold {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* Glowing cards for charts */
+.card.chart-glow {
+  transition: all 0.2s ease-in-out;
+  border-radius: 0.75rem;
+  font-family: 'Sora', sans-serif;
+}
+
+.card.chart-glow:hover {
+  box-shadow: 0 0 14px rgba(255, 167, 38, 0.4);
+  transform: translateY(-2px);
+}
+.dashboard-overview, 
+.chart-glow {
+  background-color: var(--card-bg);
 }
