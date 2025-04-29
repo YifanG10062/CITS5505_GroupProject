@@ -2,11 +2,20 @@ export const chartTheme = {
   responsive: true,
   maintainAspectRatio: false,
   interaction: { mode: "index", intersect: false },
+  animation: {
+    duration: 1200, 
+    easing: "easeOutCubic", 
+  },
+  hover: {
+    animationDuration: 400, 
+    mode: "nearest",
+    intersect: true,
+  },
   plugins: {
     legend: {
       labels: {
         color: "#f8f9fa",
-        font: { family: "Poppins", size: 12, weight: "500" },
+        font: { family: "Sora", size: 12, weight: "500" },
         padding: 20,
       },
     },
@@ -16,7 +25,7 @@ export const chartTheme = {
       color: "#f3f4f6",
       font: {
         size: 16,
-        family: "Poppins",
+        family: "Sora",
         weight: "600",
       },
       padding: {
@@ -26,10 +35,33 @@ export const chartTheme = {
     },
     tooltip: {
       backgroundColor: "#1f1f1f",
-      titleColor: "#f8f9fa",
-      bodyColor: "#d1d1d1",
-      borderColor: "#333",
-      borderWidth: 1,
+      titleColor: "#FFD700",
+      titleFont: {
+        family: "Sora",
+        weight: "600",
+        size: 14,
+      },
+      bodyColor: "#f3f4f6",
+      bodyFont: {
+        family: "Sora",
+        weight: "500",
+        size: 13,
+      },
+      borderColor: "#E69622",
+      borderWidth: 1.2,
+      padding: 10,
+      cornerRadius: 8,
+      boxPadding: 6,
+      callbacks: {
+        title: function (tooltipItems) {
+          const rawLabel = tooltipItems[0].label;
+          const date = new Date(rawLabel);
+          return date.toLocaleDateString("en-US", {
+            month: "short",
+            year: "numeric",
+          });
+        },
+      },
     },
   },
   scales: {
@@ -38,10 +70,15 @@ export const chartTheme = {
         color: "#ccc",
         font: {
           size: 11,
-          family: "Poppins",
+          family: "Sora",
         },
         maxTicksLimit: 6,
         autoSkip: true,
+        callback: function (value, index, values) {
+          const rawLabel = this.getLabelForValue(value);
+          const date = new Date(rawLabel);
+          return date.getFullYear();
+        },
       },
       grid: {
         display: false,
@@ -52,7 +89,7 @@ export const chartTheme = {
         color: "#ccc",
         font: {
           size: 11,
-          family: "Poppins",
+          family: "Sora",
         },
       },
       grid: {
