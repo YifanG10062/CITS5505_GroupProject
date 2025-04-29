@@ -21,7 +21,7 @@ export function renderCumulativeChart(weights, start_date, initial_investment) {
             {
               label: "Your Strategy",
               data: strategy,
-              borderColor: "#10b981", // Tailwind emerald-500
+              borderColor: "#10b981",
               backgroundColor: "rgba(16, 185, 129, 0.08)",
               fill: true,
               tension: 0.35,
@@ -30,7 +30,7 @@ export function renderCumulativeChart(weights, start_date, initial_investment) {
             {
               label: "SPY Benchmark",
               data: benchmark,
-              borderColor: "#facc15", // Tailwind yellow-400
+              borderColor: " #E69622",
               backgroundColor: "rgba(250, 204, 21, 0.1)",
               fill: true,
               tension: 0.35,
