@@ -482,4 +482,170 @@
 }
 
 /* Portfolio List Page Styles */
-/* Add your portfolio-list specific styles here */
+/* Portfolio view container */
+.portfolio-view-container {
+  padding: 1.5rem 0;
+}
+
+/* Portfolios header section */
+.portfolios-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Investment period display */
+.investment-period {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  margin: 1rem 0;
+}
+
+/* Portfolios table container */
+.portfolios-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+
+/* Table header */
+.portfolios-table thead th {
+  padding: 0.75rem 1rem;
+  font-family: 'Sora', sans-serif;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  text-align: left;
+  border-bottom: 1px solid var(--card-outline);
+  position: relative;
+}
+
+.portfolios-table thead th .sort-icon {
+  margin-left: 0.25rem;
+  opacity: 0.7;
+  font-size: 0.75rem;
+}
+
+/* Table body */
+.portfolios-table tbody td {
+  padding: 0.75rem 1rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  border-bottom: 1px solid var(--card-outline);
+  vertical-align: middle;
+}
+
+.portfolios-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.portfolios-table tbody tr:hover {
+  background-color: rgba(56, 61, 72, 0.3);
+}
+
+/* Portfolio name cell */
+.portfolio-name-cell {
+  font-weight: 500;
+}
+
+/* Portfolio allocation cell */
+.portfolio-allocation {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* Creator cell with badge */
+.creator-cell {
+  display: flex;
+  align-items: center;
+}
+
+/* Current value cell */
+.current-value {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Return percentage and metrics */
+.return-positive {
+  color: var(--green-up);
+  font-weight: 600;
+}
+
+.return-negative {
+  color: var(--red-down);
+  font-weight: 600;
+}
+
+/* CAGR and volatility cells */
+.metric-value {
+  font-weight: 500;
+}
+
+/* Max drawdown cell */
+.max-drawdown {
+  font-weight: 500;
+}
+
+/* Action buttons cell */
+.action-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.action-link {
+  color: var(--text-primary);
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+
+.action-link:hover {
+  opacity: 1;
+  color: var(--primary);
+}
+
+.action-link.delete {
+  color: var(--red-down);
+  opacity: 0.8;
+}
+
+.action-link.delete:hover {
+  opacity: 1;
+}
+
+/* Page buttons */
+.portfolio-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+  .portfolios-table {
+    display: block;
+    overflow-x: auto;
+  }
+  
+  .portfolio-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .portfolios-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .toggle-container {
+    margin-left: 0;
+  }
+}

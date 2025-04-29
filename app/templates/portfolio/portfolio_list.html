@@ -1,114 +1,130 @@
 {% extends "base.html" %}
 
-{% block title %}Portfolios - The Richverse{% endblock %}
+{% block title %}Portfolio - The Richverse{% endblock %}
 
 {% block styles %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/portfolio.css') }}">
 {% endblock %}
 
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Portfolio List</title>
-</head>
-<body>
-
-<div class="container">
-
-    <!-- Page header -->
-    <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
-        <h1>My Portfolios</h1>
-        <a href="{{ url_for('portfolios.create') }}" class="btn btn-primary">Create New Portfolio</a>
+<div class="container mt-4">
+  <div class="portfolio-view-container">
+    <!-- Portfolios header with tabs and toggle -->
+    <div class="portfolios-header">
+      <div class="d-flex align-items-center">
+        <div class="portfolio-tabs">
+          <div id="listViewBtn" class="portfolio-tab active">List View</div>
+          <div id="cardViewBtn" class="portfolio-tab">Card View</div>
+        </div>
+        <div class="toggle-container">
+          <label class="toggle-label">All include shared</label>
+          <label class="toggle-switch">
+            <input type="checkbox" id="includeSharedToggle">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+      
+      <div class="portfolio-buttons">
+        <button id="compareBtn" class="btn">Compare Portfolios</button>
+        <a href="{{ url_for('portfolios.create') }}" class="btn" target="_blank">Create New Portfolio</a>
+      </div>
     </div>
-
-    <!-- View toggle buttons -->
-    <div class="mb-4">
-        <button id="cardViewBtn" class="btn btn-secondary">Card View</button>
-        <button id="listViewBtn" class="btn btn-outline-secondary">List View</button>
+    
+    <!-- Investment period info -->
+    <div class="investment-period">
+      Invested $1,000 from 1/1/2015 to 4/12/2025
     </div>
-
-    <!-- Portfolio Cards (Default visible) -->
-    <div id="cardView" class="row">
+    
+    <!-- Portfolio table (List View) -->
+    <div id="listView">
+      <table class="portfolios-table">
+        <thead>
+          <tr>
+            <th>Portfolio Name</th>
+            <th>Allocation</th>
+            <th>Creator</th>
+            <th>Current Value <i class="sort-icon">↓</i></th>
+            <th>Total Return% <i class="sort-icon">↓</i></th>
+            <th>CAGR% <i class="sort-icon">↓</i></th>
+            <th>Volatility <i class="sort-icon">↓</i></th>
+            <th>Max Drawdown <i class="sort-icon">↓</i></th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for portfolio in portfolios %}
+          <tr>
+            <td class="portfolio-name-cell">{{ portfolio.portfolio_name }}</td>
+            <td class="portfolio-allocation">{{ portfolio.allocation }}</td>
+            <td class="creator-cell">
+              {{ portfolio.creator_username }}
+              {% if portfolio.is_shared %}
+              <span class="badge badge-default shared-badge">Shared</span>
+              {% endif %}
+            </td>
+            <td class="current-value">${{ portfolio.current_value | default('12,679.86') }}</td>
+            <td class="return-positive">{{ (portfolio.return_percent * 100) | round(2) | default('12.00') }}%</td>
+            <td class="return-positive">{{ (portfolio.cagr * 100) | round(2) | default('14.86') }}%</td>
+            <td class="metric-value">{{ (portfolio.volatility * 100) | round(2) | default('27.82') }}%</td>
+            <td class="return-negative">-{{ (portfolio.max_drawdown * 100) | round(2) | default('35.78') }}%</td>
+            <td class="action-cell">
+              {% if portfolio.is_editable %}
+              <a href="{{ url_for('portfolios.edit', portfolio_id=portfolio.portfolio_id) }}" class="action-link">Edit</a>
+              {% endif %}
+              
+              {% if portfolio.is_shareable %}
+              <a href="#" class="action-link" data-portfolio-id="{{ portfolio.portfolio_id }}">Share</a>
+              {% endif %}
+              
+              <a href="#" class="action-link delete" data-portfolio-id="{{ portfolio.portfolio_id }}">Delete</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Card View (Hidden by default) -->
+    <div id="cardView" class="d-none">
+      <div class="asset-grid">
         {% for portfolio in portfolios %}
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <div class="card-body">
-
-                    <!-- Portfolio Name -->
-                    <h5 class="card-title">{{ portfolio.portfolio_name }}</h5>
-
-                    <!-- Creator and Shared Info -->
-                    <h6 class="card-subtitle mb-2 text-muted">
-                        Creator: {{ portfolio.creator_username }}
-                        {% if portfolio.shared_from_username %}
-                            <span class="text-success">(shared from {{ portfolio.shared_from_username }})</span>
-                        {% endif %}
-                    </h6>
-
-                    <!-- Investment Info -->
-                    <p class="card-text">
-                        Invested ${{ portfolio.initial_amount }} on {{ portfolio.start_date }}
-                        <br>
-                        Now ({{ portfolio.calculated_at }})
-                    </p>
-
-                    <!-- Current Value and Return -->
-                    <div class="my-3">
-                        <strong>Now worth: ${{ portfolio.current_value }}</strong><br>
-                        Cumulative Return: {{ (portfolio.return_percent * 100) | round(2) }}%
-                    </div>
-
-                    <!-- Key Metrics -->
-                    <div style="font-size: small;">
-                        Initial: ${{ portfolio.initial_amount }}<br>
-                        Profit: ${{ portfolio.profit | round(2) }}<br>
-                        Volatility (ann.): {{ (portfolio.volatility * 100) | round(2) }}%<br>
-                        Max Drawdown: {{ (portfolio.max_drawdown * 100) | round(2) }}%
-                    </div>
-
-                </div>
-
-                <!-- Card Footer with Action Buttons -->
-                <div class="card-footer bg-white">
-                    {% if portfolio.is_editable %}
-                        <a href="{{ url_for('main.portfolio_edit', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-outline-secondary btn-sm">Edit</a>
-                    {% endif %}
-                    {% if portfolio.is_shareable %}
-                        <button class="btn btn-outline-secondary btn-sm" onclick="openShareModal({{ portfolio.portfolio_id }})">Share</button>
-                    {% endif %}
-                    <a href="{{ url_for('main.portfolio_detail', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-primary btn-sm">View Detail</a>
-                </div>
-            </div>
+        <div class="asset-card portfolio-card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="m-0">{{ portfolio.portfolio_name }}</h5>
+            {% if portfolio.is_shared %}
+            <span class="badge badge-default shared-badge">Shared</span>
+            {% endif %}
+          </div>
+          <div class="card-body p-3">
+            <div class="mb-2"><strong>Allocation:</strong> <span class="portfolio-allocation">{{ portfolio.allocation }}</span></div>
+            <div class="mb-2"><strong>Creator:</strong> {{ portfolio.creator_username }}</div>
+            <div class="mb-2"><strong>Current Value:</strong> ${{ portfolio.current_value | default('12,679.86') }}</div>
+            <div class="mb-2"><strong>Total Return:</strong> <span class="return-positive">{{ (portfolio.return_percent * 100) | round(2) | default('12.00') }}%</span></div>
+            <div class="mb-2"><strong>CAGR:</strong> <span class="return-positive">{{ (portfolio.cagr * 100) | round(2) | default('14.86') }}%</span></div>
+            <div class="mb-2"><strong>Volatility:</strong> {{ (portfolio.volatility * 100) | round(2) | default('27.82') }}</div>
+            <div class="mb-2"><strong>Max Drawdown:</strong> <span class="return-negative">-{{ (portfolio.max_drawdown * 100) | round(2) | default('35.78') }}%</span></div>
+          </div>
+          <div class="action-container mt-3">
+            {% if portfolio.is_editable %}
+            <a href="{{ url_for('portfolios.edit', portfolio_id=portfolio.portfolio_id) }}" class="action-link">Edit</a>
+            {% endif %}
+            
+            {% if portfolio.is_shareable %}
+            <a href="#" class="action-link" data-portfolio-id="{{ portfolio.portfolio_id }}">Share</a>
+            {% endif %}
+            
+            <a href="#" class="action-link delete" data-portfolio-id="{{ portfolio.portfolio_id }}">Delete</a>
+          </div>
         </div>
         {% endfor %}
+      </div>
     </div>
-
-    <!-- List View (Initially hidden) -->
-    <div id="listView" class="d-none">
-        <!-- TODO: implement later if needed -->
-    </div>
-
+  </div>
 </div>
 
-<script>
-    // Switch between Card View and List View
-    document.getElementById('cardViewBtn').onclick = function() {
-        document.getElementById('cardView').classList.remove('d-none');
-        document.getElementById('listView').classList.add('d-none');
-    }
-    document.getElementById('listViewBtn').onclick = function() {
-        document.getElementById('listView').classList.remove('d-none');
-        document.getElementById('cardView').classList.add('d-none');
-    }
+{% endblock %}
 
-    // Open Share Modal (Placeholder)
-    function openShareModal(portfolioId) {
-        alert("Open share modal for portfolio ID: " + portfolioId);
-    }
-</script>
-
-</body>
-</html>
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/portfolio.js') }}"></script>
 {% endblock %}

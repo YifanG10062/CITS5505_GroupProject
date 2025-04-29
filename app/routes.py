@@ -16,7 +16,51 @@ def home():
 # Portfolio List View
 @portfolios.route("/")
 def list():
-    portfolios_list = []
+    # Mock portfolio data for testing the UI
+    portfolios_list = [
+        {
+            "portfolio_id": 1,
+            "portfolio_name": "Diversified Growth",
+            "allocation": "AAPL: 30%, NVDA: 30%, BTC-USD: 40%",
+            "creator_username": "johndoe",
+            "is_shared": True,
+            "is_editable": True,
+            "is_shareable": True,
+            "current_value": 14689.75,
+            "return_percent": 0.4689,
+            "cagr": 0.1586,
+            "volatility": 0.2782,
+            "max_drawdown": 0.3578
+        },
+        {
+            "portfolio_id": 2,
+            "portfolio_name": "Tech Focus",
+            "allocation": "MSFT: 35%, AAPL: 35%, AMZN: 30%",
+            "creator_username": "johndoe",
+            "is_shared": False,
+            "is_editable": True,
+            "is_shareable": True,
+            "current_value": 12879.24,
+            "return_percent": 0.2879,
+            "cagr": 0.1214,
+            "volatility": 0.2215,
+            "max_drawdown": 0.2843
+        },
+        {
+            "portfolio_id": 3,
+            "portfolio_name": "Crypto Mix",
+            "allocation": "BTC-USD: 50%, ETH-USD: 50%",
+            "creator_username": "janedoe",
+            "is_shared": True,
+            "is_editable": False,
+            "is_shareable": False,
+            "current_value": 18753.62,
+            "return_percent": 0.8753,
+            "cagr": 0.2489,
+            "volatility": 0.4928,
+            "max_drawdown": 0.5682
+        }
+    ]
     return render_template("portfolio/portfolio_list.html", portfolios=portfolios_list)
 
 def get_assets():

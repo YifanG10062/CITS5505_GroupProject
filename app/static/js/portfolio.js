@@ -419,5 +419,50 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize UI on page load
     updateCardStates();
 
- 
+    // Portfolio list view/card view toggle functionality
+    const listViewBtn = document.getElementById('listViewBtn');
+    const cardViewBtn = document.getElementById('cardViewBtn');
+    const listView = document.getElementById('listView');
+    const cardView = document.getElementById('cardView');
+    const includeSharedToggle = document.getElementById('includeSharedToggle');
+    
+    // Add event listeners for view switching
+    if (listViewBtn && cardViewBtn) {
+        listViewBtn.addEventListener('click', function() {
+            // Switch to list view
+            listViewBtn.classList.add('active');
+            cardViewBtn.classList.remove('active');
+            listView.classList.remove('d-none');
+            cardView.classList.add('d-none');
+        });
+        
+        cardViewBtn.addEventListener('click', function() {
+            // Switch to card view
+            cardViewBtn.classList.add('active');
+            listViewBtn.classList.remove('active');
+            cardView.classList.remove('d-none');
+            listView.classList.add('d-none');
+        });
+    }
+    
+    // Toggle for including shared portfolios
+    if (includeSharedToggle) {
+        includeSharedToggle.addEventListener('change', function() {
+            // In a real implementation, this would reload the portfolios
+            // based on the toggle state
+            console.log('Include shared portfolios:', this.checked);
+            // For now, we'll just log the change
+        });
+    }
+    
+    // Setup sort functionality for table columns
+    const sortableHeaders = document.querySelectorAll('.portfolios-table th .sort-icon');
+    sortableHeaders.forEach(header => {
+        header.parentElement.addEventListener('click', function() {
+            // In a real implementation, this would sort the table
+            // based on the clicked column
+            console.log('Sort by:', this.textContent.trim());
+            // For now, we'll just log the click
+        });
+    });
 });

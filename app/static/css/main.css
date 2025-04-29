@@ -317,13 +317,181 @@ canvas {
   max-width: 100%;
 }
 
-/* Placeholder for additional common components */
+/* Badge Component - General styling for badges */
+.badge {
+  display: inline-block;
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 400;
+  margin-left: 0.5rem;
+}
+
+.badge-default {
+  background-color: rgba(56, 61, 72, 0.7);
+  color: var(--text-primary);
+}
+
+.badge-primary {
+  background-color: var(--primary);
+  color: var(--text-dark);
+}
+
+.badge-success {
+  background-color: var(--green-up);
+  color: var(--text-dark);
+}
+
+.badge-danger {
+  background-color: var(--red-down);
+  color: var(--text-dark);
+}
+
+.creator-badge {
+  font-size: 0.75rem;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  background-color: rgba(56, 61, 72, 0.5);
+  margin-left: 0.5rem;
+}
+
+.shared-badge {
+  background-color: rgba(56, 61, 72, 0.7);
+  color: var(--text-primary);
+}
+
+/* Tabs Component - General styling for tab navigation */
+.tabs {
+  display: flex;
+  background-color: var(--card-bg);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.tab {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-family: 'Sora', sans-serif;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  transition: background-color 0.2s ease;
+}
+
+.tab.active {
+  background-color: var(--primary);
+  color: var(--text-dark);
+}
+
+/* Portfolio specific tab variations */
+.portfolio-tabs {
+  display: flex;
+  background-color: var(--card-bg);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.portfolio-tab {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-family: 'Sora', sans-serif;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  transition: background-color 0.2s ease;
+}
+
+.portfolio-tab.active {
+  background-color: var(--primary);
+  color: var(--text-dark);
+}
+
+/* Toggle/Switch Component - General styling for toggle switches */
+.toggle-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-left: 1rem;
+}
+
+.toggle-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 20px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--card-bg);
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  background-color: var(--text-secondary);
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+  background-color: var(--primary);
+}
+
+input:checked + .toggle-slider:before {
+  transform: translateX(16px);
+  background-color: var(--text-dark);
+}
+
+/* Toggle sizes */
+.toggle-switch.toggle-sm {
+  width: 30px;
+  height: 16px;
+}
+
+.toggle-switch.toggle-sm .toggle-slider:before {
+  height: 12px;
+  width: 12px;
+}
+
+.toggle-switch.toggle-lg {
+  width: 48px;
+  height: 24px;
+}
+
+.toggle-switch.toggle-lg .toggle-slider:before {
+  height: 20px;
+  width: 20px;
+}
 
 /* PLACEHOLDER: Modal styling */
 /* Common modal styles will be added here */
 
-/* PLACEHOLDER: Badge styling */
-/* Common badge styles will be added here */
+/* PLACEHOLDER: Dropdown styling */
+/* Common dropdown styles will be added here */
 
 /* PLACEHOLDER: Alert styling */
 /* Common alert styles will be added here */
