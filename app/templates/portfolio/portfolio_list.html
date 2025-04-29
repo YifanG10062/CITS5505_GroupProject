@@ -9,25 +9,28 @@
 {% block content %}
 <div class="container mt-4">
   <div class="portfolio-view-container">
-    <!-- Portfolios header with tabs and toggle -->
-    <div class="portfolios-header">
-      <div class="d-flex align-items-center">
-        <div class="portfolio-tabs">
-          <div id="listViewBtn" class="portfolio-tab active">List View</div>
-          <div id="cardViewBtn" class="portfolio-tab">Card View</div>
+    <!-- Portfolio controls - fixed layout to match visual design -->
+    <div class="top-controls-row">
+      <div class="left-section">
+        <!-- View Toggle Buttons -->
+        <div class="view-toggle-buttons">
+          <button id="listViewBtn" class="toggle-btn active">List View</button>
+          <button id="cardViewBtn" class="toggle-btn">Card View</button>
         </div>
-        <div class="toggle-container">
-          <label class="toggle-label">All include shared</label>
-          <label class="toggle-switch">
-            <input type="checkbox" id="includeSharedToggle">
-            <span class="toggle-slider"></span>
-          </label>
+        
+        <!-- Toggle Switch -->
+        <div class="toggle-wrapper">
+          <span>All include shared</span>
+          <div class="form-check form-switch ms-2">
+            <input class="form-check-input form-switch-input" type="checkbox" id="includeSharedToggle">
+          </div>
         </div>
       </div>
       
-      <div class="portfolio-buttons">
-        <button id="compareBtn" class="btn">Compare Portfolios</button>
-        <a href="{{ url_for('portfolios.create') }}" class="btn" target="_blank">Create New Portfolio</a>
+      <div class="right-section">
+        <!-- Action Buttons -->
+        <button id="compareBtn" class="btn btn-primary">Compare Portfolios</button>
+        <a href="{{ url_for('portfolios.create') }}" class="btn btn-primary ms-2" target="_blank">Create New Portfolio</a>
       </div>
     </div>
     
@@ -58,7 +61,7 @@
             <td class="portfolio-name-cell">{{ portfolio.portfolio_name }}</td>
             <td class="portfolio-allocation">{{ portfolio.allocation }}</td>
             <td class="creator-cell">
-              {{ portfolio.creator_username }}
+              <span>{{ portfolio.creator_username }}</span>
               {% if portfolio.is_shared %}
               <span class="badge badge-default shared-badge">Shared</span>
               {% endif %}

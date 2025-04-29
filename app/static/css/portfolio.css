@@ -401,30 +401,6 @@
   text-underline-offset: 2px;
 }
 
-/* Edit icon styling with states */
-.edit-icon {
-  width: 16px;
-  height: 16px;
-  margin-right: 0.5rem;
-  opacity: 0.8;
-  filter: brightness(0) invert(1);
-  transition: filter 0.2s ease-in-out;
-}
-
-/* Hover state for edit icon container */
-.portfolio-name-field .d-flex:hover .edit-icon,
-.allocation-value:hover .edit-icon {
-  filter: brightness(0) saturate(100%) invert(80%) sepia(55%) saturate(1000%) hue-rotate(340deg) brightness(101%) contrast(101%); /* Make icon primary color on hover */
-  opacity: 1;
-}
-
-/* Active/focused state for edit icon */
-.portfolio-name-field input:focus + .edit-icon,
-.allocation-value.editing .edit-icon {
-  filter: brightness(0) saturate(100%) invert(80%) sepia(55%) saturate(1000%) hue-rotate(340deg) brightness(101%) contrast(101%); /* Keep primary color when editing */
-  opacity: 1;
-}
-
 /* Action container layout - update to align items to the right */
 .action-container {
   display: flex;
@@ -487,32 +463,24 @@
   padding: 1.5rem 0;
 }
 
-/* Portfolios header section */
-.portfolios-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
+/* Make table container scrollable horizontally */
+#listView {
+  overflow-x: auto;
+  width: 100%;
+  margin-bottom: 2rem;
+  -webkit-overflow-scrolling: touch; /* For smoother scrolling on iOS */
 }
 
-/* Investment period display */
-.investment-period {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.9rem;
-  color: var(--text-primary);
-  margin: 1rem 0;
-}
-
-/* Portfolios table container */
+/* Portfolios table container - update for horizontal scrolling */
 .portfolios-table {
   width: 100%;
+  min-width: 1200px; /* Ensures table has a minimum width regardless of container */
   border-collapse: separate;
   border-spacing: 0;
-  margin-bottom: 1.5rem;
   color: var(--text-primary);
 }
 
-/* Table header */
+/* Table header styling */
 .portfolios-table thead th {
   padding: 0.75rem 1rem;
   font-family: 'Sora', sans-serif;
@@ -522,23 +490,55 @@
   text-align: left;
   border-bottom: 1px solid var(--card-outline);
   position: relative;
+  white-space: nowrap; /* Prevent wrapping in headers */
 }
 
-.portfolios-table thead th .sort-icon {
-  margin-left: 0.25rem;
-  opacity: 0.7;
-  font-size: 0.75rem;
-}
-
-/* Table body */
+/* Table body styling */
 .portfolios-table tbody td {
   padding: 0.75rem 1rem;
   font-family: 'Inter', sans-serif;
   font-size: 0.875rem;
   border-bottom: 1px solid var(--card-outline);
   vertical-align: middle;
+  white-space: nowrap; /* Prevent wrapping in cells */
 }
 
+/* Set some proportional column widths for table */
+.portfolios-table th:nth-child(1), /* Portfolio Name */
+.portfolios-table td:nth-child(1) {
+  min-width: 180px;
+}
+
+.portfolios-table th:nth-child(2), /* Allocation */
+.portfolios-table td:nth-child(2) {
+  min-width: 250px;
+}
+
+.portfolios-table th:nth-child(3), /* Creator */
+.portfolios-table td:nth-child(3) {
+  min-width: 150px;
+}
+
+.portfolios-table th:nth-child(4), /* Current Value */
+.portfolios-table td:nth-child(4),
+.portfolios-table th:nth-child(5), /* Total Return% */
+.portfolios-table td:nth-child(5),
+.portfolios-table th:nth-child(6), /* CAGR% */
+.portfolios-table td:nth-child(6),
+.portfolios-table th:nth-child(7), /* Volatility */
+.portfolios-table td:nth-child(7),
+.portfolios-table th:nth-child(8), /* Max Drawdown */
+.portfolios-table td:nth-child(8) {
+  min-width: 110px;
+  text-align: right; /* Right align numeric values */
+}
+
+.portfolios-table th:nth-child(9), /* Action */
+.portfolios-table td:nth-child(9) {
+  min-width: 180px;
+}
+
+/* Table row hover effect */
 .portfolios-table tbody tr {
   transition: background-color 0.2s ease;
 }
@@ -547,105 +547,144 @@
   background-color: rgba(56, 61, 72, 0.3);
 }
 
-/* Portfolio name cell */
-.portfolio-name-cell {
-  font-weight: 500;
-}
-
-/* Portfolio allocation cell */
-.portfolio-allocation {
-  font-weight: 500;
-  color: var(--text-primary);
-}
-
-/* Creator cell with badge */
+/* Creator cell styling for better badge display */
 .creator-cell {
   display: flex;
   align-items: center;
 }
 
-/* Current value cell */
-.current-value {
-  font-weight: 600;
+.creator-cell > span:first-child {
+  margin-right: 0.5rem;
+}
+
+/* Investment period display styling */
+.investment-period {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
   color: var(--text-primary);
+  margin: 1rem 0 1.5rem;
 }
 
-/* Return percentage and metrics */
-.return-positive {
-  color: var(--green-up);
-  font-weight: 600;
+/* Top Controls Layout - matches visual design */
+.top-controls-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  width: 100%;
 }
 
-.return-negative {
-  color: var(--red-down);
-  font-weight: 600;
-}
-
-/* CAGR and volatility cells */
-.metric-value {
-  font-weight: 500;
-}
-
-/* Max drawdown cell */
-.max-drawdown {
-  font-weight: 500;
-}
-
-/* Action buttons cell */
-.action-cell {
+/* Left section containing view toggle and shared toggle */
+.left-section {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1.5rem;
 }
 
-.action-link {
-  color: var(--text-primary);
-  opacity: 0.7;
-  transition: opacity 0.2s ease;
-  text-decoration: none;
-  font-size: 0.875rem;
-}
-
-.action-link:hover {
-  opacity: 1;
-  color: var(--primary);
-}
-
-.action-link.delete {
-  color: var(--red-down);
-  opacity: 0.8;
-}
-
-.action-link.delete:hover {
-  opacity: 1;
-}
-
-/* Page buttons */
-.portfolio-buttons {
+/* View toggle buttons */
+.view-toggle-buttons {
   display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
+  background-color: var(--bg-darker);
+  border-radius: 4px;
+  overflow: hidden;
 }
 
-/* Responsive adjustments for smaller screens */
-@media (max-width: 768px) {
-  .portfolios-table {
-    display: block;
-    overflow-x: auto;
-  }
-  
-  .portfolio-buttons {
-    flex-direction: column;
-    width: 100%;
-  }
-  
-  .portfolios-header {
+.toggle-btn {
+  background: none;
+  border: none;
+  padding: 0.5rem 1.25rem;
+  color: var(--text-primary);
+  font-family: var(--font-nav);
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.toggle-btn.active {
+  background-color: var(--primary);
+  color: var(--bg-darker);
+  font-weight: 600;
+}
+
+/* Toggle switch wrapper */
+.toggle-wrapper {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+/* Right section containing action buttons */
+.right-section {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.right-section .btn {
+  white-space: nowrap;
+}
+
+/* Ensure action buttons have correct colors and style */
+.right-section .btn-primary {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: var(--bg-darker);
+}
+
+.right-section .btn-primary:hover {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .top-controls-row {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
   }
   
-  .toggle-container {
-    margin-left: 0;
+  .right-section {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 768px) {
+  .portfolios-table {
+    min-width: 1200px; /* Keep minimum width even on mobile */
+  }
+
+  .left-section {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    gap: 0.75rem;
+  }
+  
+  .view-toggle-buttons {
+    width: 100%;
+  }
+  
+  .toggle-btn {
+    flex: 1;
+    text-align: center;
+  }
+  
+  .toggle-wrapper {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .right-section {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.5rem;
+  }
+  
+  .right-section .btn {
+    width: 100%;
+    margin-left: 0 !important;
   }
 }
