@@ -1,0 +1,481 @@
+/* Portfolio creation/editing specific styles */
+
+/* Portfolio form header styling */
+.page-heading {
+    font-weight: 600;
+    font-size: 20px;
+    font-family: 'Sora', sans-serif;
+    color: var(--text-primary);
+}
+
+.richverse-title {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.page-subheading {
+    font-size: 14px;
+    font-weight: 400;
+    font-family: 'Sora', sans-serif;
+    color: var(--text-primary);
+}
+
+.highlight {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+/* Asset selection grid */
+.asset-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+/* Asset card styling */
+.asset-card {
+  background-color: var(--card-bg);
+  border: none; 
+  border-radius: 0.75rem;
+  padding: 1.5rem 0.75rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  position: relative;
+  margin: 3px;  
+  box-shadow: 0 0 0 0 transparent; 
+  transform: translateY(0);  
+  height: calc(100% - 6px);  
+}
+
+.asset-card:hover {
+  border-color: var(--card-outline); 
+  box-shadow: 0 0 8px rgba(255, 167, 38, 0.4);
+  transform: translateY(-2px);
+}
+
+.asset-card.selected {
+  border: 1px solid var(--primary);
+  box-shadow: 0 0 16px rgba(255, 167, 38, 0.4);
+  margin: 2px;  
+}
+
+.asset-card.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: grayscale(60%);
+  border-color: var(--card-outline);
+  box-shadow: none;
+  transform: none;
+}
+
+.asset-card.disabled:hover {
+  transform: none;
+  border-color: var(--card-outline);
+  box-shadow: none;
+}
+
+.asset-card .asset-icon {
+  width: 4rem;
+  height: 4rem;
+  margin: 0 auto 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.asset-card .asset-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.asset-card .asset-name {
+  font-family: 'Sora', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+}
+
+.asset-card .asset-company {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  opacity: 0.7;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: 2.5rem;
+}
+
+/* Selection indicator - hide but keep element in DOM */
+.asset-card .selection-indicator {
+  display: none !important;
+  visibility: hidden;
+  opacity: 0;
+}
+
+/* Allocation section styling */
+.allocation-section {
+  padding: 0;
+}
+
+.allocation-header {
+  padding: 1rem 0;
+  margin-bottom: 0.5rem;
+}
+
+/* Allocation total status indicators */
+.allocation-total {
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  font-family: 'Inter', sans-serif;
+}
+
+.allocation-total.valid {
+  background-color: var(--green-up);
+  color: #000;
+}
+
+.allocation-total.invalid {
+  background-color: var(--red-down);
+  color: #000;
+}
+
+/* Allocation table container */
+.allocation-table {
+  border: 1px solid var(--card-outline);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+/* Allocation item grid layout */
+.allocation-item {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--card-outline);
+}
+
+.allocation-item:last-child {
+  border-bottom: none;
+}
+
+/* Asset code display */
+.allocation-asset {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.asset-code {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--primary);
+}
+
+/* Allocation value display and interaction */
+.allocation-value {
+  text-align: right;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  cursor: pointer;
+  min-width: 80px;
+}
+
+.allocation-value .edit-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 0.25rem;
+  opacity: 0.7;
+}
+
+/* Editing state for allocation value */
+.allocation-value.editing {
+  color: var(--primary);
+}
+
+/* Edit mode for allocation values */
+.allocation-value-edit {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.allocation-value-edit input {
+  width: 5rem; /* Increase width further for better display and margin */
+  text-align: right;
+  background-color: transparent;
+  border: none;
+  color: var(--primary);
+  border-radius: 0.375rem; /* Match the standard form-control border-radius */
+  padding: 0.375rem 0.75rem; /* Match standard form-control padding */
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  box-shadow: none;
+  margin-right: 0.25rem; /* Add margin between input and percentage sign */
+}
+
+.allocation-value-edit input:focus {
+  outline: none;
+  box-shadow: none;
+  background-color: transparent;
+}
+
+.allocation-value-edit .percentage {
+  margin-left: 0.25rem;
+  color: var(--primary);
+  padding-right: 0.5rem; /* Add padding to the right of percentage sign */
+}
+
+/* Override some bootstrap form-control styles to match our design */
+.allocation-value-edit .form-control {
+  background-color: transparent;
+  border: none;
+  height: auto;
+  padding: 0.375rem 0.75rem; /* Standard Bootstrap form-control padding */
+  border-radius: 0.375rem; /* Standard Bootstrap form-control border-radius */
+}
+
+/* Empty state when no assets are selected */
+.no-assets {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--text-secondary);
+  font-family: 'Poppins', sans-serif;
+}
+
+.no-assets-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Portfolio configuration sidebar */
+.portfolio-config {
+  background-color: var(--card-bg);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  height: 100%;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Configuration item layout */
+.config-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(56, 61, 72, 0.5);
+  flex-wrap: nowrap;
+  overflow: hidden;
+  padding-right: 0; /* Ensure no extra padding on the right */
+}
+
+.config-label {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  color: var(--text-primary);
+  flex-shrink: 0;
+  margin-right: 1rem;
+}
+
+.config-value {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--primary);
+  text-align: right;
+  flex-shrink: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Portfolio name editing field */
+.portfolio-name-field .d-flex {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  padding-right: 0; /* Remove right padding */
+}
+
+.portfolio-name-field {
+  padding-right: 0; /* Ensure no extra padding on the right */
+}
+
+.portfolio-name-field .portfolio-name-display {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.portfolio-name-text {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--primary);
+  text-align: right;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Empty state styling for portfolio name */
+.portfolio-name-text.empty {
+  color: var(--text-primary);
+  font-weight: 400;
+}
+
+.portfolio-name-edit {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 0; /* Ensure no right padding */
+}
+
+.portfolio-name-edit input {
+  background-color: transparent;
+  border: none;
+  color: var(--primary);
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+  text-align: right;
+  max-width: 100%;
+  width: 100%; /* Use full width */
+  padding-right: 0;
+  margin-right: 0;
+  box-sizing: border-box; /* Ensure padding does not increase width */
+}
+
+.portfolio-name-field input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Edit icon styling with states */
+.edit-icon {
+  width: 16px;
+  height: 16px;
+  filter: brightness(0) invert(1); /* Make icon white in normal state */
+  transition: filter 0.2s ease-in-out;
+  opacity: 0.8;
+  margin-right: 0.5rem; /* Add spacing between icon and text */
+}
+
+/* Hover state for edit icon */
+.portfolio-name-display:hover .edit-icon,
+.allocation-asset:hover .edit-icon {
+  filter: brightness(0) saturate(100%) invert(80%) sepia(55%) saturate(1000%) hue-rotate(340deg) brightness(101%) contrast(101%); /* Make icon primary color on hover */
+  opacity: 1;
+}
+
+/* Hover state for the text when hovering over the container */
+.portfolio-name-display:hover .portfolio-name-text {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+/* Edit icon styling with states */
+.edit-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 0.5rem;
+  opacity: 0.8;
+  filter: brightness(0) invert(1);
+  transition: filter 0.2s ease-in-out;
+}
+
+/* Hover state for edit icon container */
+.portfolio-name-field .d-flex:hover .edit-icon,
+.allocation-value:hover .edit-icon {
+  filter: brightness(0) saturate(100%) invert(80%) sepia(55%) saturate(1000%) hue-rotate(340deg) brightness(101%) contrast(101%); /* Make icon primary color on hover */
+  opacity: 1;
+}
+
+/* Active/focused state for edit icon */
+.portfolio-name-field input:focus + .edit-icon,
+.allocation-value.editing .edit-icon {
+  filter: brightness(0) saturate(100%) invert(80%) sepia(55%) saturate(1000%) hue-rotate(340deg) brightness(101%) contrast(101%); /* Keep primary color when editing */
+  opacity: 1;
+}
+
+/* Action container layout - update to align items to the right */
+.action-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; 
+  gap: 1rem; 
+  margin-top: 1.5rem;
+}
+
+/* Fix for the old action-buttons class that is currently being used in the template */
+.action-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; 
+  gap: 1rem; 
+  margin-top: 1.5rem;
+}
+
+/* Make sure text-link is properly styled in the action-buttons container */
+.action-buttons .text-link, 
+.action-container .text-link {
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  box-shadow: none;
+  text-transform: capitalize; 
+  margin-right: 0.5rem; 
+}
+
+/* More specific selector for text-link in action-buttons */
+.portfolio-config .action-buttons .text-link {
+  background-color: transparent;
+  color: var(--text-secondary);
+  border: none;
+  font-weight: 400;
+  font-family: 'Inter', sans-serif;
+  text-decoration: none;
+  padding: 0;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+  cursor: pointer;
+  display: inline;
+  box-shadow: none;
+  border-radius: 0;
+  /* Reset any button-like properties */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.portfolio-config .action-buttons .text-link:hover {
+  color: var(--text-primary);
+  background-color: transparent;
+  text-decoration: none;
+}

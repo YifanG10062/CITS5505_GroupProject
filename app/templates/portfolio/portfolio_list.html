@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Portfolio List</title>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Page header -->
+    <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+        <h1>My Portfolios</h1>
+        <a href="{{ url_for('main.portfolio_new') }}" class="btn btn-primary">Create New Portfolio</a>
+    </div>
+
+    <!-- View toggle buttons -->
+    <div class="mb-4">
+        <button id="cardViewBtn" class="btn btn-secondary">Card View</button>
+        <button id="listViewBtn" class="btn btn-outline-secondary">List View</button>
+    </div>
+
+    <!-- Portfolio Cards (Default visible) -->
+    <div id="cardView" class="row">
+        {% for portfolio in portfolios %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+
+                    <!-- Portfolio Name -->
+                    <h5 class="card-title">{{ portfolio.portfolio_name }}</h5>
+
+                    <!-- Creator and Shared Info -->
+                    <h6 class="card-subtitle mb-2 text-muted">
+                        Creator: {{ portfolio.creator_username }}
+                        {% if portfolio.shared_from_username %}
+                            <span class="text-success">(shared from {{ portfolio.shared_from_username }})</span>
+                        {% endif %}
+                    </h6>
+
+                    <!-- Investment Info -->
+                    <p class="card-text">
+                        Invested ${{ portfolio.initial_amount }} on {{ portfolio.start_date }}
+                        <br>
+                        Now ({{ portfolio.calculated_at }})
+                    </p>
+
+                    <!-- Current Value and Return -->
+                    <div class="my-3">
+                        <strong>Now worth: ${{ portfolio.current_value }}</strong><br>
+                        Cumulative Return: {{ (portfolio.return_percent * 100) | round(2) }}%
+                    </div>
+
+                    <!-- Key Metrics -->
+                    <div style="font-size: small;">
+                        Initial: ${{ portfolio.initial_amount }}<br>
+                        Profit: ${{ portfolio.profit | round(2) }}<br>
+                        Volatility (ann.): {{ (portfolio.volatility * 100) | round(2) }}%<br>
+                        Max Drawdown: {{ (portfolio.max_drawdown * 100) | round(2) }}%
+                    </div>
+
+                </div>
+
+                <!-- Card Footer with Action Buttons -->
+                <div class="card-footer bg-white">
+                    {% if portfolio.is_editable %}
+                        <a href="{{ url_for('main.portfolio_edit', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-outline-secondary btn-sm">Edit</a>
+                    {% endif %}
+                    {% if portfolio.is_shareable %}
+                        <button class="btn btn-outline-secondary btn-sm" onclick="openShareModal({{ portfolio.portfolio_id }})">Share</button>
+                    {% endif %}
+                    <a href="{{ url_for('main.portfolio_detail', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-primary btn-sm">View Detail</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- List View (Initially hidden) -->
+    <div id="listView" class="d-none">
+        <!-- TODO: implement later if needed -->
+    </div>
+
+</div>
+
+<script>
+    // Switch between Card View and List View
+    document.getElementById('cardViewBtn').onclick = function() {
+        document.getElementById('cardView').classList.remove('d-none');
+        document.getElementById('listView').classList.add('d-none');
+    }
+    document.getElementById('listViewBtn').onclick = function() {
+        document.getElementById('listView').classList.remove('d-none');
+        document.getElementById('cardView').classList.add('d-none');
+    }
+
+    // Open Share Modal (Placeholder)
+    function openShareModal(portfolioId) {
+        alert("Open share modal for portfolio ID: " + portfolioId);
+    }
+</script>
+
+</body>
+</html>

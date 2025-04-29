@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title|default("Error") }} - The Richverse{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header {% if code >= 500 %}bg-danger{% elif code == 403 or code == 422 %}bg-warning{% else %}bg-info{% endif %} text-white">
+                    <h4 class="mb-0">{{ heading|default("Error Occurred") }}</h4>
+                </div>
+                <div class="card-body">
+                    <h5>{{ subheading|default("Something went wrong") }}</h5>
+                    
+                    {% if details %}
+                    <p>{{ details }}</p>
+                    {% endif %}
+                    
+                    {% if suggestions %}
+                    <p>This might happen if:</p>
+                    <ul>
+                        {% for suggestion in suggestions %}
+                        <li>{{ suggestion }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                    
+                    {% if reason %}
+                    <p><strong>Reason:</strong> {{ reason }}</p>
+                    {% endif %}
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
