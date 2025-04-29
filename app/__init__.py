@@ -79,10 +79,14 @@ def create_app(config_class=DeploymentConfig):
                               subheading="Something went wrong on our end",
                               details="Our technical team has been notified. Please try again later."), 500
     
-        # Register blueprints
+    # Register blueprints
     from app.routes import main, portfolios, auth
     app.register_blueprint(main)
     app.register_blueprint(portfolios)
     app.register_blueprint(auth)
-    
+
+    from app.api import api_bp
+    csrf.exempt(api_bp)
+    app.register_blueprint(api_bp)
+
     return app
