@@ -27,19 +27,18 @@ export function renderHeatmapChart(weights, start_date, initial_investment) {
         });
       }
 
-      // Green for up, Red for down
-      const getShade = (v) => {
-        if (v > 0.2) return "#166534";
-        if (v > 0.1) return "#22c55e";
-        if (v > 0.05) return "#4ade80";
-        if (v > 0.01) return "#86efac";
-        if (v > 0) return "#d1fae5";
-        if (v > -0.01) return "#fde3e3";
-        if (v > -0.05) return "#ef4444";
-        if (v > -0.1) return "#d73d3d";
-        if (v > -0.2) return "#bf3636";
-        return "#8f2929";
-      };
+     const getShade = (v) => {
+       if (v > 0.2) return "#f5c154"; 
+       if (v > 0.1) return "#e6aa2e"; 
+       if (v > 0.05) return "#c79846"; 
+       if (v > 0.01) return "#a18761"; 
+       if (v >= 0) return "#768697"; 
+       if (v > -0.01) return "#526785"; 
+       if (v > -0.05) return "#39496a"; 
+       if (v > -0.1) return "#263349"; 
+       return "#1b1b2f";
+     };
+
 
       const ctx = document.getElementById("heatmapChart").getContext("2d");
 
@@ -89,7 +88,7 @@ export function renderHeatmapChart(weights, start_date, initial_investment) {
               grid: { display: false },
               ticks: {
                 color: "#d1d5db",
-                font: { family: "Sora", size: 10 },
+                font: { family: "Sora", size: 12 },
               },
             },
             y: {
@@ -100,7 +99,7 @@ export function renderHeatmapChart(weights, start_date, initial_investment) {
               reverse: true,
               ticks: {
                 color: "#d1d5db",
-                font: { family: "Sora", size: 10 },
+                font: { family: "Sora", size: 12 },
               },
             },
           },
@@ -110,19 +109,21 @@ export function renderHeatmapChart(weights, start_date, initial_investment) {
       const legendContainer = document.getElementById("heatmapLegend");
       if (legendContainer) {
         legendContainer.innerHTML = `
-          <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; font-family: Sora; font-size: 11px; margin-top: 6px;">
-            <span style="color: #8f2929;">■</span> <span>-20%</span>
-            <span style="color: #bf3636;">■</span> <span>-10%</span>
-            <span style="color: #d73d3d;">■</span> <span>-5%</span>
-            <span style="color: #ef4444;">■</span> <span>-1%</span>
-            <span style="color: #fde3e3;">■</span> <span>0%</span>
-            <span style="color: #d1fae5;">■</span> <span>+0%</span>
-            <span style="color: #86efac;">■</span> <span>+1%</span>
-            <span style="color: #4ade80;">■</span> <span>+5%</span>
-            <span style="color: #22c55e;">■</span> <span>+10%</span>
-            <span style="color: #166534;">■</span> <span>+20%</span>
+        <div style="display: flex; justify-content: center; align-items: center; gap: 1px; font-family: Sora; font-size: 10px; margin-top: 6px;">
+          <div style="display: flex; gap: 1px;">
+            <div style="width: 14px; height: 8px; background-color: #1b1b2f;"></div>
+            <div style="width: 14px; height: 8px; background-color: #263349;"></div>
+            <div style="width: 14px; height: 8px; background-color: #39496a;"></div>
+            <div style="width: 14px; height: 8px; background-color: #526785;"></div>
+            <div style="width: 14px; height: 8px; background-color: #768697;"></div>
+            <div style="width: 14px; height: 8px; background-color: #a18761;"></div>
+            <div style="width: 14px; height: 8px; background-color: #c79846;"></div>
+            <div style="width: 14px; height: 8px; background-color: #e6aa2e;"></div>
+            <div style="width: 14px; height: 8px; background-color: #f5c154;"></div>
           </div>
-        `;
+        </div>
+      `;
+
       }
     })
     .catch((err) => {
