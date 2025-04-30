@@ -110,6 +110,38 @@ body {
 canvas {
   max-width: 100%;
 }
+.metric-box {
+  background-color: rgba(255, 255, 255, 0.02);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--card-outline);
+  height: 100%;
+}
+
+.metric-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-family: 'Sora', sans-serif;
+}
+
+.metric-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-top: 4px;
+  font-family: 'Sora', sans-serif;
+}
+
+.text-primary-custom {
+  color: var(--primary);
+}
+
+.overview-summary {
+  background-color: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--card-outline);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+}
 
 /* Card styles */
 .card {
