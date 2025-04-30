@@ -48,3 +48,42 @@
 .chart-glow {
   background-color: var(--card-bg);
 }
+.mini-metric {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-outline);
+  border-radius: 0.75rem;
+  font-family: var(--font-ui);
+  padding: 1.25rem;
+  text-align: left;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.mini-metric:hover {
+  box-shadow: 0 0 12px rgba(255, 167, 38, 0.3);
+  transform: translateY(-2px);
+}
+
+.metric-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+  letter-spacing: 0.5px;
+}
+
+.metric-value {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--font-nav);
+}
+.metric-value.text-success {
+  color: #22c55e;
+  font-weight: 700;
+}
+
+.metric-value.text-danger {
+  color: #ef4444;
+  font-weight: 700;
+}
