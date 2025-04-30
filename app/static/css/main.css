@@ -1,0 +1,581 @@
+/* Global font imports */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Global color variables based on design specs */
+:root {
+  /* Background colors */
+  --bg-darker: #0E1117;
+  --bg-dark: #111827;
+  --card-bg: #1F2937;
+  --card-outline: #383D48;
+  
+  /* Text colors */
+  --text-primary: #F3F4F6;
+  --text-secondary: #9CA3AF;
+  
+  /* Accent colors */
+  --primary: #FFA726;
+  --primary-hover: #E69622;
+  --primary-active: #CC861E;
+  --green-up: #22C55E;
+  --red-down: #EF4444;
+  
+  /* Form elements */
+  --input-bg: #374151;
+  --input-border: #4B5563;
+  
+  /* Font families */
+  --font-nav: 'Sora', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --font-body: 'Poppins', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  --font-ui: 'Inter', 'Roboto', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
+  line-height: 1.5;
+  margin-bottom: 70px; 
+}
+
+/* Navigation */
+.navbar {
+  background-color: var(--bg-dark);
+  border-bottom: 1px solid var(--card-outline);
+  padding: 0.75rem 1.5rem;
+}
+
+.navbar-brand {
+  font-family: var(--font-nav);
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 1.25rem;
+  cursor: default;
+  pointer-events: none;
+}
+
+.navbar .nav-link {
+  font-family: var(--font-nav);
+  color: var(--text-primary);
+  margin: 0 0.5rem;
+  font-weight: 500;
+  position: relative;
+  padding-bottom: 0.25rem;
+}
+
+.navbar .nav-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: var(--primary);
+  transition: width 0.3s ease;
+}
+
+.navbar .nav-link:hover::after,
+.navbar .nav-link.active::after {
+  width: 100%;
+}
+
+.navbar .nav-link.active {
+  color: var(--text-primary);
+}
+
+.navbar .nav-link:hover {
+  color: var(--primary);
+}
+
+/* Card styles */
+.card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-outline);
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.card-body {
+  padding: 1.25rem;
+  font-family: var(--font-body);
+}
+
+.card-header {
+  font-family: var(--font-nav);
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: #f3f4f6;
+  background-color: transparent;
+  border-bottom: none;
+}
+
+/* Standard Button - primary filled button */
+.btn {
+  background-color: var(--primary);
+  color: var(--text-primary);
+  border: none;
+  font-weight: 500;
+  font-family: var(--font-ui);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.2s ease-in-out;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.btn:hover, .btn:focus {
+  background-color: var(--primary-hover);
+  box-shadow: 0 0 12px rgba(255, 167, 38, 0.5);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  background-color: var(--primary-active);
+  box-shadow: none;
+  transform: translateY(0);
+}
+
+.btn:disabled {
+  background-color: rgba(255, 167, 38, 0.5);
+  color: var(--text-primary);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Secondary Button */
+.btn-secondary {
+  background-color: #b6b7ba; /* Updated to bg-light-active color */
+  color: var(--bg-dark); /* Darker text for better contrast */
+  border: none;
+  font-weight: 500;
+  font-family: var(--font-ui);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.2s ease-in-out;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.btn-secondary:hover, .btn-secondary:focus {
+  background-color: #a7a8ab; /* Slightly darker for hover state */
+  color: var(--bg-dark);
+  transform: translateY(-1px);
+}
+
+.btn-secondary:active {
+  background-color: #97989c; /* Even darker for active state */
+  transform: translateY(0);
+}
+
+.btn-secondary:disabled {
+  background-color: rgba(182, 183, 186, 0.5); /* Semi-transparent version */
+  color: var(--card-bg);
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Text Link - for secondary actions */
+.text-link {
+  background-color: transparent;
+  color: var(--text-secondary);
+  border: none;
+  font-weight: 400;
+  font-family: var(--font-ui);
+  text-decoration: none;
+  padding: 0;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+  cursor: pointer;
+  display: inline;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.text-link:hover {
+  background-color: transparent;
+  color: var(--text-primary);
+  box-shadow: none;
+  text-decoration: none;
+}
+
+/* Action container - for grouping button and text link */
+.action-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.action-container .btn,
+.action-container .btn {
+  flex: 1;
+}
+
+.action-container .text-link,
+.action-container .text-link {
+  flex: 0;
+}
+
+/* Form controls */
+.form-control {
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--text-primary);
+  border-radius: 0.375rem;
+  font-family: var(--font-ui);
+}
+
+.form-control:focus {
+  background-color: var(--input-bg);
+  border-color: var(--primary);
+  color: var(--text-primary);
+  box-shadow: 0 0 0 0.25rem rgba(255, 170, 51, 0.25);
+}
+
+.form-control::placeholder {
+  color: var(--text-secondary);
+  font-family: var(--font-ui);
+}
+
+.input-group-text {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: #000;
+  font-family: var(--font-ui);
+}
+
+/* Helper classes */
+.text-primary-custom {
+  color: var(--primary);
+}
+
+.text-secondary-custom {
+  color: var(--text-secondary);
+}
+
+.text-success {
+  color: var(--green-up);
+}
+
+.text-danger {
+  color: var(--red-down);
+}
+
+/* Table styles */
+.table {
+  color: var(--text-primary);
+  font-family: var(--font-body);
+}
+
+.table thead th {
+  color: var(--text-secondary);
+  border-color: var(--card-outline);
+  font-weight: 500;
+  font-family: var(--font-nav);
+}
+
+.table td {
+  border-color: var(--card-outline);
+  vertical-align: middle;
+}
+
+/* Navbar styling */
+.richverse-navbar {
+    background-color: rgba(28, 36, 49, 0.8); 
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid var(--card-outline);
+    font-family: var(--font-nav);
+}
+
+.richverse-navbar .navbar-brand,
+.richverse-navbar .nav-link {
+    font-family: var(--font-nav);
+}
+
+.dropdown-divider {
+    border-top: 1px solid #383D48;
+}
+
+.navbar-dark .navbar-toggler {
+    border-color: #383D48;
+}
+
+/* Footer styling */
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 70px;
+    background-color: var(--bg-dark);
+    display: flex;
+    align-items: center;
+    padding: 0;
+}
+
+.footer-text {
+    font-family: var(--font-nav);
+    font-weight: 300;
+    font-size: 12px;
+    color: rgba(148, 163, 184, 0.8); 
+}
+
+/* Canvas basic styling */
+canvas {
+  max-width: 100%;
+}
+
+/* Badge Component - General styling for badges */
+.badge {
+  display: inline-block;
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 400;
+  margin-left: 0.5rem;
+}
+
+.badge-default {
+  background-color: rgba(56, 61, 72, 0.7);
+  color: var(--text-primary);
+}
+
+.badge-primary {
+  background-color: var(--primary);
+  color: var(--text-dark);
+}
+
+.badge-success {
+  background-color: var(--green-up);
+  color: var(--text-dark);
+}
+
+.badge-danger {
+  background-color: var(--red-down);
+  color: var(--text-dark);
+}
+
+.creator-badge {
+  font-size: 0.75rem;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  background-color: rgba(56, 61, 72, 0.5);
+  margin-left: 0.5rem;
+}
+
+.shared-badge {
+  background-color: rgba(56, 61, 72, 0.7);
+  color: var(--text-primary);
+}
+
+/* Tabs Component - General styling for tab navigation */
+.tabs {
+  display: flex;
+  background-color: var(--card-bg);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.tab {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-family: 'Sora', sans-serif;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  transition: background-color 0.2s ease;
+}
+
+.tab.active {
+  background-color: var(--primary);
+  color: var(--text-dark);
+}
+
+/* Portfolio specific tab variations */
+.portfolio-tabs {
+  display: flex;
+  background-color: var(--card-bg);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.portfolio-tab {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-family: 'Sora', sans-serif;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  transition: background-color 0.2s ease;
+}
+
+.portfolio-tab.active {
+  background-color: var(--primary);
+  color: var(--text-dark);
+}
+
+/* Toggle/Switch Component - Styling based on Bootstrap with custom colors */
+.toggle-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-left: 1rem;
+}
+
+.toggle-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+}
+
+/* Using Bootstrap's form-check-input and form-switch as base */
+.form-check-input.form-switch-input {
+  background-color: var(--card-bg);
+  border-color: var(--card-outline);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%239CA3AF'/%3e%3c/svg%3e");
+  outline: none; 
+}
+
+.form-check-input.form-switch-input:checked {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23FFFFFF'/%3e%3c/svg%3e");
+}
+
+.form-check-input.form-switch-input:focus {
+  box-shadow: none; 
+  outline: none; 
+  border-color: var(--card-outline); 
+}
+
+/* Alternative implementation if not using Bootstrap's form-switch */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-outline);
+  transition: .2s;
+  border-radius: 34px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 2px;
+  background-color: var(--text-secondary);
+  transition: .2s;
+  border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+input:checked + .toggle-slider:before {
+  transform: translateX(19px);
+  background-color: #FFFFFF; /* White circle when checked */
+}
+
+/* Toggle sizes - Updated size adaptations */
+.toggle-switch.toggle-sm {
+  width: 36px;
+  height: 20px;
+}
+
+.toggle-switch.toggle-sm .toggle-slider:before {
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 2px;
+}
+
+input:checked + .toggle-slider.toggle-sm:before {
+  transform: translateX(16px);
+}
+
+.toggle-switch.toggle-lg {
+  width: 60px;
+  height: 30px;
+}
+
+.toggle-switch.toggle-lg .toggle-slider:before {
+  height: 24px;
+  width: 24px;
+  left: 3px;
+  bottom: 2px;
+}
+
+input:checked + .toggle-slider.toggle-lg:before {
+  transform: translateX(30px);
+}
+
+/* PLACEHOLDER: Modal styling */
+/* Common modal styles will be added here */
+
+/* PLACEHOLDER: Dropdown styling */
+/* Common dropdown styles will be added here */
+
+/* PLACEHOLDER: Alert styling */
+/* Common alert styles will be added here */
+
+/* PLACEHOLDER: Progress bar styling */
+/* Common progress bar styles will be added here */
+
+/* PLACEHOLDER: Tooltip styling */
+/* Common tooltip styles will be added here */
+
+/* PLACEHOLDER: Pagination styling */
+/* Common pagination styles will be added here */
+
+/* PLACEHOLDER: Card variants */
+/* Additional card variants will be added here */
+
+/* PLACEHOLDER: Responsive utilities */
+/* Additional responsive utilities will be added here */
