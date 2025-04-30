@@ -1,18 +1,18 @@
-{% extends "base.html" %}
-
-{% block title %}Dashboard - The Richverse{% endblock %}
-
-{% block styles %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
-{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Dashboard - The Richverse{% endblock
+%} {% block styles %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/dashboard.css') }}"
+/>
+{% endblock %} {% block content %}
 <div class="container mt-4">
   <div class="card dashboard-overview px-4 py-3 shadow-sm">
     <div class="row g-3">
       <!-- Portfolio Summary Left -->
       <div class="col-lg-4">
-        <div class="overview-summary h-100 d-flex flex-column justify-content-between">
+        <div
+          class="overview-summary h-100 d-flex flex-column justify-content-between"
+        >
           <div>
             <h5 class="fw-bold mb-2 text-primary-custom">Portfolio Demo</h5>
             <p class="mb-1 small">50% BTC + 30% NVDA + 20% AAPL</p>
@@ -27,43 +27,45 @@
       <div class="col-lg-8">
         <div class="row g-3">
           <div class="col-6 col-md-4">
-            <div class="metric-box">
+            <div class="card mini-metric shadow-sm p-3">
               <div class="metric-label">Current Value</div>
               <div class="metric-value" id="netWorth">$0</div>
             </div>
           </div>
           <div class="col-6 col-md-4">
-            <div class="metric-box">
+            <div class="card mini-metric shadow-sm p-3">
               <div class="metric-label">Profit</div>
               <div class="metric-value" id="profit">$0</div>
             </div>
           </div>
           <div class="col-6 col-md-4">
-            <div class="metric-box">
+            <div class="card mini-metric shadow-sm p-3">
               <div class="metric-label">Volatility</div>
               <div class="metric-value" id="volatility">0%</div>
             </div>
           </div>
           <div class="col-6 col-md-4">
-            <div class="metric-box">
+            <div class="card mini-metric shadow-sm p-3">
               <div class="metric-label">Total Return%</div>
-              <div class="metric-value text-success" id="cumulativeReturn">0%</div>
+              <div class="metric-value text-success" id="cumulativeReturn">
+                0%
+              </div>
             </div>
           </div>
           <div class="col-6 col-md-4">
-            <div class="metric-box">
+            <div class="card mini-metric shadow-sm p-3">
               <div class="metric-label">CAGR%</div>
               <div class="metric-value text-success" id="cagr">0%</div>
             </div>
           </div>
           <div class="col-6 col-md-4">
-            <div class="metric-box">
+            <div class="card mini-metric shadow-sm p-3">
               <div class="metric-label">Max Drawdown</div>
               <div class="metric-value text-danger" id="maxDrawdown">0%</div>
             </div>
           </div>
           <div class="col-6 col-md-4">
-            <div class="metric-box">
+            <div class="card mini-metric shadow-sm p-3">
               <div class="metric-label">Longest DD Days</div>
               <div class="metric-value" id="longestDD">0</div>
             </div>
@@ -73,11 +75,9 @@
     </div>
   </div>
 </div>
-
-
 <!-- Cumulative Chart -->
 <div class="container mt-5">
-  <div class="card chart-glow shadow" style="height: 400px;">
+  <div class="card chart-glow shadow" style="height: 400px">
     <div class="card-header">Cumulative Returns vs SPY</div>
     <div class="card-body">
       <canvas id="cumulativeChart"></canvas>
@@ -90,45 +90,55 @@
   <div class="row gx-3 gy-4">
     <!-- Heatmap -->
     <div class="col-lg-6 col-md-12">
-      <div class="card chart-glow shadow" style="height: 440px;">
+      <div class="card chart-glow shadow" style="height: 440px">
         <div class="card-header">Monthly Returns Heatmap</div>
         <div class="card-body d-flex flex-column justify-content-between p-3">
           <div class="flex-grow-1">
-            <canvas id="heatmapChart" style="width: 100%; height: 100%"></canvas>
+            <canvas
+              id="heatmapChart"
+              style="width: 100%; height: 100%"
+            ></canvas>
           </div>
-          <div id="heatmapLegend" class="text-center pt-2" style="margin-bottom: 10px"></div>
+          <div
+            id="heatmapLegend"
+            class="text-center pt-2"
+            style="margin-bottom: 10px"
+          ></div>
         </div>
       </div>
     </div>
 
     <!-- Placeholder Chart -->
     <div class="col-lg-6 col-md-12">
-      <div class="card chart-glow shadow" style="height: 440px;">
+      <div class="card chart-glow shadow" style="height: 440px">
         <div class="card-header">[Chart]</div>
         <div class="card-body d-flex flex-column justify-content-between p-3">
           <div class="flex-grow-1">
-            <canvas id="placeholderChart" style="width: 100%; height: 100%"></canvas>
+            <canvas
+              id="placeholderChart"
+              style="width: 100%; height: 100%"
+            ></canvas>
           </div>
-          <div class="text-center pt-2" style="opacity: 0.6; font-size: 13px">Coming soon</div>
+          <div class="text-center pt-2" style="opacity: 0.6; font-size: 13px">
+            Coming soon
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-{% endblock %}
-
-{% block scripts %}
+{% endblock %} {% block scripts %}
 <!-- ADD CHART.JS -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix@1.1.0/dist/chartjs-chart-matrix.min.js"></script>
 
 <!-- INJECT DASHBOARD DATA -->
 <script type="text/javascript">
-window.dashboardData = {
-  weights: {{ weights | default({}) | tojson | safe }},
-  start_date: "{{ start_date }}",
-  initial_investment: {{ initial_investment }}
-};
+  window.dashboardData = {
+    weights: {{ weights | default({}) | tojson | safe }},
+    start_date: "{{ start_date }}",
+    initial_investment: {{ initial_investment }}
+  };
 </script>
 
 <script
