@@ -417,15 +417,15 @@ canvas {
   color: var(--text-dark);
 }
 
-/* Portfolio specific tab variations */
-.portfolio-tabs {
+/* Tabs Component variations */
+.custom-tabs {
   display: flex;
   background-color: var(--card-bg);
   border-radius: 0.5rem;
   overflow: hidden;
 }
 
-.portfolio-tab {
+.custom-tab {
   padding: 0.5rem 1rem;
   cursor: pointer;
   font-family: 'Sora', sans-serif;
@@ -435,7 +435,7 @@ canvas {
   transition: background-color 0.2s ease;
 }
 
-.portfolio-tab.active {
+.custom-tab.active {
   background-color: var(--primary);
   color: var(--text-dark);
 }
@@ -523,7 +523,6 @@ input:checked + .toggle-slider:before {
   background-color: #FFFFFF; /* White circle when checked */
 }
 
-/* Toggle sizes - Updated size adaptations */
 .toggle-switch.toggle-sm {
   width: 36px;
   height: 20px;

@@ -244,16 +244,15 @@
 .allocation-value-edit .percentage {
   margin-left: 0.25rem;
   color: var(--primary);
-  padding-right: 0.5rem; /* Add padding to the right of percentage sign */
+  padding-right: 0.5rem; 
 }
 
-/* Override some bootstrap form-control styles to match our design */
 .allocation-value-edit .form-control {
   background-color: transparent;
   border: none;
   height: auto;
-  padding: 0.375rem 0.75rem; /* Standard Bootstrap form-control padding */
-  border-radius: 0.375rem; /* Standard Bootstrap form-control border-radius */
+  padding: 0.375rem 0.75rem; 
+  border-radius: 0.375rem; 
 }
 
 /* Empty state when no assets are selected */
@@ -287,7 +286,7 @@
   border-bottom: 1px solid rgba(56, 61, 72, 0.5);
   flex-wrap: nowrap;
   overflow: hidden;
-  padding-right: 0; /* Ensure no extra padding on the right */
+  padding-right: 0; 
 }
 
 .config-label {
@@ -316,11 +315,11 @@
   width: 100%;
   overflow: hidden;
   white-space: nowrap;
-  padding-right: 0; /* Remove right padding */
+  padding-right: 0; 
 }
 
 .portfolio-name-field {
-  padding-right: 0; /* Ensure no extra padding on the right */
+  padding-right: 0; 
 }
 
 .portfolio-name-field .portfolio-name-display {
@@ -354,7 +353,7 @@
   width: 100%;
   display: flex;
   justify-content: flex-end;
-  padding-right: 0; /* Ensure no right padding */
+  padding-right: 0;
 }
 
 .portfolio-name-edit input {
@@ -366,10 +365,10 @@
   font-size: 1rem;
   text-align: right;
   max-width: 100%;
-  width: 100%; /* Use full width */
+  width: 100%; 
   padding-right: 0;
   margin-right: 0;
-  box-sizing: border-box; /* Ensure padding does not increase width */
+  box-sizing: border-box; 
 }
 
 .portfolio-name-field input:focus {
@@ -381,10 +380,10 @@
 .edit-icon {
   width: 16px;
   height: 16px;
-  filter: brightness(0) invert(1); /* Make icon white in normal state */
+  filter: brightness(0) invert(1); 
   transition: filter 0.2s ease-in-out;
   opacity: 0.8;
-  margin-right: 0.5rem; /* Add spacing between icon and text */
+  margin-right: 0.5rem; 
 }
 
 /* Hover state for edit icon */
@@ -410,7 +409,6 @@
   margin-top: 1.5rem;
 }
 
-/* Fix for the old action-buttons class that is currently being used in the template */
 .action-buttons {
   display: flex;
   align-items: center;
@@ -419,7 +417,6 @@
   margin-top: 1.5rem;
 }
 
-/* Make sure text-link is properly styled in the action-buttons container */
 .action-buttons .text-link, 
 .action-container .text-link {
   background-color: transparent;
@@ -430,7 +427,6 @@
   margin-right: 0.5rem; 
 }
 
-/* More specific selector for text-link in action-buttons */
 .portfolio-config .action-buttons .text-link {
   background-color: transparent;
   color: var(--text-secondary);
@@ -468,9 +464,9 @@
   overflow-x: auto;
   width: 100%;
   margin-bottom: 2rem;
-  -webkit-overflow-scrolling: touch; /* For smoother scrolling on iOS */
-  position: relative; /* Add position relative for proper sticky positioning */
-  border: 1px solid var(--card-outline); /* Move border to the container instead */
+  -webkit-overflow-scrolling: touch; 
+  position: relative; 
+  border: 1px solid var(--card-outline); 
   border-radius: 0.5rem;
 }
 
@@ -506,16 +502,16 @@
   font-size: 0.875rem;
   border-bottom: 1px solid var(--card-outline);
   vertical-align: middle;
-  white-space: nowrap; /* Prevent wrapping in cells */
+  white-space: nowrap; 
 }
 
 /* Set some proportional column widths for table */
-.portfolios-table th:nth-child(1), /* Portfolio Name */
+.portfolios-table th:nth-child(1), 
 .portfolios-table td:nth-child(1) {
   min-width: 180px;
 }
 
-.portfolios-table th:nth-child(2), /* Allocation */
+.portfolios-table th:nth-child(2), 
 .portfolios-table td:nth-child(2) {
   min-width: 250px;
 }
@@ -551,17 +547,17 @@
   right: 0;
   z-index: 2;
   /* Frosted glass effect */
-  background-color: rgba(18, 24, 38, 0.85); /* Semi-transparent background matching the card bg color */
-  backdrop-filter: blur(6px); /* Add blur effect */
-  -webkit-backdrop-filter: blur(6px); /* Safari compatibility */
-  box-shadow: -5px 0 10px rgba(0, 0, 0, 0.25); /* Enhanced shadow for better separation */
-  border-left: 1px solid var(--card-outline); /* Add left border for visual separation */
+  background-color: rgba(18, 24, 38, 0.85); 
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px); 
+  box-shadow: -5px 0 10px rgba(0, 0, 0, 0.25);
+  border-left: 1px solid var(--card-outline); 
 }
 
 /* Header with frosted glass effect but slightly less transparent for emphasis */
 .portfolios-table th:last-child {
-  background-color: rgba(23, 31, 41, 0.92); /* Match header background with opacity */
-  z-index: 3; /* Higher z-index to stay above regular cells when scrolling */
+  background-color: rgba(23, 31, 41, 0.92); 
+  z-index: 3; 
 }
 
 /* Hover state maintaining frosted glass effect but with altered background */
