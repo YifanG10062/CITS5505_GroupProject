@@ -4,6 +4,7 @@ import sqlite3
 import time
 from flask import Blueprint, request, jsonify, render_template, redirect, url_for, current_app, flash, g
 from app.calculation import calculate_portfolio_metrics, get_portfolio_timeseries, get_spy_cumulative_returns
+from app.fetch_price import fetch_all_history
 
 # Define main blueprint and portfolios blueprint
 main = Blueprint("main", __name__)

@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from app.config import DeploymentConfig
 from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect, CSRFError
+from app.fetch_price import refresh_history_command
 
 # Initialize extensions
 db = SQLAlchemy()
@@ -84,6 +85,8 @@ def create_app(config_class=DeploymentConfig):
     app.register_blueprint(main)
     app.register_blueprint(portfolios)
     app.register_blueprint(auth)
+
+    app.cli.add_command(refresh_history_command)
 
     from app.api import api_bp
     csrf.exempt(api_bp)
