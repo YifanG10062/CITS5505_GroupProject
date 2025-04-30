@@ -13,43 +13,72 @@
 
 {% block content %}
 <div class="container mt-4">
-  <div class="card dashboard-overview p-4 shadow-sm">
-    <div class="row">
-      <div class="col-md-6">
-        <h5 class="fw-bold mb-1">Portfolio Demo</h5>
-        <p class="mb-0 small">50% BTC + 30% NVDA + 20% AAPL</p>
-        <p class="mb-0 small ">Feb 2020 – Apr 2025</p>
+  <div class="card dashboard-overview px-4 py-3 shadow-sm">
+    <div class="row g-3">
+      <!-- Portfolio Summary Left -->
+      <div class="col-lg-4">
+        <div class="overview-summary h-100 d-flex flex-column justify-content-between">
+          <div>
+            <h5 class="fw-bold mb-2 text-primary-custom">Portfolio Demo</h5>
+            <p class="mb-1 small">50% BTC + 30% NVDA + 20% AAPL</p>
+            <p class="mb-1 small text-secondary" id="date-range">–</p>
+            <p class="mb-1 small text-secondary">Creator: Name(Me)</p>
+            <p class="mb-0 small text-secondary">Update time:</p>
+          </div>
+        </div>
       </div>
-      <div class="col-md-6">
-        <div class="row small text-end">
-          <div class="col-6">Now Worth:</div>
-          <div class="col-6 fw-bold" id="netWorth">$0</div>
 
-          <div class="col-6">Initial Investment:</div>
-          <div class="col-6 fw-bold" id="initial">$0</div>
-
-          <div class="col-6">Profit:</div>
-          <div class="col-6 fw-bold" id="profit">$0</div>
-
-          <div class="col-6">Cumulative Return:</div>
-          <div class="col-6 fw-bold" id="cumulativeReturn">0%</div>
-
-          <div class="col-6">CAGR:</div>
-          <div class="col-6 fw-bold" id="cagr">0%</div>
-
-          <div class="col-6">Volatility:</div>
-          <div class="col-6 fw-bold" id="volatility">0%</div>
-
-          <div class="col-6">Max Drawdown:</div>
-          <div class="col-6 fw-bold" id="maxDrawdown">0%</div>
-
-          <div class="col-6">Longest DD Days:</div>
-          <div class="col-6 fw-bold" id="longestDD">0</div>
+      <!-- Metric Grid Right -->
+      <div class="col-lg-8">
+        <div class="row g-3">
+          <div class="col-6 col-md-4">
+            <div class="metric-box">
+              <div class="metric-label">Current Value</div>
+              <div class="metric-value" id="netWorth">$0</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-4">
+            <div class="metric-box">
+              <div class="metric-label">Profit</div>
+              <div class="metric-value" id="profit">$0</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-4">
+            <div class="metric-box">
+              <div class="metric-label">Volatility</div>
+              <div class="metric-value" id="volatility">0%</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-4">
+            <div class="metric-box">
+              <div class="metric-label">Total Return%</div>
+              <div class="metric-value text-success" id="cumulativeReturn">0%</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-4">
+            <div class="metric-box">
+              <div class="metric-label">CAGR%</div>
+              <div class="metric-value text-success" id="cagr">0%</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-4">
+            <div class="metric-box">
+              <div class="metric-label">Max Drawdown</div>
+              <div class="metric-value text-danger" id="maxDrawdown">0%</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-4">
+            <div class="metric-box">
+              <div class="metric-label">Longest DD Days</div>
+              <div class="metric-value" id="longestDD">0</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
 
 <!-- Cumulative Chart -->
 <div class="container mt-5">
