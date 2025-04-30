@@ -643,6 +643,222 @@
   font-weight: 600;
 }
 
+/* Basic Card View styling */
+#cardView {
+  position: relative;
+  min-height: 400px;
+  border: 1px solid var(--card-outline);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.card-view-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(18, 24, 38, 0.95);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.overlay-content {
+  text-align: center;
+  padding: 2rem;
+}
+
+.overlay-content h3 {
+  font-family: var(--font-nav);
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.overlay-content p {
+  font-family: var(--font-ui);
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+.wip-badge {
+  margin-top: 0.5rem;
+}
+
+.wip-badge span {
+  font-family: var(--font-nav);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--primary);
+  letter-spacing: 0.05em;
+}
+
+#cardView {
+  border: 1px solid var(--card-outline);
+  border-radius: 0.5rem;
+  padding: 3rem 1rem;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.coming-soon-placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  text-align: center;
+  width: 100%;
+  background-color: var(--card-bg);
+  border-radius: 0.5rem;
+}
+
+.placeholder-content {
+  max-width: 500px;
+  padding: 2rem;
+}
+
+.placeholder-icon {
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+  color: var(--primary);
+  display: block;
+}
+
+.placeholder-title {
+  font-family: var(--font-nav);
+  font-weight: 600;
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.placeholder-text {
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.placeholder-subtext {
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  color: var(--primary);
+  font-style: italic;
+}
+
+.portfolio-cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.portfolio-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-outline);
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.portfolio-card .card-header {
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--card-outline);
+  background-color: rgba(23, 31, 41, 0.6);
+}
+
+.portfolio-card .portfolio-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  font-family: var(--font-ui);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.portfolio-card .shared-badge {
+  background-color: rgba(255, 255, 255, 0.15);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.portfolio-card .card-content {
+  padding: 1rem;
+  font-family: var(--font-ui);
+  font-size: 14px;
+}
+
+.portfolio-card .card-content > div {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.portfolio-card .info-label {
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.portfolio-card .info-value {
+  font-weight: 400;
+  color: var(--text-primary);
+}
+
+.portfolio-card .info-value.positive {
+  color: var(--green-up);
+}
+
+.portfolio-card .info-value.negative {
+  color: var(--red-down);
+}
+
+.portfolio-card .card-actions {
+  padding: 1rem;
+  display: flex;
+  gap: 1.5rem;
+  border-top: 1px solid var(--card-outline);
+}
+
+.portfolio-card .action-link {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+  font-family: var(--font-ui);
+  transition: color 0.2s ease;
+}
+
+.portfolio-card .action-link:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+/* Responsive adjustments for card view */
+@media (max-width: 992px) {
+  .portfolio-cards-container {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 576px) {
+  .portfolio-cards-container {
+    grid-template-columns: 1fr;
+  }
+  
+  #cardView {
+    padding: 1rem;
+  }
+}
+
 /* Toggle switch wrapper */
 .toggle-wrapper {
   display: flex;

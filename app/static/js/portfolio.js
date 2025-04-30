@@ -738,3 +738,27 @@ document.addEventListener('DOMContentLoaded', function() {
         setupShareButton(portfolioId);
     }
 });
+
+// View Toggle Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const listViewBtn = document.getElementById('listViewBtn');
+    const cardViewBtn = document.getElementById('cardViewBtn');
+    const listView = document.getElementById('listView');
+    const cardView = document.getElementById('cardView');
+    
+    if (listViewBtn && cardViewBtn) {
+        listViewBtn.addEventListener('click', function() {
+            listViewBtn.classList.add('active');
+            cardViewBtn.classList.remove('active');
+            listView.classList.remove('d-none');
+            cardView.classList.add('d-none');
+        });
+        
+        cardViewBtn.addEventListener('click', function() {
+            cardViewBtn.classList.add('active');
+            listViewBtn.classList.remove('active');
+            cardView.classList.remove('d-none');
+            listView.classList.add('d-none');
+        });
+    }
+});

@@ -90,37 +90,15 @@
     
     <!-- Card View (Hidden by default) -->
     <div id="cardView" class="d-none">
-      <div class="asset-grid">
-        {% for portfolio in portfolios %}
-        <div class="asset-card portfolio-card">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="m-0">{{ portfolio.portfolio_name }}</h5>
-            {% if portfolio.is_shared %}
-            <span class="badge badge-default shared-badge">Shared</span>
-            {% endif %}
-          </div>
-          <div class="card-body p-3">
-            <div class="mb-2"><strong>Allocation:</strong> <span class="portfolio-allocation">{{ portfolio.allocation }}</span></div>
-            <div class="mb-2"><strong>Creator:</strong> {{ portfolio.creator_username }}</div>
-            <div class="mb-2"><strong>Current Value:</strong> ${{ portfolio.current_value | default('12,679.86') }}</div>
-            <div class="mb-2"><strong>Total Return:</strong> <span class="return-positive">{{ (portfolio.return_percent * 100) | round(2) | default('12.00') }}%</span></div>
-            <div class="mb-2"><strong>CAGR:</strong> <span class="return-positive">{{ (portfolio.cagr * 100) | round(2) | default('14.86') }}%</span></div>
-            <div class="mb-2"><strong>Volatility:</strong> {{ (portfolio.volatility * 100) | round(2) | default('27.82') }}</div>
-            <div class="mb-2"><strong>Max Drawdown:</strong> <span class="return-negative">-{{ (portfolio.max_drawdown * 100) | round(2) | default('35.78') }}%</span></div>
-          </div>
-          <div class="action-container mt-3">
-            {% if portfolio.is_editable %}
-            <a href="{{ url_for('portfolios.edit', portfolio_id=portfolio.portfolio_id) }}" class="btn-text">Edit</a>
-            {% endif %}
-            
-            {% if portfolio.is_shareable %}
-            <a href="#" class="btn-text" data-portfolio-id="{{ portfolio.portfolio_id }}">Share</a>
-            {% endif %}
-            
-            <a href="#" class="btn-text delete" data-portfolio-id="{{ portfolio.portfolio_id }}">Delete</a>
+      <!-- Card view overlay with "Coming Soon" message -->
+      <div class="card-view-overlay">
+        <div class="overlay-content">
+          <h3>Feature Under Development</h3>
+          <p>Card View is coming soon.</p>
+          <div class="wip-badge">
+            <span>WORK IN PROGRESS</span>
           </div>
         </div>
-        {% endfor %}
       </div>
     </div>
   </div>
