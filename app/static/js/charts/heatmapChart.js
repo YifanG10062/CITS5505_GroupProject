@@ -111,16 +111,16 @@ export function renderHeatmapChart(weights, start_date, initial_investment) {
       if (legendContainer) {
         legendContainer.innerHTML = `
           <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; font-family: Sora; font-size: 11px; margin-top: 6px;">
-            <span style="color: #8f2929;">■</span> <span>-20%</span>
-            <span style="color: #bf3636;">■</span> <span>-10%</span>
-            <span style="color: #d73d3d;">■</span> <span>-5%</span>
-            <span style="color: #ef4444;">■</span> <span>-1%</span>
-            <span style="color: #fde3e3;">■</span> <span>0%</span>
-            <span style="color: #d1fae5;">■</span> <span>+0%</span>
-            <span style="color: #86efac;">■</span> <span>+1%</span>
-            <span style="color: #4ade80;">■</span> <span>+5%</span>
-            <span style="color: #22c55e;">■</span> <span>+10%</span>
-            <span style="color: #166534;">■</span> <span>+20%</span>
+            <span style="color: #8f2929;">■</span> <span style="color: #f3f4f6;">-20%</span>
+            <span style="color: #bf3636;">■</span> <span style="color: #f3f4f6;">-10%</span>
+            <span style="color: #d73d3d;">■</span> <span style="color: #f3f4f6;">-5%</span>
+            <span style="color: #ef4444;">■</span> <span style="color: #f3f4f6;">-1%</span>
+            <span style="color: #fde3e3;">■</span> <span style="color: #f3f4f6;">0%</span>
+            <span style="color: #d1fae5;">■</span> <span style="color: #f3f4f6;">+0%</span>
+            <span style="color: #86efac;">■</span> <span style="color: #f3f4f6;">+1%</span>
+            <span style="color: #4ade80;">■</span> <span style="color: #f3f4f6;">+5%</span>
+            <span style="color: #22c55e;">■</span> <span style="color: #f3f4f6;">+10%</span>
+            <span style="color: #166534;">■</span> <span style="color: #f3f4f6;">+20%</span>
           </div>
         `;
       }
