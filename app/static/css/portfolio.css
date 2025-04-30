@@ -469,28 +469,34 @@
   width: 100%;
   margin-bottom: 2rem;
   -webkit-overflow-scrolling: touch; /* For smoother scrolling on iOS */
+  position: relative; /* Add position relative for proper sticky positioning */
+  border: 1px solid var(--card-outline); /* Move border to the container instead */
+  border-radius: 0.5rem;
 }
 
 /* Portfolios table container - update for horizontal scrolling */
 .portfolios-table {
   width: 100%;
-  min-width: 1200px; /* Ensures table has a minimum width regardless of container */
+  min-width: 1200px; 
   border-collapse: separate;
   border-spacing: 0;
   color: var(--text-primary);
+  border: none; /* Remove border from table */
+  overflow: visible; /* Allow overflow for sticky column */
 }
 
 /* Table header styling */
 .portfolios-table thead th {
   padding: 0.75rem 1rem;
   font-family: 'Sora', sans-serif;
-  font-weight: 500;
+  font-weight: 600; 
   font-size: 0.875rem;
   color: var(--text-primary);
   text-align: left;
   border-bottom: 1px solid var(--card-outline);
   position: relative;
-  white-space: nowrap; /* Prevent wrapping in headers */
+  white-space: nowrap; 
+  background-color: #171f29; 
 }
 
 /* Table body styling */
@@ -536,6 +542,31 @@
 .portfolios-table th:nth-child(9), /* Action */
 .portfolios-table td:nth-child(9) {
   min-width: 180px;
+}
+
+/* Fixed action column styling with frosted glass effect */
+.portfolios-table th:last-child,
+.portfolios-table td:last-child {
+  position: sticky;
+  right: 0;
+  z-index: 2;
+  /* Frosted glass effect */
+  background-color: rgba(18, 24, 38, 0.85); /* Semi-transparent background matching the card bg color */
+  backdrop-filter: blur(6px); /* Add blur effect */
+  -webkit-backdrop-filter: blur(6px); /* Safari compatibility */
+  box-shadow: -5px 0 10px rgba(0, 0, 0, 0.25); /* Enhanced shadow for better separation */
+  border-left: 1px solid var(--card-outline); /* Add left border for visual separation */
+}
+
+/* Header with frosted glass effect but slightly less transparent for emphasis */
+.portfolios-table th:last-child {
+  background-color: rgba(23, 31, 41, 0.92); /* Match header background with opacity */
+  z-index: 3; /* Higher z-index to stay above regular cells when scrolling */
+}
+
+/* Hover state maintaining frosted glass effect but with altered background */
+.portfolios-table tbody tr:hover td:last-child {
+  background-color: rgba(56, 61, 72, 0.85);
 }
 
 /* Table row hover effect */
@@ -734,4 +765,28 @@
   background-color: var(--input-bg);
   border-color: var(--input-border);
   color: var(--text-primary);
+}
+
+/* Ensure text buttons in action column maintain visibility with frosted glass effect 
+   while inheriting styles from main.css */
+.portfolios-table td:last-child .text-button,
+.portfolios-table td:last-child .btn-text,
+.portfolios-table td:last-child a.action-link {
+  position: relative;
+  z-index: 4;
+  margin: 0 0.5rem;
+  /* Inherit styles from main.css */
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.portfolios-table td:last-child .text-button:hover,
+.portfolios-table td:last-child .btn-text:hover,
+.portfolios-table td:last-child a.action-link:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
 }

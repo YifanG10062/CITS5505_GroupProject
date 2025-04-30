@@ -110,14 +110,14 @@
           </div>
           <div class="action-container mt-3">
             {% if portfolio.is_editable %}
-            <a href="{{ url_for('portfolios.edit', portfolio_id=portfolio.portfolio_id) }}" class="action-link">Edit</a>
+            <a href="{{ url_for('portfolios.edit', portfolio_id=portfolio.portfolio_id) }}" class="btn-text">Edit</a>
             {% endif %}
             
             {% if portfolio.is_shareable %}
-            <a href="#" class="action-link" data-portfolio-id="{{ portfolio.portfolio_id }}">Share</a>
+            <a href="#" class="btn-text" data-portfolio-id="{{ portfolio.portfolio_id }}">Share</a>
             {% endif %}
             
-            <a href="#" class="action-link delete" data-portfolio-id="{{ portfolio.portfolio_id }}">Delete</a>
+            <a href="#" class="btn-text delete" data-portfolio-id="{{ portfolio.portfolio_id }}">Delete</a>
           </div>
         </div>
         {% endfor %}
