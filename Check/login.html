@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Page</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="scripts.js"></script> 
+</head>
+<nav class="navbar navbar-dark bg-black px-4" style="height: 80px;">
+    <span class="navbar-brand fw-bold text-uppercase" style="color: gold; font-size: 2rem;">
+      THE RICHVERSE
+    </span>
+</nav>
+<body>
+<div class="login-page">
+    <div class="login-image" data-image="login.jpg"></div>
+    <div class="login-container">
+        <div class="login-box">
+            <h2>Login</h2>
+            <form action="/login" method="post">
+                <input type="email" name="email" placeholder="Email">
+                <input type="password" name="password" placeholder="Password">
+                <input type="submit" value="Login">
+                <a href="/resetpassword">Forgot Password?</a>
+                <a href="/register">Don't have an account? Sign Up</a>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
