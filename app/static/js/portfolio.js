@@ -465,4 +465,121 @@ document.addEventListener('DOMContentLoaded', function() {
             // For now, we'll just log the click
         });
     });
+
+    // Initialize share portfolio modal with simplified implementation
+    initSharePortfolioModal();
+
+    /**
+     * Initialize the share portfolio modal
+     * Uses a simplified approach to avoid potential conflicts
+     */
+    function initSharePortfolioModal() {
+        console.log('Initializing share portfolio modal');
+        
+        // Find all share links
+        const shareLinks = document.querySelectorAll('a.action-link');
+        shareLinks.forEach(link => {
+            if(link.textContent.trim() === 'Share') {
+                // Add click event handler
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Share link clicked');
+                    
+                    // Get the modal element
+                    const modalEl = document.getElementById('sharePortfolioModal');
+                    if (!modalEl) {
+                        console.error('Modal element not found');
+                        return;
+                    }
+                    
+                    // Store portfolio ID
+                    const portfolioId = this.dataset.portfolioId;
+                    console.log('Portfolio ID:', portfolioId);
+                    
+                    // Try to show modal using Bootstrap API
+                    if (typeof bootstrap !== 'undefined') {
+                        try {
+                            const modal = new bootstrap.Modal(modalEl);
+                            modal.show();
+                            console.log('Modal shown using Bootstrap API');
+                            
+                            // Set up share button handler
+                            setupShareButton(portfolioId);
+                        } catch (err) {
+                            console.error('Error showing modal with Bootstrap:', err);
+                            fallbackModalDisplay(modalEl, portfolioId);
+                        }
+                    } else {
+                        console.warn('Bootstrap not available, using fallback');
+                        fallbackModalDisplay(modalEl, portfolioId);
+                    }
+                });
+            }
+        });
+    }
+    
+    /**
+     * Set up share button click handler
+     * @param {string} portfolioId - The ID of the portfolio to share
+     */
+    function setupShareButton(portfolioId) {
+        const shareBtn = document.getElementById('sharePortfolioBtn');
+        if (!shareBtn) return;
+        
+        // Create new button to avoid duplicate listeners
+        const newShareBtn = shareBtn.cloneNode(true);
+        shareBtn.parentNode.replaceChild(newShareBtn, shareBtn);
+        
+        // Add click handler
+        newShareBtn.addEventListener('click', function() {
+            const username = document.getElementById('userSearch').value;
+            console.log(`Sharing portfolio ${portfolioId} with user: ${username}`);
+            
+            // Hide modal
+            const modalEl = document.getElementById('sharePortfolioModal');
+            if (modalEl && typeof bootstrap !== 'undefined') {
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                if (modal) modal.hide();
+            } else {
+                // Fallback hide
+                document.getElementById('sharePortfolioModal').style.display = 'none';
+            }
+            
+            // Clear input
+            document.getElementById('userSearch').value = '';
+        });
+    }
+    
+    /**
+     * Fallback method to display modal without Bootstrap
+     * @param {HTMLElement} modalEl - The modal element
+     * @param {string} portfolioId - The ID of the portfolio to share
+     */
+    function fallbackModalDisplay(modalEl, portfolioId) {
+        // Show modal
+        modalEl.style.display = 'block';
+        modalEl.classList.add('show');
+        document.body.classList.add('modal-open');
+        
+        // Add backdrop
+        const backdrop = document.createElement('div');
+        backdrop.className = 'modal-backdrop fade show';
+        document.body.appendChild(backdrop);
+        
+        // Set up close buttons
+        const closeButtons = modalEl.querySelectorAll('[data-bs-dismiss="modal"]');
+        closeButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                modalEl.style.display = 'none';
+                modalEl.classList.remove('show');
+                document.body.classList.remove('modal-open');
+                if (document.body.contains(backdrop)) {
+                    document.body.removeChild(backdrop);
+                }
+            });
+        });
+        
+        // Set up share button
+        setupShareButton(portfolioId);
+    }
 });
