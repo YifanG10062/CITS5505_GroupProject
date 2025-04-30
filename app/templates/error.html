@@ -1,35 +1,24 @@
 {% extends "base.html" %}
 
-{% block title %}{{ title|default("Error") }} - The Richverse{% endblock %}
+{% block title %}Error - The Richverse{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-8 offset-md-2">
             <div class="card">
-                <div class="card-header {% if code >= 500 %}bg-danger{% elif code == 403 or code == 422 %}bg-warning{% else %}bg-info{% endif %} text-white">
-                    <h4 class="mb-0">{{ heading|default("Error Occurred") }}</h4>
+                <div class="card-header">
+                    {{ error_title|default('Error') }}
                 </div>
-                <div class="card-body">
-                    <h5>{{ subheading|default("Something went wrong") }}</h5>
-                    
-                    {% if details %}
-                    <p>{{ details }}</p>
-                    {% endif %}
-                    
-                    {% if suggestions %}
-                    <p>This might happen if:</p>
-                    <ul>
-                        {% for suggestion in suggestions %}
-                        <li>{{ suggestion }}</li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
-                    
-                    {% if reason %}
-                    <p><strong>Reason:</strong> {{ reason }}</p>
-                    {% endif %}
-                    
+                <div class="card-body text-center">
+                    <h5 class="card-title">{{ error_code|default('') }}</h5>
+                    <p class="card-text">{{ error_message|default('An unexpected error occurred.') }}</p>
+                    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                        <a href="{{ url_for('main.home') }}" class="btn">Go to Homepage</a>
+                        {% if code != 500 %}
+                        <button onclick="window.history.back()" class="btn btn-outline-secondary">Go Back</button>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,0 +1,1013 @@
+/* Portfolio specific styles */
+@import url('../css/main.css');
+
+/* Portfolio form header styling */
+.page-heading {
+    font-weight: 600;
+    font-size: 20px;
+    font-family: var(--font-nav);
+    color: var(--text-primary);
+}
+
+.richverse-title {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.page-subheading {
+    font-size: 14px;
+    font-weight: 400;
+    font-family: var(--font-nav);
+    color: var(--text-primary);
+}
+
+.highlight {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+/* Asset selection grid */
+.asset-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+/* Asset card styling */
+.asset-card {
+  background-color: var(--card-bg);
+  border: none; 
+  border-radius: 0.75rem;
+  padding: 1.5rem 0.75rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  position: relative;
+  margin: 3px;  
+  box-shadow: 0 0 0 0 transparent; 
+  transform: translateY(0);  
+  height: calc(100% - 6px);  
+}
+
+.asset-card:hover {
+  border-color: var(--card-outline); 
+  box-shadow: 0 0 8px rgba(255, 167, 38, 0.4);
+  transform: translateY(-2px);
+}
+
+.asset-card.selected {
+  border: 1px solid var(--primary);
+  box-shadow: 0 0 16px rgba(255, 167, 38, 0.4);
+  margin: 2px;  
+}
+
+.asset-card.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: grayscale(60%);
+  border-color: var(--card-outline);
+  box-shadow: none;
+  transform: none;
+}
+
+.asset-card.disabled:hover {
+  transform: none;
+  border-color: var(--card-outline);
+  box-shadow: none;
+}
+
+.asset-card .asset-icon {
+  width: 4rem;
+  height: 4rem;
+  margin: 0 auto 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.asset-card .asset-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.asset-card .asset-name {
+  font-family: 'Sora', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+}
+
+.asset-card .asset-company {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  opacity: 0.7;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: 2.5rem;
+}
+
+/* Selection indicator - hide but keep element in DOM */
+.asset-card .selection-indicator {
+  display: none !important;
+  visibility: hidden;
+  opacity: 0;
+}
+
+/* Allocation section styling */
+.allocation-section {
+  padding: 0;
+}
+
+.allocation-header {
+  padding: 1rem 0;
+  margin-bottom: 0.5rem;
+}
+
+/* Allocation total status indicators */
+.allocation-total {
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  font-family: 'Inter', sans-serif;
+}
+
+.allocation-total.valid {
+  background-color: var(--green-up);
+  color: #000;
+}
+
+.allocation-total.invalid {
+  background-color: var(--red-down);
+  color: #000;
+}
+
+/* Allocation table container */
+.allocation-table {
+  border: 1px solid var(--card-outline);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+/* Allocation item grid layout */
+.allocation-item {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--card-outline);
+}
+
+.allocation-item:last-child {
+  border-bottom: none;
+}
+
+/* Asset code display */
+.allocation-asset {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.asset-code {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--primary);
+}
+
+/* Allocation value display and interaction */
+.allocation-value {
+  text-align: right;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  cursor: pointer;
+  min-width: 80px;
+}
+
+.allocation-value .edit-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 0.25rem;
+  opacity: 0.7;
+}
+
+/* Editing state for allocation value */
+.allocation-value.editing {
+  color: var(--primary);
+}
+
+/* Edit mode for allocation values */
+.allocation-value-edit {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.allocation-value-edit input {
+  width: 5rem; /* Increase width further for better display and margin */
+  text-align: right;
+  background-color: transparent;
+  border: none;
+  color: var(--primary);
+  border-radius: 0.375rem; /* Match the standard form-control border-radius */
+  padding: 0.375rem 0.75rem; /* Match standard form-control padding */
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  box-shadow: none;
+  margin-right: 0.25rem; /* Add margin between input and percentage sign */
+}
+
+.allocation-value-edit input:focus {
+  outline: none;
+  box-shadow: none;
+  background-color: transparent;
+}
+
+.allocation-value-edit .percentage {
+  margin-left: 0.25rem;
+  color: var(--primary);
+  padding-right: 0.5rem; /* Add padding to the right of percentage sign */
+}
+
+/* Override some bootstrap form-control styles to match our design */
+.allocation-value-edit .form-control {
+  background-color: transparent;
+  border: none;
+  height: auto;
+  padding: 0.375rem 0.75rem; /* Standard Bootstrap form-control padding */
+  border-radius: 0.375rem; /* Standard Bootstrap form-control border-radius */
+}
+
+/* Empty state when no assets are selected */
+.no-assets {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--text-secondary);
+  font-family: 'Poppins', sans-serif;
+}
+
+.no-assets-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Portfolio configuration sidebar */
+.portfolio-config {
+  background-color: var(--card-bg);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  height: 100%;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Configuration item layout */
+.config-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(56, 61, 72, 0.5);
+  flex-wrap: nowrap;
+  overflow: hidden;
+  padding-right: 0; /* Ensure no extra padding on the right */
+}
+
+.config-label {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  color: var(--text-primary);
+  flex-shrink: 0;
+  margin-right: 1rem;
+}
+
+.config-value {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--primary);
+  text-align: right;
+  flex-shrink: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Portfolio name editing field */
+.portfolio-name-field .d-flex {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  padding-right: 0; /* Remove right padding */
+}
+
+.portfolio-name-field {
+  padding-right: 0; /* Ensure no extra padding on the right */
+}
+
+.portfolio-name-field .portfolio-name-display {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.portfolio-name-text {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--primary);
+  text-align: right;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Empty state styling for portfolio name */
+.portfolio-name-text.empty {
+  color: var(--text-primary);
+  font-weight: 400;
+}
+
+.portfolio-name-edit {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 0; /* Ensure no right padding */
+}
+
+.portfolio-name-edit input {
+  background-color: transparent;
+  border: none;
+  color: var(--primary);
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+  text-align: right;
+  max-width: 100%;
+  width: 100%; /* Use full width */
+  padding-right: 0;
+  margin-right: 0;
+  box-sizing: border-box; /* Ensure padding does not increase width */
+}
+
+.portfolio-name-field input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Edit icon styling with states */
+.edit-icon {
+  width: 16px;
+  height: 16px;
+  filter: brightness(0) invert(1); /* Make icon white in normal state */
+  transition: filter 0.2s ease-in-out;
+  opacity: 0.8;
+  margin-right: 0.5rem; /* Add spacing between icon and text */
+}
+
+/* Hover state for edit icon */
+.portfolio-name-display:hover .edit-icon,
+.allocation-asset:hover .edit-icon {
+  filter: brightness(0) saturate(100%) invert(80%) sepia(55%) saturate(1000%) hue-rotate(340deg) brightness(101%) contrast(101%); /* Make icon primary color on hover */
+  opacity: 1;
+}
+
+/* Hover state for the text when hovering over the container */
+.portfolio-name-display:hover .portfolio-name-text {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+/* Action container layout - update to align items to the right */
+.action-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; 
+  gap: 1rem; 
+  margin-top: 1.5rem;
+}
+
+/* Fix for the old action-buttons class that is currently being used in the template */
+.action-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; 
+  gap: 1rem; 
+  margin-top: 1.5rem;
+}
+
+/* Make sure text-link is properly styled in the action-buttons container */
+.action-buttons .text-link, 
+.action-container .text-link {
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  box-shadow: none;
+  text-transform: capitalize; 
+  margin-right: 0.5rem; 
+}
+
+/* More specific selector for text-link in action-buttons */
+.portfolio-config .action-buttons .text-link {
+  background-color: transparent;
+  color: var(--text-secondary);
+  border: none;
+  font-weight: 400;
+  font-family: 'Inter', sans-serif;
+  text-decoration: none;
+  padding: 0;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+  cursor: pointer;
+  display: inline;
+  box-shadow: none;
+  border-radius: 0;
+  /* Reset any button-like properties */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.portfolio-config .action-buttons .text-link:hover {
+  color: var(--text-primary);
+  background-color: transparent;
+  text-decoration: none;
+}
+
+/* Portfolio List Page Styles */
+/* Portfolio view container */
+.portfolio-view-container {
+  padding: 1.5rem 0;
+}
+
+/* Make table container scrollable horizontally */
+#listView {
+  overflow-x: auto;
+  width: 100%;
+  margin-bottom: 2rem;
+  -webkit-overflow-scrolling: touch; /* For smoother scrolling on iOS */
+  position: relative; /* Add position relative for proper sticky positioning */
+  border: 1px solid var(--card-outline); /* Move border to the container instead */
+  border-radius: 0.5rem;
+}
+
+/* Portfolios table container - update for horizontal scrolling */
+.portfolios-table {
+  width: 100%;
+  min-width: 1200px; 
+  border-collapse: separate;
+  border-spacing: 0;
+  color: var(--text-primary);
+  border: none; /* Remove border from table */
+  overflow: visible; /* Allow overflow for sticky column */
+}
+
+/* Table header styling */
+.portfolios-table thead th {
+  padding: 0.75rem 1rem;
+  font-family: 'Sora', sans-serif;
+  font-weight: 600; 
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  text-align: left;
+  border-bottom: 1px solid var(--card-outline);
+  position: relative;
+  white-space: nowrap; 
+  background-color: #171f29; 
+}
+
+/* Table body styling */
+.portfolios-table tbody td {
+  padding: 0.75rem 1rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  border-bottom: 1px solid var(--card-outline);
+  vertical-align: middle;
+  white-space: nowrap; /* Prevent wrapping in cells */
+}
+
+/* Set some proportional column widths for table */
+.portfolios-table th:nth-child(1), /* Portfolio Name */
+.portfolios-table td:nth-child(1) {
+  min-width: 180px;
+}
+
+.portfolios-table th:nth-child(2), /* Allocation */
+.portfolios-table td:nth-child(2) {
+  min-width: 250px;
+}
+
+.portfolios-table th:nth-child(3), /* Creator */
+.portfolios-table td:nth-child(3) {
+  min-width: 150px;
+}
+
+.portfolios-table th:nth-child(4), /* Current Value */
+.portfolios-table td:nth-child(4),
+.portfolios-table th:nth-child(5), /* Total Return% */
+.portfolios-table td:nth-child(5),
+.portfolios-table th:nth-child(6), /* CAGR% */
+.portfolios-table td:nth-child(6),
+.portfolios-table th:nth-child(7), /* Volatility */
+.portfolios-table td:nth-child(7),
+.portfolios-table th:nth-child(8), /* Max Drawdown */
+.portfolios-table td:nth-child(8) {
+  min-width: 110px;
+  text-align: right; /* Right align numeric values */
+}
+
+.portfolios-table th:nth-child(9), /* Action */
+.portfolios-table td:nth-child(9) {
+  min-width: 180px;
+}
+
+/* Fixed action column styling with frosted glass effect */
+.portfolios-table th:last-child,
+.portfolios-table td:last-child {
+  position: sticky;
+  right: 0;
+  z-index: 2;
+  /* Frosted glass effect */
+  background-color: rgba(18, 24, 38, 0.85); /* Semi-transparent background matching the card bg color */
+  backdrop-filter: blur(6px); /* Add blur effect */
+  -webkit-backdrop-filter: blur(6px); /* Safari compatibility */
+  box-shadow: -5px 0 10px rgba(0, 0, 0, 0.25); /* Enhanced shadow for better separation */
+  border-left: 1px solid var(--card-outline); /* Add left border for visual separation */
+}
+
+/* Header with frosted glass effect but slightly less transparent for emphasis */
+.portfolios-table th:last-child {
+  background-color: rgba(23, 31, 41, 0.92); /* Match header background with opacity */
+  z-index: 3; /* Higher z-index to stay above regular cells when scrolling */
+}
+
+/* Hover state maintaining frosted glass effect but with altered background */
+.portfolios-table tbody tr:hover td:last-child {
+  background-color: rgba(56, 61, 72, 0.85);
+}
+
+/* Table row hover effect */
+.portfolios-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.portfolios-table tbody tr:hover {
+  background-color: rgba(56, 61, 72, 0.3);
+}
+
+/* Creator cell styling for better badge display */
+.creator-cell {
+  display: flex;
+  align-items: center;
+}
+
+.creator-cell > span:first-child {
+  margin-right: 0.5rem;
+}
+
+/* Investment period display styling */
+.investment-period {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  margin: 1rem 0 1.5rem;
+}
+
+/* Top Controls Layout - matches visual design */
+.top-controls-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+/* Left section containing view toggle and shared toggle */
+.left-section {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* View toggle buttons */
+.view-toggle-buttons {
+  display: flex;
+  background-color: var(--bg-darker);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.toggle-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  padding: 0.5rem 1.25rem;
+  color: rgba(255, 255, 255, 0.85);
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggle-btn:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Active state is the same for all buttons */
+.toggle-btn.active {
+  background-color: var(--primary);
+  color: var(--bg-darker);
+  font-weight: 600;
+}
+
+/* Basic Card View styling */
+#cardView {
+  position: relative;
+  min-height: 400px;
+  border: 1px solid var(--card-outline);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.card-view-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(18, 24, 38, 0.95);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.overlay-content {
+  text-align: center;
+  padding: 2rem;
+}
+
+.overlay-content h3 {
+  font-family: var(--font-nav);
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.overlay-content p {
+  font-family: var(--font-ui);
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+.wip-badge {
+  margin-top: 0.5rem;
+}
+
+.wip-badge span {
+  font-family: var(--font-nav);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--primary);
+  letter-spacing: 0.05em;
+}
+
+#cardView {
+  border: 1px solid var(--card-outline);
+  border-radius: 0.5rem;
+  padding: 3rem 1rem;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.coming-soon-placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  text-align: center;
+  width: 100%;
+  background-color: var(--card-bg);
+  border-radius: 0.5rem;
+}
+
+.placeholder-content {
+  max-width: 500px;
+  padding: 2rem;
+}
+
+.placeholder-icon {
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+  color: var(--primary);
+  display: block;
+}
+
+.placeholder-title {
+  font-family: var(--font-nav);
+  font-weight: 600;
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.placeholder-text {
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.placeholder-subtext {
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  color: var(--primary);
+  font-style: italic;
+}
+
+.portfolio-cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.portfolio-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-outline);
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.portfolio-card .card-header {
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--card-outline);
+  background-color: rgba(23, 31, 41, 0.6);
+}
+
+.portfolio-card .portfolio-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  font-family: var(--font-ui);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.portfolio-card .shared-badge {
+  background-color: rgba(255, 255, 255, 0.15);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.portfolio-card .card-content {
+  padding: 1rem;
+  font-family: var(--font-ui);
+  font-size: 14px;
+}
+
+.portfolio-card .card-content > div {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.portfolio-card .info-label {
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.portfolio-card .info-value {
+  font-weight: 400;
+  color: var(--text-primary);
+}
+
+.portfolio-card .info-value.positive {
+  color: var(--green-up);
+}
+
+.portfolio-card .info-value.negative {
+  color: var(--red-down);
+}
+
+.portfolio-card .card-actions {
+  padding: 1rem;
+  display: flex;
+  gap: 1.5rem;
+  border-top: 1px solid var(--card-outline);
+}
+
+.portfolio-card .action-link {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+  font-family: var(--font-ui);
+  transition: color 0.2s ease;
+}
+
+.portfolio-card .action-link:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+/* Responsive adjustments for card view */
+@media (max-width: 992px) {
+  .portfolio-cards-container {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 576px) {
+  .portfolio-cards-container {
+    grid-template-columns: 1fr;
+  }
+  
+  #cardView {
+    padding: 1rem;
+  }
+}
+
+/* Toggle switch wrapper */
+.toggle-wrapper {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+/* Right section containing action buttons */
+.right-section {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.right-section .btn {
+  white-space: nowrap;
+}
+
+/* Ensure action buttons have correct colors and style */
+.right-section .btn-primary {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: var(--bg-darker);
+}
+
+.right-section .btn-primary:hover {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .top-controls-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .right-section {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 768px) {
+  .portfolios-table {
+    min-width: 1200px; /* Keep minimum width even on mobile */
+  }
+
+  .left-section {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    gap: 0.75rem;
+  }
+  
+  .view-toggle-buttons {
+    width: 100%;
+  }
+  
+  .toggle-btn {
+    flex: 1;
+    text-align: center;
+  }
+  
+  .toggle-wrapper {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .right-section {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.5rem;
+  }
+  
+  .right-section .btn {
+    width: 100%;
+    margin-left: 0 !important;
+  }
+}
+
+/* Share Portfolio Modal Styling */
+.modal {
+  color: var(--text-primary);
+}
+
+.modal-content {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-outline);
+  border-radius: 0.5rem;
+}
+
+.modal-header {
+  border-bottom: 1px solid var(--card-outline);
+}
+
+.modal-footer {
+  border-top: 1px solid var(--card-outline);
+}
+
+.modal-title {
+  font-family: var(--font-nav);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.btn-close {
+  background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
+}
+
+.modal-body p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.user-selector .input-group-text {
+  background-color: var(--card-outline);
+  border-color: var(--input-border);
+  color: var(--text-primary);
+}
+
+.user-selector .form-control {
+  background-color: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--text-primary);
+}
+
+/* Ensure text buttons in action column maintain visibility with frosted glass effect 
+   while inheriting styles from main.css */
+.portfolios-table td:last-child .text-button,
+.portfolios-table td:last-child .btn-text,
+.portfolios-table td:last-child a.action-link {
+  position: relative;
+  z-index: 4;
+  margin: 0 0.5rem;
+  /* Inherit styles from main.css */
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.portfolios-table td:last-child .text-button:hover,
+.portfolios-table td:last-child .btn-text:hover,
+.portfolios-table td:last-child a.action-link:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
