@@ -21,7 +21,7 @@
     {% block styles %}{% endblock %}
 </head>
 <body>
-    <!-- Navigation -->
+    {% block navbar %}
     <nav class="navbar navbar-expand-md navbar-dark richverse-navbar">
         <div class="container-fluid">
             <div class="navbar-brand">
@@ -49,6 +49,7 @@
             </div>
         </div>
     </nav>
+    {% endblock %}
 
     <!-- Main Content -->
     <main class="container py-4">
