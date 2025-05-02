@@ -23,5 +23,9 @@ python -m venv venv
 # Install dependencies
 pip install -r requirements.txt
 
+# (Optional) Refresh historical asset price data
+# This will fetch prices from 2015-01-01 to today and update the database
+flask --app run.py refresh-history
+
 # Run the app
 python run.py

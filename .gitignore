@@ -1,25 +1,24 @@
-# Python venv
+# Python
 venv/
 __pycache__/
 *.pyc
 
-# Editor/IDE stuff
+# Flask runtime/cache
+instance/
+*.sqlite3
+
+# Editor/IDE
 .vscode/
 .idea/
 .DS_Store
 
-# Flask cache
-instance/
-# *.db
-*.sqlite3
-
-# OS/Temp files
+# Logs and temp files
 *.log
+logs/app.log*
 *.tmp
 *.swp
-
 *.db-journal
 
-# Aoli local test files
+# Local dev/test files
 test_calc.py
 .flaskenv
