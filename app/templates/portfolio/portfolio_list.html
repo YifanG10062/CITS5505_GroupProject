@@ -58,7 +58,11 @@
         <tbody>
           {% for portfolio in portfolios %}
           <tr>
-            <td class="portfolio-name-cell">{{ portfolio.portfolio_name }}</td>
+            <td class="portfolio-name-cell">
+              <a href="{{ url_for('portfolios.dashboard', portfolio_id=portfolio.portfolio_id) }}" class="action-link" target="_blank">
+                {{ portfolio.portfolio_name }}
+              </a>
+            </td>
             <td class="portfolio-allocation">{{ portfolio.allocation }}</td>
             <td class="creator-cell">
               <span>{{ portfolio.creator_username }}</span>
