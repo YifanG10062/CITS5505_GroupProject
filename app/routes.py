@@ -1,3 +1,12 @@
+################################################################################
+# WARNING: THIS FILE HAS BEEN REFACTORED INTO app/routes
+# DO NOT MODIFY THIS FILE!
+# This file is kept for reference only until the refactoring is fully confirmed.
+# All code logic should be implemented in the app/routes directory.
+# Please make any changes or additions there instead.
+# THIS FILE WILL BE DELETED AFTER REFACTORING IS COMPLETED AND VERIFIED.
+################################################################################
+
 import traceback
 import pandas as pd
 import sqlite3
