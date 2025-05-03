@@ -81,10 +81,13 @@ def create_app(config_class=DeploymentConfig):
                               details="Our technical team has been notified. Please try again later."), 500
     
     # Register blueprints
-    from app.routes import main, portfolios, auth
+    from app.routes.main import main
+    from app.routes.portfolio import portfolios
+    from app.routes.user import user
+    
     app.register_blueprint(main)
     app.register_blueprint(portfolios)
-    app.register_blueprint(auth)
+    app.register_blueprint(user)
 
     app.cli.add_command(refresh_history_command)
 

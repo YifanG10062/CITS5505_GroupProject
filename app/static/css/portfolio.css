@@ -1007,3 +1007,34 @@
   text-decoration-thickness: 1px;
   text-underline-offset: 2px;
 }
+
+/* Global action-link style */
+a.action-link {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+a.action-link:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+/* Global text button style for use throughout the application */
+.text-button {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+  cursor: pointer;
+}
+
+.text-button:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
