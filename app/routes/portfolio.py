@@ -1,27 +1,11 @@
-################################################################################
-# WARNING: THIS FILE HAS BEEN REFACTORED INTO app/routes
-# DO NOT MODIFY THIS FILE!
-# This file is kept for reference only until the refactoring is fully confirmed.
-# All code logic should be implemented in the app/routes directory.
-# Please make any changes or additions there instead.
-# THIS FILE WILL BE DELETED AFTER REFACTORING IS COMPLETED AND VERIFIED.
-################################################################################
-
 import traceback
-import pandas as pd
 import sqlite3
-import time
-from flask import Blueprint, request, jsonify, render_template, redirect, url_for, current_app, flash, g
-from app.calculation import calculate_portfolio_metrics, get_portfolio_timeseries, get_spy_cumulative_returns
-from app.fetch_price import fetch_all_history
+import json
+from flask import Blueprint, request, render_template, redirect, url_for
+from app.calculation import calculate_portfolio_metrics
 
-# Define main blueprint and portfolios blueprint
-main = Blueprint("main", __name__)
+# Define portfolios blueprint
 portfolios = Blueprint("portfolios", __name__, url_prefix="/portfolios")
-
-@main.route("/")
-def home():
-    return render_template("dashboard.html")
 
 # Portfolio List View
 @portfolios.route("/")
@@ -237,31 +221,10 @@ def edit(portfolio_id):
 @portfolios.route("/<int:portfolio_id>/dashboard")
 def dashboard(portfolio_id):
     default_weights = {"BTC-USD": 0.5, "NVDA": 0.3, "AAPL": 0.2}
-    start_date = "2020-01-01"
+    start_date = "2015-01-01"
     initial_investment = 1000
 
     return render_template("dashboard.html",
                            weights=default_weights,
                            start_date=start_date,
                            initial_investment=initial_investment)
-
-# =============================================================================
-# TEMPORARY USER AUTHENTICATION MODULE - TO BE REPLACED
-# =============================================================================
-# WARNING: This is a placeholder implementation that will be removed once 
-# the proper user management module is implemented.
-# It provides minimal routing to prevent template errors with current_user.
-# =============================================================================
-auth = Blueprint("auth", __name__, url_prefix="/auth")
-
-@auth.route("/account")
-def account():
-    return render_template("error.html", 
-                          code=501, 
-                          title="Not Implemented",
-                          heading="Feature Not Implemented", 
-                          details="User account is not yet available.")
-
-# =============================================================================
-# END OF TEMPORARY USER AUTHENTICATION MODULE
-# =============================================================================

@@ -12,7 +12,7 @@
                 </div>
                 <div class="card-body text-center">
                     <h5 class="card-title">{{ error_code|default('') }}</h5>
-                    <p class="card-text">{{ error_message|default('An unexpected error occurred.') }}</p>
+                    <p class="card-text text-white">{{ error_message|default('An unexpected error occurred.') }}</p>
                     <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
                         <a href="{{ url_for('main.home') }}" class="btn">Go to Homepage</a>
                         {% if code != 500 %}

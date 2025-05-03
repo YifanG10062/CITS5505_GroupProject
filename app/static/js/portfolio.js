@@ -613,7 +613,10 @@ document.addEventListener('DOMContentLoaded', function() {
                                     if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
                                         const modal = new bootstrap.Modal(modalEl);
                                         modal.show();
+                                    } else if (typeof $ !== 'undefined' && $(modalEl).modal) {
+                                        $(modalEl).modal('show');
                                     } else {
+                                        console.log('Using fallback modal display method');
                                         fallbackModalDisplay(modalEl);
                                     }
                                     

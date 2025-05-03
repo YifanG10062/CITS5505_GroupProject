@@ -1,31 +1,7 @@
-################################################################################
-# WARNING: THIS FILE HAS BEEN REFACTORED INTO app/models
-# DO NOT MODIFY THIS FILE!
-# This file is kept for reference only until the refactoring is fully confirmed.
-# All code logic should be implemented in the app/models directory.
-# Please make any changes or additions there instead.
-# THIS FILE WILL BE DELETED AFTER REFACTORING IS COMPLETED AND VERIFIED.
-################################################################################
-
-# app/models.py
 from app import db
 from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, Date, ForeignKey, Text
 from sqlalchemy.orm import relationship
 from datetime import datetime
-
-class Price(db.Model):
-    __tablename__ = 'prices'
-    asset_code = db.Column(db.String, primary_key=True)
-    date = db.Column(db.Date, primary_key=True)
-    close_price = db.Column(db.Float)
-
-class Asset(db.Model):
-    __tablename__ = 'assets'
-    asset_code = db.Column(db.String, primary_key=True)
-    display_name = db.Column(db.String)
-    full_name = db.Column(db.String)
-    type = db.Column(db.String)
-    currency = db.Column(db.String)
 
 # --- PortfolioSummary Table ---
 class PortfolioSummary(db.Model):
@@ -120,12 +96,3 @@ class PortfolioShareLog(db.Model):
 
     def __repr__(self):
         return f'<PortfolioShareLog {self.portfolio_share_id}>'
-
-# --- User Table ---
-# NOTE: Temporary placeholder for User table.
-# Please update this model later (assigned to Pavan).
-# Current version only exists to support building Portfolio tables.
-class User(db.Model):
-    __tablename__ = 'user'
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), unique=True, nullable=False)
