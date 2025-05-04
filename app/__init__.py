@@ -35,6 +35,8 @@ def create_app(config_class=DeploymentConfig):
     db.init_app(app)
     migrate.init_app(app, db)
     csrf.init_app(app)
+
+    from app import models
     
     # Ensure SECRET_KEY is set for CSRF
     if not app.config.get('SECRET_KEY'):

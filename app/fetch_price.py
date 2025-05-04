@@ -1,11 +1,13 @@
 import yfinance as yf
 import pandas as pd
 from datetime import datetime
+import click
+from flask.cli import with_appcontext
 
 def fetch_all_history():
     from app import db
     from app.models import Asset, Price
-    
+
     asset_metadata = {
         "AAPL":  ("AAPL", "Apple Inc.", "stock", "USD"),
         "MSFT":  ("MSFT", "Microsoft Corp", "stock", "USD"),
@@ -20,14 +22,31 @@ def fetch_all_history():
         "SPY":   ("SPY", "S&P 500 ETF", "etf", "USD")
     }
 
-    # Insert or update asset metadata in the database
+    default_logos = {
+        "AAPL": "https://logo.clearbit.com/apple.com",
+        "MSFT": "https://logo.clearbit.com/microsoft.com",
+        "TSLA": "https://logo.clearbit.com/tesla.com",
+        "NVDA": "https://logo.clearbit.com/nvidia.com",
+        "AMZN": "https://logo.clearbit.com/amazon.com",
+        "GOOGL": "https://logo.clearbit.com/google.com",
+        "BRK-B": "https://logo.clearbit.com/berkshirehathaway.com",
+        "BTC-USD": "https://cryptologos.cc/logos/bitcoin-btc-logo.png",
+        "MSTR": "https://logo.clearbit.com/microstrategy.com",
+        "AMD": "https://logo.clearbit.com/amd.com",
+        "SPY": None
+    }
+
     for code, (display, full, typ, curr) in asset_metadata.items():
+        existing = db.session.get(Asset, code)
+        logo = existing.logo_url if existing else default_logos.get(code)
+
         asset = Asset(
             asset_code=code,
             display_name=display,
             full_name=full,
             type=typ,
-            currency=curr
+            currency=curr,
+            logo_url=logo
         )
         db.session.merge(asset)
 
@@ -58,12 +77,9 @@ def fetch_all_history():
             print(f"❌ Error fetching {ticker}: {e}")
 
     db.session.commit()
-    print("✅ Historical price data saved to database.")
+    print("✅ Historical price data and asset metadata saved.")
 
-# Command-line interface for fetching historical prices
-import click
-from flask.cli import with_appcontext
-
+# Command Line Interface (CLI) command to refresh history
 @click.command("refresh-history")
 @with_appcontext
 def refresh_history_command():
