@@ -1,7 +1,10 @@
-import traceback
-import sqlite3
 import json
-from flask import Blueprint, request, render_template, redirect, url_for
+import sqlite3
+import traceback
+
+from flask import Blueprint, redirect, render_template, request, url_for
+from flask_login import login_required
+
 from app.calculation import calculate_portfolio_metrics
 
 # Define portfolios blueprint
@@ -9,6 +12,7 @@ portfolios = Blueprint("portfolios", __name__, url_prefix="/portfolios")
 
 # Portfolio List View
 @portfolios.route("/")
+@login_required
 def list():
     # Mock portfolio data for testing the UI
     portfolios_list = [
