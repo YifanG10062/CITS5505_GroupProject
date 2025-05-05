@@ -170,12 +170,7 @@ def create_app(config_class=DeploymentConfig):
         ConfirmPassword = PasswordField(validators=[InputRequired(), Length(min=4, max=200)], render_kw={"placeholder": "ConfirmPassword"})
         UserToken = StringField(validators=[InputRequired()], render_kw={"placeholder": "UserToken"})
 
-    class Upload(db.Model):
-        id = db.Column(db.Integer, primary_key=True)
-        eventid = db.Column(db.Integer, nullable=False)
-        filename = db.Column(db.String(200), nullable=False)
-        file = db.Column(db.LargeBinary)
-        
+          
     app.app_context().push()
     db.create_all()
 
