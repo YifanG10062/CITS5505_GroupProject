@@ -25,17 +25,17 @@ def fetch_all_history():
 
     # Default logo URLs for each asset
     default_logos = {
-        "AAPL": "https://logo.clearbit.com/apple.com",
-        "MSFT": "https://logo.clearbit.com/microsoft.com",
-        "TSLA": "https://logo.clearbit.com/tesla.com",
-        "NVDA": "https://logo.clearbit.com/nvidia.com",
-        "AMZN": "https://logo.clearbit.com/amazon.com",
-        "GOOGL": "https://logo.clearbit.com/google.com",
-        "BRK-B": "https://logo.clearbit.com/berkshirehathaway.com",
-        "BTC-USD": "https://cryptologos.cc/logos/bitcoin-btc-logo.png",
-        "MSTR": "https://logo.clearbit.com/microstrategy.com",
-        "AMD": "https://logo.clearbit.com/amd.com",
-        "SPY": None  # No clear default
+        "AAPL": "/static/icons/aapl.svg",
+        "MSFT": "/static/icons/msft.svg",
+        "TSLA": "/static/icons/tsla.svg",
+        "NVDA": "/static/icons/nvda.svg",
+        "AMZN": "/static/icons/amzn.svg",
+        "GOOGL": "/static/icons/googl.svg",
+        "BRK-B": "/static/icons/brk-b.svg",
+        "BTC-USD": "/static/icons/btc-usd.svg",
+        "MSTR": "/static/icons/mstr.svg",
+        "AMD": "/static/icons/amd.svg",
+        "SPY": "/static/icons/spy.svg"
     }
 
     # Strategy description for each asset
