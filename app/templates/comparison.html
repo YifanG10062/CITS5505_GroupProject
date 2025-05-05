@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1 class="mb-4">Portfolio A vs Portfolio B</h1>
+
+  <!-- Overview -->
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="card shadow-sm bg-dark text-light">
+        <div class="card-header bg-secondary text-white fw-bold">Portfolio A</div>
+        <div class="card-body">
+          <ul class="mb-0">
+            {% for code, pct in weights_a.items() %}
+              <li>
+                <strong>{{ strategy_map[code].display_name }}:</strong>
+                {{ (pct * 100) | round(1) }}% — {{ strategy_map[code].strategy }}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card shadow-sm bg-dark text-light">
+        <div class="card-header bg-secondary text-white fw-bold">Portfolio B</div>
+        <div class="card-body">
+          <ul class="mb-0">
+            {% for code, pct in weights_b.items() %}
+              <li>
+                <strong>{{ strategy_map[code].display_name }}:</strong>
+                {{ (pct * 100) | round(1) }}% — {{ strategy_map[code].strategy }}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cumulative Return Chart -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card chart-glow shadow" style="height: 400px;">
+        <div class="card-header">Cumulative Return Over Time</div>
+        <div class="card-body">
+          <canvas id="comparisonChart" style="width: 100%; height: 100%;"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Allocation Pie Charts -->
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="card chart-glow shadow" style="height: 360px;">
+        <div class="card-header">Portfolio A Allocation</div>
+        <div class="card-body">
+          <canvas id="allocationChartA" style="width: 100%; height: 100%;"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card chart-glow shadow" style="height: 360px;">
+        <div class="card-header">Portfolio B Allocation</div>
+        <div class="card-body">
+          <canvas id="allocationChartB" style="width: 100%; height: 100%;"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Metric Bar Chart -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card chart-glow shadow" style="height: 360px;">
+        <div class="card-header">Key Performance Metrics</div>
+        <div class="card-body">
+          <canvas id="metricsChart" style="width: 100%; height: 100%;"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const allocationDataA = {{ weights_a | tojson }};
+  const allocationDataB = {{ weights_b | tojson }};
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/comparisonChart.js') }}"></script>
+{% endblock %}

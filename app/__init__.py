@@ -49,6 +49,8 @@ def create_app(config_class=DeploymentConfig):
     db.init_app(app)
     migrate.init_app(app, db)
     csrf.init_app(app)
+
+    from app import models
     
     # Ensure SECRET_KEY is set for CSRF
     if not app.config.get('SECRET_KEY'):
@@ -99,10 +101,12 @@ def create_app(config_class=DeploymentConfig):
     from app.routes.main import main
     from app.routes.portfolio import portfolios
     from app.routes.user import user
+    from app.routes.comparison import comparison
     
     app.register_blueprint(main)
     app.register_blueprint(portfolios)
     app.register_blueprint(user)
+    app.register_blueprint(comparison)
 
     app.cli.add_command(refresh_history_command)
 
