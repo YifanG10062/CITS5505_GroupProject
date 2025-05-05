@@ -265,9 +265,3 @@ def account():
 # =============================================================================
 # END OF TEMPORARY USER AUTHENTICATION MODULE
 # =============================================================================
-
-# routes.py
-
-@main.route("/comparison")
-def comparison():
-    return render_template("comparison.html")

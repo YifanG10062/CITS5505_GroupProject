@@ -92,3 +92,34 @@ def timeseries():
             "datasets": heatmap_datasets
         }
     })
+
+# 3. Comparison chart: Portfolio A vs Portfolio B
+@api_bp.route("/comparison_timeseries", methods=["POST"])
+def comparison_timeseries():
+    try:
+        data = request.get_json()
+        weights_a = data["weights_a"]
+        weights_b = data["weights_b"]
+        start_date = data.get("start_date", "2015-01-01")
+        initial_amount = float(data.get("initial_investment", 1000))
+
+        # Calculate time series for both portfolios
+        ts_a = get_portfolio_timeseries(weights_a, start_date, initial_amount)
+        ts_b = get_portfolio_timeseries(weights_b, start_date, initial_amount)
+
+        if not ts_a or not ts_b:
+            return jsonify({"error": "No time series data"}), 400
+
+        # Extract cumulative return series
+        labels = list(ts_a["cumulative_returns_series"].keys())  # assumed same labels
+        cumulative_a = list(ts_a["cumulative_returns_series"].values())
+        cumulative_b = list(ts_b["cumulative_returns_series"].values())
+
+        return jsonify({
+            "labels": labels,
+            "portfolio_a": cumulative_a,
+            "portfolio_b": cumulative_b
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

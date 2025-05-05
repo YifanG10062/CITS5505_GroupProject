@@ -20,5 +20,6 @@ class Asset(db.Model):
     type = db.Column(db.String)
     currency = db.Column(db.String)
     logo_url = db.Column(db.String)
+    strategy_description = db.Column(db.String(256))
 
     prices = db.relationship("Price", back_populates="asset", cascade="all, delete-orphan")

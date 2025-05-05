@@ -86,10 +86,12 @@ def create_app(config_class=DeploymentConfig):
     from app.routes.main import main
     from app.routes.portfolio import portfolios
     from app.routes.user import user
+    from app.routes.comparison import comparison
     
     app.register_blueprint(main)
     app.register_blueprint(portfolios)
     app.register_blueprint(user)
+    app.register_blueprint(comparison)
 
     app.cli.add_command(refresh_history_command)
 
