@@ -37,9 +37,9 @@ class PortfolioSummary(db.Model):
     is_shown = Column(Boolean, default=True)
 
     # Relationships
-    user = relationship("User", foreign_keys=[user_id])
-    creator = relationship("User", foreign_keys=[creator_id])
-    shared_from = relationship("User", foreign_keys=[shared_from_id])
+    user = relationship("User", foreign_keys=[user_id], back_populates="portfolio_summaries")
+    creator = relationship("User", foreign_keys=[creator_id], back_populates="created_portfolios")
+    shared_from = relationship("User", foreign_keys=[shared_from_id], back_populates="shared_portfolios")
 
     def __repr__(self):
         return f'<PortfolioSummary {self.portfolio_name}>'
