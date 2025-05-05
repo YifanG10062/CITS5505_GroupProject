@@ -174,12 +174,6 @@ def create_app(config_class=DeploymentConfig):
         ConfirmPassword = PasswordField(validators=[InputRequired(), Length(min=4, max=200)], render_kw={"placeholder": "ConfirmPassword"})
         UserToken = StringField(validators=[InputRequired()], render_kw={"placeholder": "UserToken"})
 
-          
-    app.app_context().push()
-    db.create_all()
-
-
-
     @app.route("/")    
     @app.route('/login', methods = ['GET', 'POST'])
     def login():
