@@ -22,3 +22,6 @@ logs/app.log*
 # Local dev/test files
 test_calc.py
 .flaskenv
+
+# Database files
+db/

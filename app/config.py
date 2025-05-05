@@ -10,6 +10,8 @@ class Config:
     WTF_CSRF_ENABLED = True
     WTF_CSRF_TIME_LIMIT = 3600  # Token validity period (1 hour)
 
+# Create database directory if it doesn't exist (for DeploymentConfig)
+os.makedirs(os.path.join(basedir, 'db'), exist_ok=True)
 class DeploymentConfig(Config):
     SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(basedir, 'db', 'portfolio_data.db')
 
