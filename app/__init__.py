@@ -61,6 +61,7 @@ def create_app(config_class=ProductionConfig):
     from app.routes.user import user
     from app.routes.comparison import comparison
     from app.api import api_bp
+    from app.routes.dashboard import dashboard
 
     app.register_blueprint(main)
     app.register_blueprint(portfolios)
@@ -68,6 +69,7 @@ def create_app(config_class=ProductionConfig):
     app.register_blueprint(comparison)
     csrf.exempt(api_bp)
     app.register_blueprint(api_bp)
+    app.register_blueprint(dashboard)
 
     # User loader
     @login_manager.user_loader

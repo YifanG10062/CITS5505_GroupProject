@@ -232,19 +232,6 @@ def edit(portfolio_id):
     
     # Show edit form for GET request
     return render_template("portfolio/portfolio_form.html", portfolio=portfolio, assets=assets)
-
-# Portfolio Dashboard
-@portfolios.route("/<int:portfolio_id>/dashboard")
-def dashboard(portfolio_id):
-    default_weights = {"BTC-USD": 0.5, "NVDA": 0.3, "AAPL": 0.2}
-    start_date = "2020-01-01"
-    initial_investment = 1000
-
-    return render_template("dashboard.html",
-                           weights=default_weights,
-                           start_date=start_date,
-                           initial_investment=initial_investment)
-
 # =============================================================================
 # TEMPORARY USER AUTHENTICATION MODULE - TO BE REPLACED
 # =============================================================================
