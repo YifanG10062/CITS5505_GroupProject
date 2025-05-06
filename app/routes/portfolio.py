@@ -1,14 +1,21 @@
-import traceback
-import sqlite3
 import json
-from flask import Blueprint, request, render_template, redirect, url_for
+import sqlite3
+import traceback
+from datetime import datetime  # Add datetime import
+
+from flask import Blueprint, redirect, render_template, request, url_for
+from flask_login import login_required, current_user
+
 from app.calculation import calculate_portfolio_metrics
+from app.models.portfolio import PortfolioSummary  # Fix the import path
+from app import db  # Import db from app
 
 # Define portfolios blueprint
 portfolios = Blueprint("portfolios", __name__, url_prefix="/portfolios")
 
 # Portfolio List View
 @portfolios.route("/")
+@login_required
 def list():
     # Mock portfolio data for testing the UI
     portfolios_list = [
@@ -122,18 +129,38 @@ def create():
                     initial_amount=initial_amount
                 )
                 
-                # TODO: Create a new portfolio entry in the database with:
-                # - portfolio_name
-                # - user_id (current user)
-                # - allocation_json (store the JSON representation of the allocation dict)
-                # - metrics values from the calculation result
+                # Create a new portfolio entry in the database
+                new_portfolio = PortfolioSummary(
+                    portfolio_name=portfolio_name,
+                    user_id=current_user.id,
+                    creator_id=current_user.id,
+                    allocation_json=json.dumps(allocation),  # Store allocation as JSON
+                    # Set other fields from metrics calculation
+                    total_contributions=initial_amount,
+                    current_value=metrics['final_value'],
+                    return_percent=metrics['return_percent'],
+                    cagr=metrics['cagr'],
+                    volatility=metrics['volatility'],
+                    max_drawdown=metrics['max_drawdown'],
+                    input_created_at=datetime.utcnow(),
+                    input_updated_at=datetime.utcnow()
+                )
+                
+                # Set user information
+                new_portfolio.user_username = current_user.username
+                new_portfolio.user_email = current_user.user_email
+                new_portfolio.creator_username = current_user.username
+                new_portfolio.creator_email = current_user.user_email
+                
+                db.session.add(new_portfolio)
+                db.session.commit()
                 
             except Exception as e:
-                print(f"Calculation error: {e}")
+                print(f"Calculation or DB error: {e}")
                 return render_template("portfolio/portfolio_form.html", portfolio=None,
-                                       error="Error calculating portfolio metrics")
+                                       error="Error saving portfolio data")
 
-            return redirect(url_for('portfolios.dashboard', portfolio_id=1))
+            return redirect(url_for('portfolios.dashboard', portfolio_id=new_portfolio.portfolio_id))
 
         # Get assets from the database
         assets = get_assets()
@@ -175,18 +202,29 @@ def edit(portfolio_id):
                 initial_amount=initial_amount
             )
             
-            # TODO: Update the existing portfolio in the database with:
-            # - Updated portfolio_name
-            # - New allocation_json (store the JSON representation of the allocation dict)
-            # - Updated metrics values from the calculation result
-            # - Update input_updated_at timestamp
+            # Update the existing portfolio in the database
+            portfolio.portfolio_name = portfolio_name
+            portfolio.allocation_json = json.dumps(allocation)  # Update allocation JSON
+            # Update metrics fields
+            portfolio.current_value = metrics['final_value']
+            portfolio.return_percent = metrics['return_percent']
+            portfolio.cagr = metrics['cagr']
+            portfolio.volatility = metrics['volatility']
+            portfolio.max_drawdown = metrics['max_drawdown']
+            portfolio.input_updated_at = datetime.utcnow()  # Update timestamp
+            
+            # Update user information in case it changed
+            portfolio.user_username = current_user.username
+            portfolio.user_email = current_user.user_email
+            
+            db.session.commit()
             
             # TODO: Record changes in PortfolioVersion and PortfolioChangeLog tables
             
         except Exception as e:
-            print(f"Calculation error: {e}")
+            print(f"Calculation or DB error: {e}")
             return render_template("portfolio/portfolio_form.html", portfolio=portfolio,
-                                   error="Error calculating portfolio metrics")
+                                   error="Error calculating or saving portfolio metrics")
 
         return redirect(url_for('portfolios.list'))
         

@@ -1,5 +1,4 @@
 from app import db
-from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, Date, ForeignKey, Text
 
 # --- Price Table ---
 class Price(db.Model):
