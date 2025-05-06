@@ -11,8 +11,9 @@ from wtforms import StringField, PasswordField
 from wtforms.validators import InputRequired, Email, Length
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from app.config import DeploymentConfig
+from config import ProductionConfig
 from app.fetch_price import refresh_history_command
+from app.commands import refresh_user_info_command  # Import the new command
 
 # --- Extensions ---
 db = SQLAlchemy()
@@ -29,7 +30,7 @@ class MockUser:
         self.username = "test_user" if is_authenticated else None
 
 # --- Flask App Factory ---
-def create_app(config_class=DeploymentConfig):
+def create_app(config_class=ProductionConfig):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
@@ -39,7 +40,7 @@ def create_app(config_class=DeploymentConfig):
     csrf.init_app(app)
     mail.init_app(app)
     login_manager.init_app(app)
-    login_manager.login_view = 'login'
+    login_manager.login_view = 'user.login'  # Updated to use blueprint route
 
     # Import models
     from app import models
@@ -50,9 +51,10 @@ def create_app(config_class=DeploymentConfig):
         app.config['SECRET_KEY'] = 'temporary-secret-key'
         print("WARNING: Using temporary secret key")
 
-    # CLI command
+    # CLI commands
     app.cli.add_command(refresh_history_command)
-
+    app.cli.add_command(refresh_user_info_command)  # Register the new command
+    
     # Register blueprints
     from app.routes.main import main
     from app.routes.portfolio import portfolios
@@ -100,78 +102,5 @@ def create_app(config_class=DeploymentConfig):
     @app.context_processor
     def inject_user_template():
         return {'current_user': getattr(g, 'current_user', MockUser())}
-
-    # --- Auth Forms ---
-    class LoginForm(FlaskForm):
-        Email = StringField(validators=[InputRequired(), Email(), Length(min=4, max=200)],
-                            render_kw={"placeholder": "Email"})
-        Password = PasswordField(validators=[InputRequired(), Length(min=4, max=200)],
-                                 render_kw={"placeholder": "Password"})
-
-    class RegistrationForm(FlaskForm):
-        FirstName = StringField(validators=[InputRequired(), Length(min=2, max=200)],
-                                render_kw={"placeholder": "First Name"})
-        LastName = StringField(validators=[InputRequired(), Length(min=2, max=200)],
-                               render_kw={"placeholder": "Last Name"})
-        Email = StringField(validators=[InputRequired(), Email(), Length(min=4, max=200)],
-                            render_kw={"placeholder": "Email"})
-        Password = PasswordField(validators=[InputRequired(), Length(min=4, max=200)],
-                                 render_kw={"placeholder": "Password"})
-
-    class ResetRequestForm(FlaskForm):
-        Email = StringField(validators=[InputRequired(), Email(), Length(min=4, max=200)],
-                            render_kw={"placeholder": "Email"})
-
-    # --- Routes ---
-    @app.route("/")
-    @app.route("/login", methods=["GET", "POST"])
-    def login():
-        form = LoginForm()
-        if form.validate_on_submit():
-            user = User.query.filter_by(user_email=form.Email.data).first()
-            if user and check_password_hash(user.user_pswd, form.Password.data):
-                login_user(user)
-                return redirect(url_for('portfolios.list'))
-            flash("Invalid email or password.", "error")
-        return render_template("login.html", form=form)
-
-    @app.route("/register", methods=["GET", "POST"])
-    def register():
-        form = RegistrationForm()
-        if form.validate_on_submit():
-            existing_user = User.query.filter_by(user_email=form.Email.data).first()
-            if existing_user:
-                flash("Email already registered.", "error")
-            else:
-                new_user = User(
-                    user_fName=form.FirstName.data,
-                    user_lName=form.LastName.data,
-                    user_email=form.Email.data,
-                    user_pswd=generate_password_hash(form.Password.data)
-                )
-                db.session.add(new_user)
-                db.session.commit()
-                flash("Registration successful. Please log in.", "success")
-                return redirect(url_for("login"))
-        return render_template("register.html", form=form)
-
-    @app.route("/resetrequest", methods=["GET", "POST"])
-    def resetrequest():
-        form = ResetRequestForm()
-        if form.validate_on_submit():
-            user = User.query.filter_by(user_email=form.Email.data).first()
-            if user:
-                flash("Reset link would be sent to your email (not implemented).", "success")
-                return redirect(url_for("login"))
-            else:
-                flash("Email not found.", "error")
-        return render_template("resetrequest.html", form=form)
-
-    @app.route("/logout")
-    @login_required
-    def logout():
-        logout_user()
-        flash("Logged out successfully.", "success")
-        return redirect("/")
 
     return app

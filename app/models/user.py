@@ -7,6 +7,7 @@ class User(db.Model, UserMixin):
     __tablename__ = 'user'
 
     id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(200), nullable=False)  # New username field
     user_email = db.Column(db.String(200), nullable=False, unique=True)
     user_pswd = db.Column(db.String(200), nullable=False)
     user_fName = db.Column(db.String(200), nullable=False)
