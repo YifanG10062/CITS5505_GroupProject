@@ -59,7 +59,7 @@
           {% for portfolio in portfolios %}
           <tr>
             <td class="portfolio-name-cell">
-              <a href="{{ url_for('portfolios.dashboard', portfolio_id=portfolio.portfolio_id) }}" class="action-link" target="_blank">
+              <a href="{{ url_for('dashboard.show', portfolio_id=portfolio.portfolio_id) }}" class="action-link" target="_blank">
                 {{ portfolio.portfolio_name }}
               </a>
             </td>
