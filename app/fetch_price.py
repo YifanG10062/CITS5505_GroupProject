@@ -3,6 +3,10 @@ import pandas as pd
 from datetime import datetime
 import click
 from flask.cli import with_appcontext
+from curl_cffi import requests
+
+# Create a browser-like session to avoid being blocked
+session = requests.Session(impersonate="chrome")
 
 def fetch_all_history():
     from app import db
@@ -78,7 +82,7 @@ def fetch_all_history():
     for ticker in asset_metadata:
         print(f"📈 Fetching: {ticker}")
         try:
-            df = yf.download(ticker, start=start_date, end=end_date, interval="1d", progress=False)
+            df = yf.download(ticker, start=start_date, end=end_date, interval="1d", progress=False, session=session)
 
             if "Close" not in df:
                 print(f"⚠️  Skipped {ticker}, no 'Close' column.")
