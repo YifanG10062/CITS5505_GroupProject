@@ -17,6 +17,9 @@
     <!-- Favicon -->
     <link rel="shortcut icon" href="{{ url_for('static', filename='icons/favicon.ico') }}">
     
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    
     <!-- Additional CSS blocks -->
     {% block styles %}{% endblock %}
 </head>
@@ -32,29 +35,28 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                {% if request.endpoint and request.endpoint not in ['user.login', 'user.register', 'user.resetrequest', 'user.changepassword'] %}
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link {% if 'portfolios.' in request.endpoint %}active{% endif %}" href="{{ url_for('portfolios.list') }}">
-                                Portfolios
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('user.account') }}">Account</a>
-                        </li>
-                    </ul>
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="btn btn-danger" href="{{ url_for('user.logout') }}">Log Out</a>
-                        </li>
-                    </ul>
-                {% endif %}
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint and 'portfolios.' in request.endpoint %}active{% endif %}" href="{{ url_for('portfolios.list') }}">
+                            Portfolios
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ current_user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item text-danger" href="{{ url_for('user.logout') }}">Log Out</a></li>
+                        </ul>
+                    </li>
+                </ul>
             </div>
-            
         </div>
     </nav>
     {% endblock %}
-    
+
     <!-- Main Content -->
     <main class="container py-4">
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -88,5 +90,33 @@
     
     <!-- Additional Script blocks -->
     {% block scripts %}{% endblock %}
+    
+    <!-- Dropdown hover functionality -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdownElementList = document.querySelectorAll('.dropdown');
+            
+            dropdownElementList.forEach(function(dropdown) {
+                const trigger = dropdown.querySelector('.dropdown-toggle');
+                const menu = dropdown.querySelector('.dropdown-menu');
+                let timeout;
+                
+                dropdown.addEventListener('mouseenter', function() {
+                    clearTimeout(timeout);
+                    const dropdownInstance = new bootstrap.Dropdown(trigger);
+                    dropdownInstance.show();
+                });
+                
+                dropdown.addEventListener('mouseleave', function() {
+                    timeout = setTimeout(function() {
+                        const dropdownInstance = bootstrap.Dropdown.getInstance(trigger);
+                        if (dropdownInstance) {
+                            dropdownInstance.hide();
+                        }
+                    }, 200); // Small delay before hiding
+                });
+            });
+        });
+    </script>
 </body>
 </html>
