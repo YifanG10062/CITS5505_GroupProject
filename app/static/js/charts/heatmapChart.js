@@ -27,18 +27,18 @@ export function renderHeatmapChart(weights, start_date, initial_investment) {
         });
       }
 
-     const getShade = (v) => {
-       if (v > 0.2) return "#f5c154"; 
-       if (v > 0.1) return "#e6aa2e"; 
-       if (v > 0.05) return "#c79846"; 
-       if (v > 0.01) return "#a18761"; 
-       if (v >= 0) return "#768697"; 
-       if (v > -0.01) return "#526785"; 
-       if (v > -0.05) return "#39496a"; 
-       if (v > -0.1) return "#263349"; 
-       return "#1b1b2f";
-     };
-
+      // Updated green to yellow color scale
+      const getShade = (v) => {
+        if (v > 0.2) return "#f5c154"; 
+        if (v > 0.1) return "#e6aa2e"; 
+        if (v > 0.05) return "#d4b832"; 
+        if (v > 0.01) return "#7cd7a7"; 
+        if (v >= 0) return "#46c389"; 
+        if (v > -0.01) return "#2aa27f"; 
+        if (v > -0.05) return "#1b7b6c"; 
+        if (v > -0.1) return "#0f5249"; 
+        return "#083c35"; 
+      };
 
       const ctx = document.getElementById("heatmapChart").getContext("2d");
 
@@ -111,19 +111,18 @@ export function renderHeatmapChart(weights, start_date, initial_investment) {
         legendContainer.innerHTML = `
         <div style="display: flex; justify-content: center; align-items: center; gap: 1px; font-family: Sora; font-size: 10px; margin-top: 6px;">
           <div style="display: flex; gap: 1px;">
-            <div style="width: 14px; height: 8px; background-color: #1b1b2f;"></div>
-            <div style="width: 14px; height: 8px; background-color: #263349;"></div>
-            <div style="width: 14px; height: 8px; background-color: #39496a;"></div>
-            <div style="width: 14px; height: 8px; background-color: #526785;"></div>
-            <div style="width: 14px; height: 8px; background-color: #768697;"></div>
-            <div style="width: 14px; height: 8px; background-color: #a18761;"></div>
-            <div style="width: 14px; height: 8px; background-color: #c79846;"></div>
+            <div style="width: 14px; height: 8px; background-color: #083c35;"></div>
+            <div style="width: 14px; height: 8px; background-color: #0f5249;"></div>
+            <div style="width: 14px; height: 8px; background-color: #1b7b6c;"></div>
+            <div style="width: 14px; height: 8px; background-color: #2aa27f;"></div>
+            <div style="width: 14px; height: 8px; background-color: #46c389;"></div>
+            <div style="width: 14px; height: 8px; background-color: #7cd7a7;"></div>
+            <div style="width: 14px; height: 8px; background-color: #d4b832;"></div>
             <div style="width: 14px; height: 8px; background-color: #e6aa2e;"></div>
             <div style="width: 14px; height: 8px; background-color: #f5c154;"></div>
           </div>
         </div>
       `;
-
       }
     })
     .catch((err) => {

@@ -3,11 +3,11 @@ export const chartTheme = {
   maintainAspectRatio: false,
   interaction: { mode: "index", intersect: false },
   animation: {
-    duration: 1200, 
-    easing: "easeOutCubic", 
+    duration: 1200,
+    easing: "easeOutCubic",
   },
   hover: {
-    animationDuration: 400, 
+    animationDuration: 400,
     mode: "nearest",
     intersect: true,
   },
@@ -52,6 +52,7 @@ export const chartTheme = {
       padding: 10,
       cornerRadius: 8,
       boxPadding: 6,
+      displayColors: true,
       callbacks: {
         title: function (tooltipItems) {
           const rawLabel = tooltipItems[0].label;
