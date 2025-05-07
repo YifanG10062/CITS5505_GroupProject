@@ -125,7 +125,6 @@ def email(emailID):
 @login_required
 def logout():
     logout_user()
-    flash("Logged out successfully.", "success")
     return redirect(url_for("user.login"))
 
 # Added from __init__.py - Root route

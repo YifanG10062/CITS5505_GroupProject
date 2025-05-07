@@ -36,12 +36,12 @@
     
     <!-- Investment period info -->
     <div class="investment-period">
-      Invested $1,000 from 1/1/2015 to 4/12/2025
+      Invested $1,000 from {{ earliest_date.strftime('%-m/%-d/%Y') }} to {{ latest_date.strftime('%-m/%-d/%Y') }}
     </div>
     
     <!-- Portfolio table (List View) -->
     <div id="listView">
-      <table class="portfolios-table">
+      <table class="portfolios-table" style="width: auto;">
         <thead>
           <tr>
             <th>Portfolio Name</th>

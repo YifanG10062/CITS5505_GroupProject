@@ -8,6 +8,8 @@ from flask_login import login_required, current_user
 
 from app.calculation import calculate_portfolio_metrics
 from app.models.portfolio import PortfolioSummary, PortfolioChangeLog  # Fix the import path
+from app.models.asset import Price
+from sqlalchemy import func
 from app import db  # Import db from app
 
 # Define portfolios blueprint
@@ -141,7 +143,9 @@ def list():
             "max_drawdown": p.max_drawdown
         })
     
-    return render_template("portfolio/portfolio_list.html", portfolios=portfolios_list)
+    earliest_date = db.session.query(func.min(Price.date)).scalar()
+    latest_date = db.session.query(func.max(Price.date)).scalar()
+    return render_template("portfolio/portfolio_list.html", portfolios=portfolios_list, earliest_date=earliest_date, latest_date=latest_date)
 
 def get_assets():
     """Get assets directly from database without caching"""
