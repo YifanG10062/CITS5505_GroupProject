@@ -1038,3 +1038,28 @@ a.action-link:hover {
   text-decoration-thickness: 1px;
   text-underline-offset: 2px;
 }
+
+/* Selected row styling for portfolios table */
+.portfolios-table tbody tr.selected td {
+  border-bottom: none;
+}
+
+/* Draw an outline around the row when clicked */
+.portfolios-table tbody tr.selected {
+  outline: 2px solid var(--primary);
+  outline-offset: -1px;
+}
+
+/* Left-side highlight bar with high visibility */
+.portfolios-table tbody tr.selected td:first-child {
+  position: relative;            /* Reference for pseudo-element positioning */
+}
+.portfolios-table tbody tr.selected td:first-child::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;                    /* Thickness of the highlight bar */
+  background: var(--primary);
+  border-top-left-radius: 4px;   
+  border-bottom-left-radius: 4px; 
+}

@@ -855,3 +855,40 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// Portfolio Comparison Functionality
+document.addEventListener('DOMContentLoaded', () => {
+    const rows = document.querySelectorAll('.portfolios-table tbody tr');
+    const compareBtn = document.getElementById('compareBtn');
+    let selected = [];
+  
+    rows.forEach(row => {
+      row.addEventListener('click', () => {
+        const id = row.dataset.id;
+  
+        if (selected.includes(id)) {
+          // Deselect the row
+          selected = selected.filter(x => x !== id);
+          row.classList.remove('selected');
+        } else {
+          // Allow selection of up to two rows
+          if (selected.length < 2) {
+            selected.push(id);
+            row.classList.add('selected');
+          } else {
+            alert('You can only select up to two portfolios for comparison.');
+          }
+        }
+  
+        // Compare button state
+        compareBtn.disabled = (selected.length !== 2);
+      });
+    });
+  
+    compareBtn.addEventListener('click', () => {
+      if (selected.length === 2) {
+        const [a, b] = selected;
+        window.location.href = `/comparison/?a=${a}&b=${b}`;
+      }
+    });
+});
