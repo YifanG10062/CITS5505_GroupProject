@@ -64,6 +64,13 @@ def create_test_users():
             'user_pswd': 'password123',
             'user_fName': 'Rich',
             'user_lName': 'Two'
+        },
+        {
+            'username': 'rich3',
+            'user_email': 'rich3@example.com',
+            'user_pswd': 'password123',
+            'user_fName': 'Rich',
+            'user_lName': 'Three'
         }
     ]
     
