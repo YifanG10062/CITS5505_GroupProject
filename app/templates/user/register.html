@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/userpage.css') }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
 {% endblock %}
-
+{% block navbar %}{% endblock %}
 {% block content %}
 {% from "user/_formhelpers.html" import render_field %}
 

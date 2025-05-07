@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
 
 {% endblock %}
-
+{% block navbar %}{% endblock %}
 {% block content %}
 {% from "user/_formhelpers.html" import render_field %}
 
@@ -33,19 +33,6 @@
 
                     <div class="d-flex">
                         <div class="w-100">
-                            <!-- Flash for login-required message -->
-                            {% with messages = get_flashed_messages(with_categories=true) %}
-                                {% if messages %}
-                                    {% for category, message in messages %}
-                                        {% if message == "Please log in to access this page." %}
-                                            <div class="alert alert-warning alert-dismissible fade show" role="alert" style="font-size: 12px;">
-                                                {{ message }}
-                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                            </div>
-                                        {% endif %}
-                                    {% endfor %}
-                                {% endif %}
-                            {% endwith %}  
                             <h3 class="mb-4">Sign In</h3>
                         </div>
                     </div>
