@@ -93,12 +93,41 @@ body {
   width: 100%;
 }
 
+/* Prevent underline on dropdown toggle */
+.navbar .nav-link.dropdown-toggle::after {
+  content: none;  
+}
+
+/* Add back just the dropdown caret */
+.navbar .nav-link.dropdown-toggle {
+  padding-bottom: 0;  
+}
+
 .navbar .nav-link.active {
   color: var(--text-primary);
 }
 
 .navbar .nav-link:hover {
   color: var(--primary);
+}
+
+/* Style for active dropdown - highlight username when dropdown is shown */
+.navbar .nav-link.dropdown-toggle.show {
+  color: var(--primary);
+}
+
+/* Dropdown styling for navbar */
+.nav-item .dropdown-toggle::after {
+    margin-left: 0.5em;
+    vertical-align: middle;
+    position: relative;
+    top: 1px;
+    border-top-color: currentColor;  
+}
+
+.nav-item .dropdown-toggle {
+    display: inline-flex;
+    align-items: center;
 }
 
 /* Card styles */

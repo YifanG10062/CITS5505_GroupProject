@@ -87,5 +87,33 @@
     
     <!-- Additional Script blocks -->
     {% block scripts %}{% endblock %}
+    
+    <!-- Dropdown hover functionality -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdownElementList = document.querySelectorAll('.dropdown');
+            
+            dropdownElementList.forEach(function(dropdown) {
+                const trigger = dropdown.querySelector('.dropdown-toggle');
+                const menu = dropdown.querySelector('.dropdown-menu');
+                let timeout;
+                
+                dropdown.addEventListener('mouseenter', function() {
+                    clearTimeout(timeout);
+                    const dropdownInstance = new bootstrap.Dropdown(trigger);
+                    dropdownInstance.show();
+                });
+                
+                dropdown.addEventListener('mouseleave', function() {
+                    timeout = setTimeout(function() {
+                        const dropdownInstance = bootstrap.Dropdown.getInstance(trigger);
+                        if (dropdownInstance) {
+                            dropdownInstance.hide();
+                        }
+                    }, 200); // Small delay before hiding
+                });
+            });
+        });
+    </script>
 </body>
 </html>
