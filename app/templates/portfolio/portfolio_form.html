@@ -112,4 +112,12 @@
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/portfolio.js') }}"></script>
+
+{% if current_allocation %}
+<script>
+    // Make current allocation available to portfolio.js
+    const currentAllocation = {{ current_allocation|tojson }};
+    console.log('Current allocation loaded:', currentAllocation);
+</script>
+{% endif %}
 {% endblock %}
