@@ -20,6 +20,13 @@
     <div class="row">
         <!-- Asset Selection -->
         <div class="col-12 col-lg-8 order-1">
+            <!-- Debug information -->
+            {% if assets %}
+                <!-- Assets found: {{ assets|length }} -->
+            {% else %}
+                <div class="alert alert-warning">No assets available. Please check the database.</div>
+            {% endif %}
+            
             <div class="asset-grid">
                 {% for asset in assets %}
                 <div class="asset-card" data-asset-code="{{ asset.code }}">
@@ -90,7 +97,7 @@
                         <!-- Edit View (Hidden initially) -->
                         <div class="portfolio-name-edit" style="display: none;">
                             <input type="text" class="form-control" id="portfolio_name" name="portfolio_name" 
-                                   value="{{ portfolio.name if portfolio and portfolio.name else '' }}" required maxlength="50">
+                                   value="{{ portfolio.name if portfolio and portfolio.name else '' }}" maxlength="40">
                         </div>
                     </div>
                 </div>
