@@ -20,6 +20,13 @@
     <div class="row">
         <!-- Asset Selection -->
         <div class="col-12 col-lg-8 order-1">
+            <!-- Debug information -->
+            {% if assets %}
+                <!-- Assets found: {{ assets|length }} -->
+            {% else %}
+                <div class="alert alert-warning">No assets available. Please check the database.</div>
+            {% endif %}
+            
             <div class="asset-grid">
                 {% for asset in assets %}
                 <div class="asset-card" data-asset-code="{{ asset.code }}">
@@ -82,15 +89,15 @@
                         <!-- Display View (Default) -->
                         <div class="portfolio-name-display">
                             <img src="{{ url_for('static', filename='icons/edit.svg') }}" alt="Edit" class="edit-icon">
-                            <span class="portfolio-name-text {% if not portfolio or not portfolio.name %}empty{% endif %}">
-                                {% if portfolio and portfolio.name %}{{ portfolio.name }}{% else %}click to edit{% endif %}
+                            <span class="portfolio-name-text {% if not portfolio or not portfolio.portfolio_name %}empty{% endif %}">
+                                {% if portfolio and portfolio.portfolio_name %}{{ portfolio.portfolio_name }}{% elif suggested_name %}{{ suggested_name }}{% else %}click to edit{% endif %}
                             </span>
                         </div>
                         
                         <!-- Edit View (Hidden initially) -->
                         <div class="portfolio-name-edit" style="display: none;">
                             <input type="text" class="form-control" id="portfolio_name" name="portfolio_name" 
-                                   value="{{ portfolio.name if portfolio and portfolio.name else '' }}" required maxlength="50">
+                                   value="{% if portfolio and portfolio.portfolio_name %}{{ portfolio.portfolio_name }}{% elif suggested_name %}{{ suggested_name }}{% else %}{% endif %}" maxlength="40">
                         </div>
                     </div>
                 </div>
@@ -112,4 +119,12 @@
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/portfolio.js') }}"></script>
+
+{% if current_allocation %}
+<script>
+    // Make current allocation available to portfolio.js
+    const currentAllocation = {{ current_allocation|tojson }};
+    console.log('Current allocation loaded:', currentAllocation);
+</script>
+{% endif %}
 {% endblock %}
