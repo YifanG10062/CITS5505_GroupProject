@@ -14,11 +14,15 @@
           class="overview-summary h-100 d-flex flex-column justify-content-between"
         >
           <div>
-            <h5 class="fw-bold mb-2 text-primary-custom">Portfolio Demo</h5>
-            <p class="mb-1 small">50% BTC + 30% NVDA + 20% AAPL</p>
-            <p class="mb-1 small text-secondary" id="date-range">–</p>
-            <p class="mb-1 small text-secondary">Creator: Name(Me)</p>
-            <p class="mb-0 small text-secondary">Update time:</p>
+            <h5 class="fw-bold mb-2 text-primary-custom">
+              {{ portfolio_name }}
+            </h5>
+            <p class="mb-1 small">{{ asset_string }}</p>
+            <p class="mb-1 small text-secondary" id="date-range">
+              From {{ start_date }} to {{ end_date }}
+            </p>
+            <p class="mb-1 small text-secondary">Creator: {{ creator }}</p>
+            <p class="mb-0 small text-secondary">Last Updated: {{ updated_at }}</p>
           </div>
         </div>
       </div>
