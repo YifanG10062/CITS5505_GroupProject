@@ -6,6 +6,8 @@ from app.models.asset import Price
 from app import db
 import json
 from datetime import datetime
+from flask import request, jsonify
+from app.calculation import calculate_portfolio_metrics
 
 dashboard = Blueprint("dashboard", __name__)
 
@@ -61,3 +63,29 @@ def show(portfolio_id):
         end_date=end_date,
         initial_investment=initial_investment
     )
+@dashboard.route("/api/portfolio-top-movers", methods=["POST"])
+@login_required
+def top_movers():
+    data = request.get_json()
+    weights = data.get("weights", {})
+    if not weights:
+        return jsonify({"error": "Missing weights"}), 400
+
+    start_date = "2015-01-01"
+    initial_amount = 1000
+
+    asset_returns = []
+    for asset, weight in weights.items():
+        metrics = calculate_portfolio_metrics({asset: 1.0}, start_date, initial_amount, fields=["return_percent"])
+        if metrics and "return_percent" in metrics:
+            asset_returns.append((asset, round(metrics["return_percent"] * 100, 2)))
+
+    asset_returns.sort(key=lambda x: x[1], reverse=True)
+    top = asset_returns[:3]
+    bottom = asset_returns[-3:] if len(asset_returns) > 3 else []
+
+    combined = top + bottom
+    labels = [a[0] for a in combined]
+    values = [a[1] for a in combined]
+
+    return jsonify({"labels": labels, "values": values})
