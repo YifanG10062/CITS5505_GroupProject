@@ -1,4 +1,3 @@
-from app import db
 from app.models.user import User
 from app.models.portfolio import PortfolioSummary
 from flask import current_app
@@ -11,6 +10,7 @@ from flask.cli import with_appcontext
 @with_appcontext
 def refresh_user_info_command():
     """Refresh all user information in portfolio summaries."""
+    from app import db
     portfolios = PortfolioSummary.query.all()
     updated_count = 0
     
@@ -27,14 +27,29 @@ def setup_dev_environment():
     if os.environ.get('FLASK_ENV') != 'development' and not current_app.config.get('TESTING', False):
         return
     
-    # Check and create test users
-    create_test_users()
+    # Ensure db is initialized
+    from app import db
+    
+    # Check if database tables exist, create them if not
+    try:
+        # Check and create test users
+        create_test_users()
+    except Exception as e:
+        print(f"Error setting up development environment: {e}")
     
     # Additional development environment initialization code can be added here
     print("Development environment setup completed, test users are ready")
 
 def create_test_users():
     """Create test users if they don't exist"""
+    from app import db
+    
+    # Ensure User is a SQLAlchemy model
+    # If User is not a subclass of db.Model, check and handle it this way
+    if not hasattr(User, 'query'):
+        print("Error: User model has no query attribute, please check the User class definition")
+        return
+    
     test_users = [
         {
             'username': 'rich1',
@@ -80,6 +95,7 @@ def setup_dev_command():
 def init_app(app):
     """Register commands with the Flask application"""
     app.cli.add_command(setup_dev_command)
+    app.cli.add_command(refresh_user_info_command)
     
     # Setup development environment on app startup if in development mode
     if os.environ.get('FLASK_ENV') == 'development' or app.config.get('TESTING', False):
