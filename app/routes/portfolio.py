@@ -8,6 +8,8 @@ from flask_login import login_required, current_user
 
 from app.calculation import calculate_portfolio_metrics
 from app.models.portfolio import PortfolioSummary, PortfolioChangeLog  # Fix the import path
+from app.models.asset import Price
+from sqlalchemy import func
 from app import db  # Import db from app
 
 # Define portfolios blueprint
@@ -141,7 +143,9 @@ def list():
             "max_drawdown": p.max_drawdown
         })
     
-    return render_template("portfolio/portfolio_list.html", portfolios=portfolios_list)
+    earliest_date = db.session.query(func.min(Price.date)).scalar()
+    latest_date = db.session.query(func.max(Price.date)).scalar()
+    return render_template("portfolio/portfolio_list.html", portfolios=portfolios_list, earliest_date=earliest_date, latest_date=latest_date)
 
 def get_assets():
     """Get assets directly from database without caching"""
@@ -180,7 +184,135 @@ def get_assets():
 
 # Create New Portfolio
 @portfolios.route("/new", methods=["GET", "POST"])
+@login_required
 def create():
+    try:
+        if request.method == "POST":
+            portfolio_name = request.form.get("portfolio_name")
+
+            # Get allocation from form
+            allocation = {}
+            for key, value in request.form.items():
+                if key.startswith('allocation[') and key.endswith(']'):
+                    asset_code = key[11:-1]
+                    try:
+                        allocation[asset_code] = int(value) / 100.0
+                    except ValueError:
+                        return render_template("portfolio/portfolio_form.html", portfolio=None, 
+                                               error="Invalid allocation values", assets=get_assets())
+
+            initial_amount = 1000.0
+            start_date = datetime.strptime("2015-01-01", "%Y-%m-%d").date()
+
+            try:
+                # Calculate metrics
+                metrics = calculate_portfolio_metrics(
+                    allocation=allocation,
+                    start_date=start_date.isoformat(),
+                    initial_amount=initial_amount
+                )
+
+                new_portfolio = PortfolioSummary(
+                    portfolio_name=portfolio_name,
+                    user_id=current_user.id,
+                    creator_id=current_user.id,
+                    user_username=current_user.username,
+                    user_email=current_user.user_email,
+                    creator_username=current_user.username,
+                    creator_email=current_user.user_email,
+                    allocation_json=json.dumps(allocation),
+                    start_date=start_date,
+                    initial_amount=initial_amount,
+                    current_value=metrics.get("current_value"),
+                    profit=metrics.get("profit"),
+                    return_percent=metrics.get("return_percent"),
+                    cagr=metrics.get("cagr"),
+                    volatility=metrics.get("volatility"),
+                    max_drawdown=metrics.get("max_drawdown"),
+                    input_updated_at=datetime.utcnow()
+                )
+
+                db.session.add(new_portfolio)
+                db.session.commit()
+
+            except Exception as e:
+                print("Portfolio creation error:", e)
+                return render_template("portfolio/portfolio_form.html", portfolio=None, 
+                                       error="Failed to calculate or save portfolio.", assets=get_assets())
+
+            return redirect(url_for('dashboard.show', portfolio_id=new_portfolio.portfolio_id))
+
+        return render_template("portfolio/portfolio_form.html", portfolio=None, error=None, assets=get_assets())
+
+    except Exception as e:
+        print("Unhandled error in portfolio creation:", e)
+        print(traceback.format_exc())
+        return f"Internal server error: {str(e)}", 500
+
+    try:
+        if request.method == "POST":
+            # Use the user-provided portfolio name if provided, otherwise will be updated after creation
+            portfolio_name = request.form.get("portfolio_name", "")
+
+            # Get allocation from form
+            allocation = {}
+            for key, value in request.form.items():
+                if key.startswith('allocation[') and key.endswith(']'):
+                    asset_code = key[11:-1]
+                    try:
+                        allocation[asset_code] = int(value) / 100.0
+                    except ValueError:
+                        return render_template("portfolio/portfolio_form.html", portfolio=None, 
+                                               error="Invalid allocation values", assets=get_assets())
+
+            initial_amount = 1000.0
+            start_date = datetime.strptime("2015-01-01", "%Y-%m-%d").date()
+
+            try:
+                # Calculate metrics
+                metrics = calculate_portfolio_metrics(
+                    allocation=allocation,
+                    start_date=start_date.isoformat(),
+                    initial_amount=initial_amount
+                )
+
+                new_portfolio = PortfolioSummary(
+                    portfolio_name=portfolio_name,
+                    user_id=current_user.id,
+                    creator_id=current_user.id,
+                    user_username=current_user.username,
+                    user_email=current_user.user_email,
+                    creator_username=current_user.username,
+                    creator_email=current_user.user_email,
+                    allocation_json=json.dumps(allocation),
+                    start_date=start_date,
+                    initial_amount=initial_amount,
+                    current_value=metrics.get("current_value"),
+                    profit=metrics.get("profit"),
+                    return_percent=metrics.get("return_percent"),
+                    cagr=metrics.get("cagr"),
+                    volatility=metrics.get("volatility"),
+                    max_drawdown=metrics.get("max_drawdown"),
+                    input_updated_at=datetime.utcnow()
+                )
+
+                db.session.add(new_portfolio)
+                db.session.commit()
+
+            except Exception as e:
+                print("Portfolio creation error:", e)
+                return render_template("portfolio/portfolio_form.html", portfolio=None, 
+                                       error="Failed to calculate or save portfolio.", assets=get_assets())
+
+            return redirect(url_for('dashboard.show', portfolio_id=new_portfolio.portfolio_id))
+
+        return render_template("portfolio/portfolio_form.html", portfolio=None, error=None, assets=get_assets())
+
+    except Exception as e:
+        print("Unhandled error in portfolio creation:", e)
+        print(traceback.format_exc())
+        return f"Internal server error: {str(e)}", 500
+
     try:
         if request.method == "POST":
             # Use the user-provided portfolio name if provided, otherwise will be updated after creation
@@ -372,7 +504,7 @@ def edit(portfolio_id):
 
         return redirect(url_for('dashboard.show', portfolio_id=portfolio.portfolio_id))
     
-    # Fetch assets from database
+    # Fetch assets from the database, excluding 'etf' type
     try:
         conn = sqlite3.connect('db/portfolio_data.db')
         cursor = conn.cursor()
@@ -380,6 +512,7 @@ def edit(portfolio_id):
         cursor.execute("""
             SELECT asset_code, display_name, full_name, logo_url 
             FROM assets
+            WHERE type != 'etf'  -- Exclude 'etf' assets
             ORDER BY display_name
         """)
         assets = []

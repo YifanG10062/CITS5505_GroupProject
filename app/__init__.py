@@ -32,6 +32,9 @@ def create_app(config_class=ProductionConfig):
     login_manager.init_app(app)
     login_manager.login_view = 'user.login'  # Updated to use blueprint route
 
+    # Suppress the default "Please log in to access this page." message
+    login_manager.login_message = None
+
     # Secret key fallback
     if not app.config.get('SECRET_KEY'):
         app.config['SECRET_KEY'] = 'temporary-secret-key'

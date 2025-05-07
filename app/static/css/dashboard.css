@@ -1,7 +1,49 @@
 /* Dashboard specific styles */
 @import url('../css/main.css');
 
-/* Dashboard overview card styling */
+/* Portfolio Overview Styling */
+.overview-summary {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1.5rem 0;
+  height: 100%;
+}
+
+.portfolio-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+}
+
+.overview-divider {
+  width: 60%;
+  height: 1px;
+  background-color: var(--card-outline);
+  margin: 0.75rem 0 1rem 0;
+  opacity: 0.4;
+}
+
+.overview-summary p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.35rem;
+}
+
+.overview-asset-string {
+  font-weight: 600;
+  color: rgba(243, 244, 246, 0.85); /* near-primary text */
+  margin-top: 0.25rem;
+}
+
+.portfolio-title {
+  color: var(--primary);
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
 .card.dashboard-overview {
   background-color: var(--card-bg) !important;
   color: var(--text-primary);
