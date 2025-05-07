@@ -89,15 +89,15 @@
                         <!-- Display View (Default) -->
                         <div class="portfolio-name-display">
                             <img src="{{ url_for('static', filename='icons/edit.svg') }}" alt="Edit" class="edit-icon">
-                            <span class="portfolio-name-text {% if not portfolio or not portfolio.name %}empty{% endif %}">
-                                {% if portfolio and portfolio.name %}{{ portfolio.name }}{% else %}click to edit{% endif %}
+                            <span class="portfolio-name-text {% if not portfolio or not portfolio.portfolio_name %}empty{% endif %}">
+                                {% if portfolio and portfolio.portfolio_name %}{{ portfolio.portfolio_name }}{% elif suggested_name %}{{ suggested_name }}{% else %}click to edit{% endif %}
                             </span>
                         </div>
                         
                         <!-- Edit View (Hidden initially) -->
                         <div class="portfolio-name-edit" style="display: none;">
                             <input type="text" class="form-control" id="portfolio_name" name="portfolio_name" 
-                                   value="{{ portfolio.name if portfolio and portfolio.name else '' }}" maxlength="40">
+                                   value="{% if portfolio and portfolio.portfolio_name %}{{ portfolio.portfolio_name }}{% elif suggested_name %}{{ suggested_name }}{% else %}{% endif %}" maxlength="40">
                         </div>
                     </div>
                 </div>

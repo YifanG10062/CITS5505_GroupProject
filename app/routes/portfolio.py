@@ -183,7 +183,8 @@ def get_assets():
 def create():
     try:
         if request.method == "POST":
-            portfolio_name = request.form.get("portfolio_name")
+            # Use the user-provided portfolio name if provided, otherwise will be updated after creation
+            portfolio_name = request.form.get("portfolio_name", "")
             
             # Collect allocation data and convert to the correct format
             allocation = {}
@@ -210,7 +211,7 @@ def create():
                 
                 # Use dictionary get() method with defaults to handle missing keys
                 new_portfolio = PortfolioSummary(
-                    portfolio_name=portfolio_name,
+                    portfolio_name=portfolio_name or f"Temporary Name",  # Will be updated after ID is assigned
                     user_id=current_user.id,
                     creator_id=current_user.id,
                     allocation_json=json.dumps(allocation),  # Store allocation as JSON
@@ -238,7 +239,15 @@ def create():
                 new_portfolio.creator_username = current_user.username
                 new_portfolio.creator_email = current_user.user_email
                 
+                # First save to get the portfolio_id
                 db.session.add(new_portfolio)
+                db.session.flush()
+                
+                # Now update the name with the portfolio_id if no custom name was provided
+                if not portfolio_name:
+                    new_portfolio.portfolio_name = f"{current_user.username}'s portfolio{new_portfolio.portfolio_id}"
+                
+                # Commit the changes
                 db.session.commit()
                 
             except Exception as e:
@@ -248,9 +257,12 @@ def create():
 
             return redirect(url_for('dashboard.show', portfolio_id=new_portfolio.portfolio_id))
 
+        # For GET request: prepare a suggested portfolio name for the form
+        suggested_name = f"{current_user.username}'s portfolio"
         # Get assets from the database
         assets = get_assets()
-        return render_template("portfolio/portfolio_form.html", portfolio=None, error=None, assets=assets)
+        return render_template("portfolio/portfolio_form.html", portfolio=None, 
+                              error=None, assets=assets, suggested_name=suggested_name)
 
     except Exception as e:
         # Log the full error with traceback
@@ -275,7 +287,9 @@ def edit(portfolio_id):
         current_allocation = {}
     
     if request.method == "POST":
+        # Get the updated portfolio name from the form
         portfolio_name = request.form.get("portfolio_name")
+        original_portfolio_name = portfolio.portfolio_name  # Store original name for comparison
         
         # Collect allocation data and convert to the correct format
         allocation = {}
@@ -285,8 +299,11 @@ def edit(portfolio_id):
                 try:
                     allocation[asset_code] = int(value) / 100.0
                 except ValueError:
-                    return render_template("portfolio/portfolio_form.html", portfolio=portfolio,
-                                           error="Invalid allocation values")
+                    return render_template("portfolio/portfolio_form.html", 
+                                          portfolio=portfolio,
+                                          current_allocation=current_allocation,
+                                          assets=get_assets(),
+                                          error="Invalid allocation values")
 
         initial_amount = 1000.0
         start_date = "2015-01-01"
@@ -329,12 +346,12 @@ def edit(portfolio_id):
                 db.session.add(change_log)
                 db.session.commit()
                 
-                if portfolio_name != portfolio.portfolio_name:
+                if portfolio_name != original_portfolio_name:  # Compare with original name
                     name_change_log = PortfolioChangeLog(
                         portfolio_id=portfolio.portfolio_id,
                         changed_by=current_user.id,
                         field_changed="portfolio_name",
-                        old_value=portfolio.portfolio_name,
+                        old_value=original_portfolio_name,
                         new_value=portfolio_name
                     )
                     db.session.add(name_change_log)
