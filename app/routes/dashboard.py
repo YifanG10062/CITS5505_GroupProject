@@ -19,10 +19,8 @@ def show(portfolio_id):
         weights = {"BTC-USD": 0.5, "NVDA": 0.3, "AAPL": 0.2}
         portfolio_name = "Preview Portfolio"
         creator = current_user.username
-        updated_at = datetime.today().strftime("%b %d, %Y %H:%M")
+        updated_at = datetime.today().strftime("%b %d %Y")
         initial_investment = 1000
-
-        # fallback asset codes
         asset_codes = list(weights.keys())
     else:
         if portfolio.user_id != current_user.id and not portfolio.is_shared:
@@ -37,8 +35,9 @@ def show(portfolio_id):
         creator = portfolio.creator_username
         initial_investment = portfolio.initial_amount
         asset_codes = list(weights.keys())
+        updated_at = portfolio.metric_updated_at.strftime("%b %d %Y") if portfolio.metric_updated_at else "Unknown"
 
-    # Common: compute shared start and end dates from price data
+    # Compute shared start and end dates
     start_date_result = db.session.query(func.min(Price.date)).filter(
         Price.asset_code.in_(asset_codes)
     ).group_by(Price.asset_code).all()
@@ -49,12 +48,8 @@ def show(portfolio_id):
     ).group_by(Price.asset_code).all()
     end_date = min((r[0] for r in end_date_result), default=datetime.today()).strftime("%Y-%m-%d")
 
-    updated_at = min((r[0] for r in end_date_result), default=datetime.today()).strftime("%b %d, %Y %H:%M")
-
     # Allocation summary string
-    asset_string = " + ".join([
-        f"{int(w * 100)}% {code}" for code, w in weights.items()
-    ])
+    asset_string = " + ".join([f"{int(w * 100)}% {code}" for code, w in weights.items()])
 
     return render_template("dashboard.html",
         weights=weights,
