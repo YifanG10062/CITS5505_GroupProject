@@ -13,7 +13,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from config import ProductionConfig
 from app.fetch_price import refresh_history_command
-from app.commands import refresh_user_info_command  # Import the new command
+from app.commands import refresh_user_info_command, init_app  # Import the new command and init function
 
 # --- Extensions ---
 db = SQLAlchemy()
@@ -21,13 +21,6 @@ migrate = Migrate()
 csrf = CSRFProtect()
 mail = Mail()
 login_manager = LoginManager()
-
-# --- Optional Mock User (for dev mode) ---
-class MockUser:
-    def __init__(self, is_authenticated=False):
-        self.is_authenticated = is_authenticated
-        self.id = 1 if is_authenticated else None
-        self.username = "test_user" if is_authenticated else None
 
 # --- Flask App Factory ---
 def create_app(config_class=ProductionConfig):
@@ -96,13 +89,10 @@ def create_app(config_class=ProductionConfig):
                                heading="Something went wrong", subheading="Internal Server Error",
                                details="Try again later or contact support."), 500
 
-    # Optional: mock user for dev
-    @app.before_request
-    def inject_user():
-        g.current_user = MockUser(is_authenticated=False)
-
-    @app.context_processor
-    def inject_user_template():
-        return {'current_user': getattr(g, 'current_user', MockUser())}
+    with app.app_context():
+        db.create_all()  # Ensure database tables are created
+        
+        # Register commands and initialize development environment if needed
+        init_app(app)
 
     return app

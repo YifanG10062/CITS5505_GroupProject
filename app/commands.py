@@ -1,3 +1,9 @@
+from app import db
+from app.models.user import User
+from app.models.portfolio import PortfolioSummary
+from flask import current_app
+import os
+from werkzeug.security import generate_password_hash
 import click
 from flask.cli import with_appcontext
 
@@ -5,10 +11,6 @@ from flask.cli import with_appcontext
 @with_appcontext
 def refresh_user_info_command():
     """Refresh all user information in portfolio summaries."""
-    # Move imports inside the function to avoid circular imports
-    from app import db
-    from app.models.portfolio import PortfolioSummary
-    
     portfolios = PortfolioSummary.query.all()
     updated_count = 0
     
@@ -18,3 +20,68 @@ def refresh_user_info_command():
     
     db.session.commit()
     click.echo(f"Updated user information for {updated_count} portfolios.")
+
+def setup_dev_environment():
+    """Setup test users and other configurations in development environment"""
+    # Only execute in development environment
+    if os.environ.get('FLASK_ENV') != 'development' and not current_app.config.get('TESTING', False):
+        return
+    
+    # Check and create test users
+    create_test_users()
+    
+    # Additional development environment initialization code can be added here
+    print("Development environment setup completed, test users are ready")
+
+def create_test_users():
+    """Create test users if they don't exist"""
+    test_users = [
+        {
+            'username': 'rich1',
+            'user_email': 'rich1@example.com',
+            'user_pswd': 'password123',
+            'user_fName': 'Rich',
+            'user_lName': 'One'
+        },
+        {
+            'username': 'rich2',
+            'user_email': 'rich2@example.com',
+            'user_pswd': 'password123',
+            'user_fName': 'Rich',
+            'user_lName': 'Two'
+        }
+    ]
+    
+    for user_data in test_users:
+        # Check if user already exists
+        existing_user = User.query.filter_by(user_email=user_data['user_email']).first()
+        if not existing_user:
+            # Create new user
+            new_user = User(
+                username=user_data['username'],
+                user_email=user_data['user_email'],
+                user_pswd=generate_password_hash(user_data['user_pswd']),
+                user_fName=user_data['user_fName'],
+                user_lName=user_data['user_lName']
+            )
+            db.session.add(new_user)
+            print(f"Created test user: {user_data['username']}")
+    
+    # Commit all changes
+    db.session.commit()
+
+@click.command('setup-dev')
+@with_appcontext
+def setup_dev_command():
+    """Command to manually setup development environment"""
+    setup_dev_environment()
+    click.echo('Development environment setup completed.')
+
+def init_app(app):
+    """Register commands with the Flask application"""
+    app.cli.add_command(setup_dev_command)
+    
+    # Setup development environment on app startup if in development mode
+    if os.environ.get('FLASK_ENV') == 'development' or app.config.get('TESTING', False):
+        with app.app_context():
+            setup_dev_environment()
