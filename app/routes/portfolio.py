@@ -504,7 +504,7 @@ def edit(portfolio_id):
 
         return redirect(url_for('dashboard.show', portfolio_id=portfolio.portfolio_id))
     
-    # Fetch assets from database
+    # Fetch assets from the database, excluding 'etf' type
     try:
         conn = sqlite3.connect('db/portfolio_data.db')
         cursor = conn.cursor()
@@ -512,6 +512,7 @@ def edit(portfolio_id):
         cursor.execute("""
             SELECT asset_code, display_name, full_name, logo_url 
             FROM assets
+            WHERE type != 'etf'  -- Exclude 'etf' assets
             ORDER BY display_name
         """)
         assets = []
