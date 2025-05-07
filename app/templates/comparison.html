@@ -1,77 +1,161 @@
 {% extends "base.html" %}
-
 {% block title %}Comparison - The Richverse{% endblock %}
-
 {% block styles %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 {% endblock %}
-
 {% block content %}
-<div class="container mt-4">
-  <div class="card dashboard-overview px-4 py-3 shadow-sm">
-    <div class="row g-3">
-      <!-- Metrics Bar Chart -->
-      <div class="col-lg-6">
-        <div class="card chart-glow shadow-sm" style="height: 350px;">
-          <div class="card-header">Comparison Metrics</div>
-          <div class="card-body d-flex align-items-center justify-content-center">
-            <canvas id="metricsChart"></canvas>
-          </div>
+    <div class="container mt-4">
+        <div class="row g-4 align-items-stretch">
+            <!-- Portfolio A Card -->
+            <div class="col-12 col-lg-6">
+                <div class="card dashboard-overview px-4 py-3 shadow-sm">
+                    <div class="row g-3">
+                        <!-- Summary Left -->
+                        <div class="col-lg-4">
+                            <div class="overview-summary h-100 d-flex flex-column justify-content-between">
+                                <div>
+                                    <h4 class="portfolio-title">{{ name_a }}</h4>
+                                    <p class="overview-asset-string">{{ asset_string }}</p>
+                                    <div class="overview-divider"></div>
+                                    <p class="small">From {{ start_date }} to {{ end_date }}</p>
+                                    <p class="small">Last Updated: {{ updated_at }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Metrics Right -->
+                        <div class="col-lg-8">
+                            <div class="row g-3">
+                                <div class="col-6 col-md-4 d-flex">
+                                    <div class="card mini-metric shadow-sm p-3">
+                                        <div class="metric-label">Volatility</div>
+                                        <div class="metric-value" id="volatilityA">0%</div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4 d-flex">
+                                    <div class="card mini-metric shadow-sm p-3">
+                                        <div class="metric-label">CAGR%</div>
+                                        <div class="metric-value text-success" id="cagrA">0%</div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4 d-flex">
+                                    <div class="card mini-metric shadow-sm p-3">
+                                        <div class="metric-label">Max Drawdown</div>
+                                        <div class="metric-value text-danger" id="maxDrawdownA">0%</div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if descriptions_a %}
+                                {% set n = descriptions_a|length %}
+                                {% set items = descriptions_a[:3] %}
+                                <div class="row g-3 mt-3">
+                                    {% for item in items %}
+                                        <div class="d-flex {% if n == 1 %}col-12{% elif n == 2 %}col-6{% else %}col-4{% endif %}">
+                                            <div class="card mini-metric shadow-sm p-3 flex-fill">
+                                                <div class="metric-label">{{ item.name }}</div>
+                                                <div class="metric-value" style="font-size:0.9em;">{{ item.description }}</div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Portfolio B Card -->
+            <div class="col-12 col-lg-6">
+                <div class="card dashboard-overview px-4 py-3 shadow-sm">
+                    <div class="row g-3">
+                        <!-- Summary Left -->
+                        <div class="col-lg-4">
+                            <div class="overview-summary h-100 d-flex flex-column justify-content-between">
+                                <div>
+                                    <h4 class="portfolio-title">{{ name_b }}</h4>
+                                    <div class="overview-divider"></div>
+                                    <p class="small">From {{ start_date }} to {{ end_date }}</p>
+                                    <p class="small">Last Updated: {{ updated_at }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Metrics Right -->
+                        <div class="col-lg-8">
+                            <div class="row g-3">
+                                <div class="col-6 col-md-4 d-flex">
+                                    <div class="card mini-metric shadow-sm p-3">
+                                        <div class="metric-label">Volatility</div>
+                                        <div class="metric-value" id="volatilityB">0%</div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4 d-flex">
+                                    <div class="card mini-metric shadow-sm p-3">
+                                        <div class="metric-label">CAGR%</div>
+                                        <div class="metric-value text-success" id="cagrB">0%</div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4 d-flex">
+                                    <div class="card mini-metric shadow-sm p-3">
+                                        <div class="metric-label">Max Drawdown</div>
+                                        <div class="metric-value text-danger" id="maxDrawdownB">0%</div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if descriptions_b %}
+                                {% set n = descriptions_b|length %}
+                                {% set items = descriptions_b[:3] %}
+                                <div class="row g-3 mt-3">
+                                    {% for item in items %}
+                                        <div class="d-flex {% if n == 1 %}col-12{% elif n == 2 %}col-6{% else %}col-4{% endif %}">
+                                            <div class="card mini-metric shadow-sm p-3 flex-fill">
+                                                <div class="metric-label">{{ item.name }}</div>
+                                                <div class="metric-value" style="font-size:0.9em;">{{ item.description }}</div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-      <!-- Cumulative Returns Line Chart -->
-      <div class="col-lg-6">
-        <div class="card chart-glow shadow-sm" style="height: 350px;">
-          <div class="card-header">Cumulative Returns Comparison</div>
-          <div class="card-body d-flex align-items-center justify-content-center">
-            <canvas id="comparisonChart"></canvas>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
-</div>
 
-<div class="container mt-4">
-  <div class="row gx-3 gy-4">
-    <!-- Allocation Pie Chart for Portfolio A -->
-    <div class="col-md-6">
-      <div class="card chart-glow shadow-sm" style="height: 350px;">
-        <div class="card-header">Allocation - {{ name_a }}</div>
-        <div class="card-body d-flex align-items-center justify-content-center">
-          <canvas id="allocationChartA"></canvas>
+    <div class="container mt-5">
+        <!-- Cumulative Returns Card -->
+        <div class="card chart-glow shadow" style="height: 400px;">
+            <div class="card-header">Cumulative Returns Comparison</div>
+            <div class="card-body">
+                <canvas id="cumulativeChartComparison"></canvas>
+            </div>
         </div>
-      </div>
     </div>
-    <!-- Allocation Pie Chart for Portfolio B -->
-    <div class="col-md-6">
-      <div class="card chart-glow shadow-sm" style="height: 350px;">
-        <div class="card-header">Allocation - {{ name_b }}</div>
-        <div class="card-body d-flex align-items-center justify-content-center">
-          <canvas id="allocationChartB"></canvas>
+
+<!--
+<div class="container mt-5">
+    <div class="card chart-glow shadow">
+        <div class="card-header">Allocation Comparison</div>
+        <div class="card-body text-center">
+            <h3 class="text-muted">WORK IN PROGRESS</h3>
         </div>
-      </div>
     </div>
-  </div>
-</div>
+</div>    
+-->
+
 {% endblock %}
 
 {% block scripts %}
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<!-- Inject comparison configuration -->
-<script type="text/javascript">
-  window.comparisonConfig = {
-    weightsA: {{ weights_a|tojson }},
-    weightsB: {{ weights_b|tojson }},
-    startDate: "{{ start_date }}",
-    initialInvestment: {{ initial_investment }},
-    nameA: "{{ name_a }}",
-    nameB: "{{ name_b }}"
-  };
-</script>
-
-<!-- Comparison page JS module -->
-<script type="module" src="{{ url_for('static', filename='js/comparison.js') }}"></script>
+    <script>
+        window.comparisonConfig = {
+            weightsA: {{ weights_a | tojson }},
+            weightsB: {{ weights_b | tojson }},
+            weightsSPY: {{ weights_spy | tojson }},
+            startDate: "{{ start_date }}",
+            initialInvestment: {{ initial_investment }},
+            nameA: "{{ name_a }}",
+            nameB: "{{ name_b }}",
+            nameSPY: "{{ name_spy }}"
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module" src="{{ url_for('static', filename='js/comparison.js') }}"></script>
 {% endblock %}
