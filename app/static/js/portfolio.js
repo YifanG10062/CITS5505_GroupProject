@@ -124,6 +124,46 @@ document.addEventListener('DOMContentLoaded', function() {
         let selectedAssets = [];
         let allocations = {};
         
+        // Check if we're in edit mode and initialize current allocations
+        function initEditMode() {
+            // Check if currentAllocation is defined in the global scope (set by server-side template)
+            if (typeof currentAllocation !== 'undefined' && currentAllocation) {
+                console.log('Edit mode detected with current allocation:', currentAllocation);
+                
+                // For each asset in the current allocation, select it
+                Object.keys(currentAllocation).forEach(assetCode => {
+                    const percent = currentAllocation[assetCode] * 100;
+                    
+                    // Find the asset card for this code
+                    const assetCard = document.querySelector(`.asset-card[data-asset-code="${assetCode}"]`);
+                    if (assetCard) {
+                        // Get asset details
+                        const assetName = assetCard.querySelector('.asset-name').innerText;
+                        const assetCompany = assetCard.querySelector('.asset-company').innerText;
+                        const assetLogoSrc = assetCard.querySelector('.asset-icon img').src;
+                        
+                        // Select the asset card
+                        assetCard.classList.add('selected');
+                        
+                        // Add to selected assets
+                        selectedAssets.push({
+                            code: assetCode,
+                            name: assetName,
+                            company: assetCompany,
+                            logoSrc: assetLogoSrc
+                        });
+                        
+                        // Set allocation
+                        allocations[assetCode] = Math.round(percent);
+                    }
+                });
+                
+                // Update the UI
+                updateAllocationItems();
+                updateCardStates();
+            }
+        }
+        
         /**
          * Update the disabled state of asset cards based on selection count
          */
@@ -429,6 +469,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Initialize UI on page load
         updateCardStates();
+        
+        // Check if we're in edit mode and initialize accordingly
+        initEditMode();
     }
     
     /**
@@ -478,6 +521,53 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('Sort by:', this.textContent.trim());
             });
         });
+
+        // Setup delete functionality
+        const deleteLinks = document.querySelectorAll('.action-link.delete');
+        deleteLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const portfolioId = this.dataset.portfolioId;
+                const portfolioName = this.closest('tr').querySelector('.portfolio-name-cell').textContent.trim();
+                
+                if (confirm(`Are you sure you want to delete portfolio "${portfolioName}"?`)) {
+                    fetch(`/portfolios/${portfolioId}/delete`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Remove row from UI
+                            this.closest('tr').remove();
+                        } else {
+                            alert(`Delete failed: ${data.message}`);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error deleting portfolio:', error);
+                        alert('An error occurred during deletion');
+                    });
+                }
+            });
+        });
+    }
+
+    // Helper function to get CSRF token
+    function getCsrfToken() {
+        // Try to get from meta tag
+        const meta = document.querySelector('meta[name="csrf-token"]');
+        if (meta) return meta.getAttribute('content');
+        
+        // Try to get from hidden input
+        const input = document.querySelector('input[name="csrf_token"]');
+        if (input) return input.value;
+        
+        return '';
     }
     
     /**

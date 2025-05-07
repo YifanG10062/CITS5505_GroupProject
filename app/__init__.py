@@ -1,33 +1,23 @@
+# Standard library imports
 import uuid
 
-from flask import Flask, render_template, redirect, url_for, flash, g, request
+# Third-party imports
+from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, login_user, logout_user, login_required, UserMixin
+from flask_login import LoginManager
 from flask_mail import Mail
 from flask_migrate import Migrate
-from flask_wtf import FlaskForm
 from flask_wtf.csrf import CSRFProtect, CSRFError
-from wtforms import StringField, PasswordField
-from wtforms.validators import InputRequired, Email, Length
-from werkzeug.security import generate_password_hash, check_password_hash
 
+# Local application imports
 from config import ProductionConfig
-from app.fetch_price import refresh_history_command
-from app.commands import refresh_user_info_command  # Import the new command
 
 # --- Extensions ---
-db = SQLAlchemy()
+db = SQLAlchemy()  # Create db instance first
 migrate = Migrate()
 csrf = CSRFProtect()
 mail = Mail()
 login_manager = LoginManager()
-
-# --- Optional Mock User (for dev mode) ---
-class MockUser:
-    def __init__(self, is_authenticated=False):
-        self.is_authenticated = is_authenticated
-        self.id = 1 if is_authenticated else None
-        self.username = "test_user" if is_authenticated else None
 
 # --- Flask App Factory ---
 def create_app(config_class=ProductionConfig):
@@ -35,16 +25,12 @@ def create_app(config_class=ProductionConfig):
     app.config.from_object(config_class)
 
     # Initialize extensions
-    db.init_app(app)
+    db.init_app(app)  # Initialize db with app
     migrate.init_app(app, db)
     csrf.init_app(app)
     mail.init_app(app)
     login_manager.init_app(app)
     login_manager.login_view = 'user.login'  # Updated to use blueprint route
-
-    # Import models
-    from app import models
-    from app.models.user import User  
 
     # Secret key fallback
     if not app.config.get('SECRET_KEY'):
@@ -52,8 +38,13 @@ def create_app(config_class=ProductionConfig):
         print("WARNING: Using temporary secret key")
 
     # CLI commands
+    from app.fetch_price import refresh_history_command
     app.cli.add_command(refresh_history_command)
-    app.cli.add_command(refresh_user_info_command)  # Register the new command
+    
+    # Register custom commands
+    with app.app_context():
+        from app.commands import init_app as init_commands
+        init_commands(app)
     
     # Register blueprints
     from app.routes.main import main
@@ -74,6 +65,7 @@ def create_app(config_class=ProductionConfig):
     # User loader
     @login_manager.user_loader
     def load_user(user_id):
+        from app.models.user import User
         return User.query.get(int(user_id))
 
     # CSRF error handler
@@ -96,13 +88,7 @@ def create_app(config_class=ProductionConfig):
                                heading="Something went wrong", subheading="Internal Server Error",
                                details="Try again later or contact support."), 500
 
-    # Optional: mock user for dev
-    @app.before_request
-    def inject_user():
-        g.current_user = MockUser(is_authenticated=False)
-
-    @app.context_processor
-    def inject_user_template():
-        return {'current_user': getattr(g, 'current_user', MockUser())}
+    with app.app_context():
+        db.create_all()  # Ensure database tables are created
 
     return app

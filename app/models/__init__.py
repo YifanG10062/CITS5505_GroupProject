@@ -1,8 +1,9 @@
-# This file re-exports all models to maintain backwards compatibility
-# with code that imports from app.models
+# This file re-exports all models for easier imports
 
-from app import db 
+# Export db for backwards compatibility with other modules
+from app import db
 
+# Direct re-exports of all models
 from app.models.user import User
 from app.models.asset import Asset, Price
 from app.models.portfolio import (
