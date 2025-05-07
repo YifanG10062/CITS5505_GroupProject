@@ -1,4 +1,4 @@
-alembic==1.14.1
+﻿alembic==1.14.1
 appnope==0.1.4
 asttokens==3.0.0
 attrs==25.3.0
@@ -88,5 +88,5 @@ webdriver-manager==4.0.1
 Werkzeug==3.0.6
 wsproto==1.2.0
 WTForms==3.1.2
-yfinance==0.2.55
+yfinance==0.2.58
 zipp==3.20.2

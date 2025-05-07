@@ -4,7 +4,7 @@ This project is built using Flask and provides an interactive dashboard to visua
 
 ## 🔧 Requirements
 
-- Python **3.10** or higher (due to modern type hinting syntax)
+- Python **3.10** or higher (due to modern type hinting syntax). However, python **3.13** is currently not recommended due to compatibility issues with certain dependencies (e.g., setuptools, pkgutil, and others).
 - `pip` (latest recommended)
 - Virtual environment setup (`venv`)
 
