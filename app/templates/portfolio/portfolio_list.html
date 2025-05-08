@@ -81,7 +81,7 @@
               {% endif %}
               
               {% if portfolio.is_shareable %}
-              <a href="#" class="action-link" data-portfolio-id="{{ portfolio.portfolio_id }}">Share</a>
+              <a href="#" class="action-link share" data-portfolio-id="{{ portfolio.portfolio_id }}">Share</a>
               {% endif %}
               
               <a href="#" class="action-link delete" data-portfolio-id="{{ portfolio.portfolio_id }}">Delete</a>
@@ -109,7 +109,7 @@
 </div>
 
 <!-- Share Portfolio Modal -->
-<div class="modal fade" id="sharePortfolioModal" tabindex="-1" aria-labelledby="sharePortfolioModalLabel" aria-hidden="true">
+<div class="modal fade" id="sharePortfolioModal" tabindex="-1" aria-labelledby="sharePortfolioModalLabel" aria-hidden="true" data-portfolio-id="">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
@@ -118,11 +118,17 @@
       </div>
       <div class="modal-body">
         <p>Select Users you want to share with your portfolio. After you share this, the other users will only view your portfolio details, they can't edit or share again.</p>
-        <div class="user-selector mt-3">
+        <div class="user-selector mt-3 position-relative">
           <div class="input-group">
             <span class="input-group-text">@</span>
-            <input type="text" class="form-control" id="userSearch" placeholder="Username">
+            <input type="text" class="form-control" id="userSearch" placeholder="Type username to search" autocomplete="off">
           </div>
+          <div id="userSearchResults" class="user-search-dropdown position-absolute w-100 border rounded bg-white shadow-sm" 
+               style="max-height: 200px; overflow-y: auto; z-index: 1050; display: none;"></div>
+        </div>
+        <div id="selectedUsers" class="mt-3">
+          <h6 class="selected-user-heading d-none">Selected User:</h6>
+          <div class="selected-user-list"></div>
         </div>
       </div>
       <div class="modal-footer">

@@ -576,260 +576,568 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function initSharePortfolioModal() {
         console.log('Initializing share portfolio modal');
-        
-        // Check if modal exists first
+
         const modalEl = document.getElementById('sharePortfolioModal');
         if (!modalEl) {
             console.warn('Share portfolio modal not found in the DOM, skipping initialization');
             return;
         }
-        
-        // Find all share links with standard DOM selectors
-        // Use various approaches to find all possible share links
-        const shareLinks = [];
+
+        // Find share links using multiple selectors
+        // First clear the links array
+        let shareLinks = [];
         
         // Method 1: Find links with text content "Share"
         document.querySelectorAll('a').forEach(link => {
             if (link.textContent.trim() === 'Share') {
                 shareLinks.push(link);
+                console.log('Found share link by text content:', link.outerHTML);
             }
         });
         
         // Method 2: Use standard attribute selectors
-        document.querySelectorAll('a[data-action="share"], .share-btn').forEach(link => {
+        document.querySelectorAll('.action-link:not(.delete), a.share-btn, button.share-btn, [data-action="share"]').forEach(link => {
             if (!shareLinks.includes(link)) {
                 shareLinks.push(link);
+                console.log('Found share link by class/attribute selector:', link.outerHTML);
             }
         });
         
-        console.log('Found share links:', shareLinks.length);
-        
-        // For each share link, add click handler
-        shareLinks.forEach(link => {
-            console.log('Found share link:', link.outerHTML);
-            
-            // Remove existing listeners first to avoid duplication
-            const newLink = link.cloneNode(true);
-            link.parentNode.replaceChild(newLink, link);
-            
-            // Add click event handler with debugging
-            newLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                console.log('Share link clicked!');
-                
-                // Get the portfolio ID
-                // First try from data attributes
-                let portfolioId = this.dataset.portfolioId || this.dataset.id;
-                
-                // Then try from parent elements
-                if (!portfolioId) {
-                    const row = this.closest('tr, .portfolio-card');
-                    if (row) {
-                        portfolioId = row.dataset.portfolioId || row.dataset.id;
-                    }
-                }
-                
-                // Last resort - check href if it's a link
-                if (!portfolioId && this.href) {
-                    const matches = this.href.match(/portfolio[\/=](\d+)/i);
-                    if (matches && matches[1]) {
-                        portfolioId = matches[1];
-                    }
-                }
-                
-                portfolioId = portfolioId || 'unknown';
-                console.log('Sharing portfolio ID:', portfolioId);
-                
-                // Store portfolio ID in modal for later use
-                modalEl.dataset.portfolioId = portfolioId;
-                
-                // Try multiple methods to show the modal
-                try {
-                    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-                        // Bootstrap 5 method
-                        const modal = new bootstrap.Modal(modalEl);
-                        modal.show();
-                        console.log('Modal shown using Bootstrap API');
-                    } else if (typeof $ !== 'undefined' && $(modalEl).modal) {
-                        // jQuery Bootstrap method (version 4 or earlier)
-                        $(modalEl).modal('show');
-                        console.log('Modal shown using jQuery Bootstrap API');
-                    } else {
-                        // Fallback to manual display
-                        console.log('Using fallback modal display method');
-                        fallbackModalDisplay(modalEl);
-                    }
-                    
-                    // Set up share button handler
-                    setupShareButton(portfolioId);
-                } catch (err) {
-                    console.error('Error showing modal:', err);
-                    fallbackModalDisplay(modalEl);
-                }
-            });
+        // Method 3: Specifically target links in table action cells
+        document.querySelectorAll('.action-cell a').forEach(link => {
+            if (link.textContent.trim() === 'Share' && !shareLinks.includes(link)) {
+                shareLinks.push(link);
+                console.log('Found share link in action cell:', link.outerHTML);
+            }
         });
         
-        // If no share links were found with the above methods, try a more direct approach
+        console.log(`Total found ${shareLinks.length} share links in the page`);
+        
         if (shareLinks.length === 0) {
-            console.warn('No share links found with standard methods, trying direct table cell access');
+            console.warn('No share links found with standard selectors, trying with plain query');
+            // Last attempt: Use direct CSS selectors to find all possible share links
+            document.querySelectorAll('.portfolios-table a:not([class*="delete"])').forEach(link => {
+                console.log('Checking link:', link.outerHTML, 'Text:', link.textContent.trim());
+                if (link.textContent.trim() === 'Share') {
+                    shareLinks.push(link);
+                    console.log('Added share link with direct selection:', link.outerHTML);
+                }
+            });
             
-            // Look for links inside the last column of each table row
-            const tableRows = document.querySelectorAll('.portfolios-table tr');
-            tableRows.forEach(row => {
-                const cells = row.querySelectorAll('td');
-                if (cells.length > 0) {
-                    // Get the last cell
-                    const lastCell = cells[cells.length - 1];
-                    const links = lastCell.querySelectorAll('a');
+            console.log(`After final attempt: found ${shareLinks.length} share links`);
+        }
+        
+        // Add click handler for each share link
+        shareLinks.forEach(link => {
+            // First clone the node to remove any existing event listeners
+            const newLink = link.cloneNode(true);
+            if (link.parentNode) {
+                link.parentNode.replaceChild(newLink, link);
+                
+                // Add click event listener
+                newLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Share link clicked');
                     
-                    links.forEach(link => {
-                        if (link.textContent.trim() === 'Share') {
-                            console.log('Found share link in table cell:', link.outerHTML);
+                    // Get portfolio ID
+                    let portfolioId = this.dataset.portfolioId;
+                    
+                    // If link doesn't have ID, try to get from containing row
+                    if (!portfolioId) {
+                        const row = this.closest('tr');
+                        if (row) {
+                            // Try to get from row's data attributes
+                            portfolioId = row.dataset.portfolioId;
                             
-                            // Attach event listener directly
-                            link.addEventListener('click', function(e) {
-                                e.preventDefault();
-                                console.log('Share link clicked from table cell!');
-                                
-                                // Get portfolio ID from row if available
-                                const portfolioId = row.dataset.portfolioId || row.dataset.id || 'unknown';
-                                console.log('Portfolio ID from table row:', portfolioId);
-                                
-                                // Show modal
-                                modalEl.dataset.portfolioId = portfolioId;
-                                
-                                // Create and show bootstrap modal
-                                try {
-                                    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-                                        const modal = new bootstrap.Modal(modalEl);
-                                        modal.show();
-                                    } else if (typeof $ !== 'undefined' && $(modalEl).modal) {
-                                        $(modalEl).modal('show');
-                                    } else {
-                                        console.log('Using fallback modal display method');
-                                        fallbackModalDisplay(modalEl);
+                            // If row doesn't have ID, try from other links in same row
+                            if (!portfolioId) {
+                                // Try to extract from "edit" link URL
+                                const editLink = row.querySelector('a[href*="edit"]');
+                                if (editLink && editLink.href) {
+                                    const matches = editLink.href.match(/portfolio_id=(\d+)/);
+                                    if (matches && matches[1]) {
+                                        portfolioId = matches[1];
                                     }
-                                    
-                                    setupShareButton(portfolioId);
-                                } catch (err) {
-                                    console.error('Error showing modal from table cell click:', err);
-                                    fallbackModalDisplay(modalEl);
                                 }
-                            });
+                                
+                                // Try to get from "delete" link's data attributes
+                                if (!portfolioId) {
+                                    const deleteLink = row.querySelector('.action-link.delete');
+                                    if (deleteLink) {
+                                        portfolioId = deleteLink.dataset.portfolioId;
+                                    }
+                                }
+                                
+                                // Try to get from first cell link
+                                if (!portfolioId) {
+                                    const firstCellLink = row.querySelector('td:first-child a');
+                                    if (firstCellLink && firstCellLink.href) {
+                                        const matches = firstCellLink.href.match(/portfolio_id=(\d+)/);
+                                        if (matches && matches[1]) {
+                                            portfolioId = matches[1];
+                                        }
+                                    }
+                                }
+                            }
                         }
-                    });
+                    }
+                    
+                    if (!portfolioId) {
+                        console.error('Could not determine portfolio ID for sharing');
+                        alert('Error: Could not determine which portfolio to share.');
+                        return;
+                    }
+                    
+                    console.log('Portfolio ID for sharing:', portfolioId);
+                    
+                    // Store portfolio ID in modal
+                    modalEl.dataset.portfolioId = portfolioId;
+                    
+                    // Clear previous user selection
+                    resetModalState();
+                    
+                    // Show modal - try multiple methods
+                    try {
+                        // Try using Bootstrap 5 API
+                        if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                            const modal = new bootstrap.Modal(modalEl);
+                            modal.show();
+                            console.log('Modal shown with Bootstrap 5 API');
+                        } else if (typeof $ !== 'undefined') {
+                            // Try using jQuery (Bootstrap 4)
+                            $(modalEl).modal('show');
+                            console.log('Modal shown with jQuery');
+                        } else {
+                            // Manual display
+                            modalEl.style.display = 'block';
+                            modalEl.classList.add('show');
+                            document.body.classList.add('modal-open');
+                            
+                            // Add backdrop
+                            const backdrop = document.createElement('div');
+                            backdrop.className = 'modal-backdrop fade show';
+                            document.body.appendChild(backdrop);
+                            console.log('Modal shown manually');
+                        }
+                    } catch (error) {
+                        console.error('Error showing modal:', error);
+                        // Fall back to manual display on error
+                        modalEl.style.display = 'block';
+                        modalEl.classList.add('show');
+                    }
+                });
+            }
+        });
+
+        const userSearchInput = document.getElementById('userSearch');
+        const userSearchResults = document.getElementById('userSearchResults');
+        const sharePortfolioBtn = document.getElementById('sharePortfolioBtn');
+        let selectedUserId = null; // State to store the selected user ID
+        let allUsers = []; // Cache for all users
+
+        // Load users when the modal is shown - use both Bootstrap 4 and 5 event syntax
+        modalEl.addEventListener('show.bs.modal', function () {
+            loadUsers();
+            resetModalState();
+        });
+        
+        // Also handle jQuery event for Bootstrap 4
+        if (typeof $ !== 'undefined') {
+            $(modalEl).on('show.bs.modal', function() {
+                loadUsers();
+                resetModalState();
+            });
+        }
+
+        // Handle input for filtering users
+        if (userSearchInput) {
+            userSearchInput.addEventListener('input', function () {
+                const searchTerm = userSearchInput.value.trim().toLowerCase();
+                filterUsers(searchTerm);
+            });
+            
+            // Also handle keyboard events to improve UX
+            userSearchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowDown' && userSearchResults.children.length > 0) {
+                    // Focus on first result when pressing down arrow
+                    const firstSelectBtn = userSearchResults.querySelector('.select-user-btn');
+                    if (firstSelectBtn) firstSelectBtn.focus();
+                    e.preventDefault();
                 }
             });
         }
+
+        // Set up the share button
+        if (sharePortfolioBtn) {
+            // Replace with new button to avoid duplicate listeners
+            const newBtn = sharePortfolioBtn.cloneNode(true);
+            if (sharePortfolioBtn.parentNode) {
+                sharePortfolioBtn.parentNode.replaceChild(newBtn, sharePortfolioBtn);
+                setupShareButton(newBtn, modalEl);
+            }
+        }
+
+        /**
+         * Reset modal state
+         */
+        function resetModalState() {
+            userSearchInput.value = '';
+            userSearchResults.innerHTML = '';
+            selectedUserId = null;
+        }
+
+        /**
+         * Load users from the server
+         */
+        function loadUsers() {
+            fetch('/portfolios/api/users')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch users');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    allUsers = data.users || [];
+                    filterUsers(''); // Display all users initially
+                })
+                .catch(error => {
+                    console.error('Error loading users:', error);
+                });
+        }
+
+        /**
+         * Filter users based on the search term and update the results
+         * @param {string} searchTerm - The term to filter users by
+         */
+        function filterUsers(searchTerm) {
+            const userSearchResults = document.getElementById('userSearchResults');
+            userSearchResults.innerHTML = '';
+
+            const filteredUsers = allUsers.filter(user =>
+                user.username.toLowerCase().includes(searchTerm)
+            );
+
+            if (filteredUsers.length === 0) {
+                userSearchResults.innerHTML = '<div class="text-center p-2">No users found</div>';
+                return;
+            }
+
+            filteredUsers.forEach(user => {
+                const userItem = document.createElement('div');
+                userItem.className = 'user-item d-flex justify-content-between align-items-center p-2';
+                userItem.innerHTML = `
+                    <span>${user.username}</span>
+                    <button class="btn btn-sm btn-outline-primary select-user-btn" data-user-id="${user.id}">
+                        Select
+                    </button>
+                `;
+
+                userItem.querySelector('.select-user-btn').addEventListener('click', function () {
+                    selectUser(user.id, user.username);
+                });
+
+                userSearchResults.appendChild(userItem);
+            });
+        }
+
+        /**
+         * Select a user for sharing
+         * @param {number} userId - The ID of the selected user
+         * @param {string} username - The username of the selected user
+         */
+        function selectUser(userId, username) {
+            const userSearchResults = document.getElementById('userSearchResults');
+            const userSearchInput = document.getElementById('userSearch');
+            selectedUserId = userId;
+
+            // Update the input field to show the selected user
+            userSearchInput.value = username;
+
+            // Clear the search results
+            userSearchResults.innerHTML = '';
+        }
+
+        /**
+         * Set up the share button click handler
+         * @param {HTMLElement} shareButton - The share button element
+         * @param {HTMLElement} modalEl - The modal element
+         */
+        function setupShareButton(shareButton, modalEl) {
+            shareButton.addEventListener('click', function () {
+                if (!selectedUserId) {
+                    alert('Please select a user to share with.');
+                    return;
+                }
+
+                const portfolioId = modalEl.dataset.portfolioId;
+                if (!portfolioId) {
+                    console.error('Portfolio ID not found in modal data');
+                    alert('Error: Could not determine which portfolio to share.');
+                    return;
+                }
+
+                // Disable button during request to prevent multiple clicks
+                shareButton.disabled = true;
+                shareButton.innerText = 'Sharing...';
+
+                fetch('/portfolios/api/portfolios/share', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCsrfToken()
+                    },
+                    body: JSON.stringify({
+                        portfolio_id: portfolioId,
+                        user_ids: [selectedUserId]
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        alert(`Portfolio shared successfully with ${data.shared_with.join(', ')}`);
+                        
+                        // Close the modal - try multiple methods
+                        try {
+                            const bootstrapModal = bootstrap.Modal.getInstance(modalEl);
+                            if (bootstrapModal) {
+                                bootstrapModal.hide();
+                            } else if (typeof $ !== 'undefined') {
+                                $(modalEl).modal('hide');
+                            } else {
+                                modalEl.style.display = 'none';
+                                modalEl.classList.remove('show');
+                                document.body.classList.remove('modal-open');
+                                const backdrop = document.querySelector('.modal-backdrop');
+                                if (backdrop) backdrop.remove();
+                            }
+                        } catch (error) {
+                            console.error('Error hiding modal:', error);
+                            modalEl.style.display = 'none';
+                        }
+                    } else {
+                        alert(`Failed to share portfolio: ${data.message || 'Unknown error'}`);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error sharing portfolio:', error);
+                    alert('Failed to share portfolio. Please try again.');
+                })
+                .finally(() => {
+                    // Re-enable button
+                    shareButton.disabled = false;
+                    shareButton.innerText = 'Share';
+                });
+            });
+        }
+    }
+});
+
+/**
+ * Set up share button click handler
+ * @param {string} portfolioId - The ID of the portfolio to share
+ */
+function setupShareButton(portfolioId) {
+    const shareBtn = document.getElementById('sharePortfolioBtn');
+    if (!shareBtn) {
+        console.error('Share button not found in modal!');
+        return;
     }
     
-    /**
-     * Set up share button click handler
-     * @param {string} portfolioId - The ID of the portfolio to share
-     */
-    function setupShareButton(portfolioId) {
-        const shareBtn = document.getElementById('sharePortfolioBtn');
-        if (!shareBtn) {
-            console.error('Share button not found in modal!');
+    // Set up user search functionality
+    const userSearchInput = document.getElementById('userSearch');
+    const userSearchResults = document.getElementById('userSearchResults');
+    const selectedUsersList = document.querySelector('.selected-user-list');
+    const selectedUserHeading = document.querySelector('.selected-user-heading');
+    let selectedUserId = null;
+    
+    // Show user list when input field gets focus
+    if (userSearchInput) {
+        userSearchInput.addEventListener('focus', function() {
+            loadAndShowUserDropdown();
+        });
+        
+        // Filter users when typing
+        userSearchInput.addEventListener('input', function() {
+            const searchTerm = this.value.trim().toLowerCase();
+            filterUsers(searchTerm);
+        });
+        
+        // Handle clicking outside to close dropdown menu
+        document.addEventListener('click', function(e) {
+            if (!userSearchInput.contains(e.target) && 
+                !userSearchResults.contains(e.target)) {
+                userSearchResults.style.display = 'none';
+            }
+        });
+    }
+    
+    // Add click handler for share button
+    const newShareBtn = shareBtn.cloneNode(true);
+    shareBtn.parentNode.replaceChild(newShareBtn, shareBtn);
+    
+    newShareBtn.addEventListener('click', function() {
+        if (!selectedUserId) {
+            alert('Please select a user to share with');
             return;
         }
         
-        // Create new button to avoid duplicate listeners
-        const newShareBtn = shareBtn.cloneNode(true);
-        shareBtn.parentNode.replaceChild(newShareBtn, shareBtn);
+        // Disable button and show loading state
+        this.disabled = true;
+        const originalText = this.textContent;
+        this.textContent = 'Sharing...';
         
-        // Add click handler with debugging
-        newShareBtn.addEventListener('click', function() {
-            const username = document.getElementById('userSearch')?.value || '';
-            console.log(`Attempting to share portfolio ${portfolioId} with user: ${username}`);
+        // Send share request
+        console.log(`Sharing portfolio ${portfolioId} with user ID: ${selectedUserId}`);
+        
+        // Add actual sharing API call here
+        // Example code, should use fetch to send request to backend
+        setTimeout(() => {
+            console.log('Share successful!');
+            alert('Portfolio shared successfully!');
             
-            if (!username.trim()) {
-                alert('Please enter a username to share with');
-                return;
-            }
+            // Reset state
+            this.disabled = false;
+            this.textContent = originalText;
             
-            // Here you would normally send an AJAX request to share the portfolio
-            // For demo purposes, just log and show success message
-            console.log(`Successfully shared portfolio ${portfolioId} with ${username}`);
-            alert(`Portfolio shared with ${username}`);
-            
-            // Hide modal
+            // Close modal
             const modalEl = document.getElementById('sharePortfolioModal');
             try {
-                if (modalEl && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-                    const modal = bootstrap.Modal.getInstance(modalEl);
-                    if (modal) modal.hide();
-                } else if ($(modalEl).modal) {
-                    $(modalEl).modal('hide');
-                } else {
-                    // Fallback hide
-                    modalEl.style.display = 'none';
-                    const backdrop = document.querySelector('.modal-backdrop');
-                    if (backdrop) backdrop.parentNode.removeChild(backdrop);
-                    document.body.classList.remove('modal-open');
+                const bootstrapModal = bootstrap.Modal.getInstance(modalEl);
+                if (bootstrapModal) {
+                    bootstrapModal.hide();
                 }
             } catch (err) {
                 console.error('Error hiding modal:', err);
-                // Force hide as last resort
                 modalEl.style.display = 'none';
             }
             
-            // Clear input
-            if (document.getElementById('userSearch')) {
-                document.getElementById('userSearch').value = '';
-            }
+            // Clear selection
+            selectedUserId = null;
+            userSearchInput.value = '';
+            selectedUsersList.innerHTML = '';
+            selectedUserHeading.classList.add('d-none');
+        }, 1000);
+    });
+    
+    // Load and show user dropdown list
+    function loadAndShowUserDropdown() {
+        // Show loading state
+        userSearchResults.style.display = 'block';
+        userSearchResults.innerHTML = '<div class="p-2 text-center">Loading users...</div>';
+        
+        // Simulate API call to get user list
+        // Should call backend API in real application
+        setTimeout(() => {
+            // Sample user data
+            const users = [
+                { id: 1, username: 'user1' },
+                { id: 2, username: 'user2' },
+                { id: 3, username: 'rich3' },
+                { id: 4, username: 'lililili' }
+            ];
+            
+            displayUserList(users);
+        }, 500);
+    }
+    
+    // Filter users based on search term
+    function filterUsers(searchTerm) {
+        if (searchTerm === '') {
+            loadAndShowUserDropdown();
+            return;
+        }
+        
+        // Simulate filtering users by search term
+        // Should call backend API for search in real application
+        setTimeout(() => {
+            const users = [
+                { id: 1, username: 'user1' },
+                { id: 2, username: 'user2' },
+                { id: 3, username: 'rich3' },
+                { id: 4, username: 'lililili' }
+            ].filter(user => user.username.toLowerCase().includes(searchTerm));
+            
+            displayUserList(users);
+        }, 300);
+    }
+    
+    // Display user list in dropdown
+    function displayUserList(users) {
+        userSearchResults.innerHTML = '';
+        
+        if (users.length === 0) {
+            userSearchResults.innerHTML = '<div class="p-2 text-center">No users found</div>';
+            return;
+        }
+        
+        users.forEach(user => {
+            const userItem = document.createElement('div');
+            userItem.className = 'user-dropdown-item p-2 border-bottom d-flex justify-content-between align-items-center';
+            userItem.innerHTML = `
+                <span>${user.username}</span>
+                <button class="btn btn-sm btn-outline-primary">Select</button>
+            `;
+            
+            // Click to select user
+            userItem.querySelector('button').addEventListener('click', function() {
+                selectUser(user.id, user.username);
+                userSearchResults.style.display = 'none';
+            });
+            
+            // Clicking entire row can also select user
+            userItem.addEventListener('click', function(e) {
+                if (e.target !== userItem.querySelector('button')) {
+                    selectUser(user.id, user.username);
+                    userSearchResults.style.display = 'none';
+                }
+            });
+            
+            userSearchResults.appendChild(userItem);
         });
     }
     
-    /**
-     * Fallback method to display modal without Bootstrap
-     * @param {HTMLElement} modalEl - The modal element
-     */
-    function fallbackModalDisplay(modalEl) {
-        // Show modal manually
-        modalEl.style.display = 'block';
-        modalEl.classList.add('show');
-        document.body.classList.add('modal-open');
+    // Select a user
+    function selectUser(userId, username) {
+        selectedUserId = userId;
+        userSearchInput.value = username;
         
-        // Create backdrop if it doesn't exist
-        let backdrop = document.querySelector('.modal-backdrop');
-        if (!backdrop) {
-            backdrop = document.createElement('div');
-            backdrop.className = 'modal-backdrop fade show';
-            document.body.appendChild(backdrop);
-        }
+        // Show selected user
+        selectedUsersList.innerHTML = `
+            <div class="selected-user p-2 bg-light rounded d-flex justify-content-between align-items-center">
+                <span>@${username}</span>
+                <button class="btn btn-sm btn-outline-danger" title="Remove">×</button>
+            </div>
+        `;
         
-        // Set up close buttons
-        const closeButtons = modalEl.querySelectorAll('[data-bs-dismiss="modal"], .close, .btn-close');
-        closeButtons.forEach(btn => {
-            // Replace with new element to avoid duplicate listeners
-            const newBtn = btn.cloneNode(true);
-            btn.parentNode.replaceChild(newBtn, btn);
-            
-            newBtn.addEventListener('click', function() {
-                modalEl.style.display = 'none';
-                modalEl.classList.remove('show');
-                document.body.classList.remove('modal-open');
-                if (backdrop && document.body.contains(backdrop)) {
-                    document.body.removeChild(backdrop);
-                }
-            });
+        // Show heading
+        selectedUserHeading.classList.remove('d-none');
+        
+        // Add event handler for remove button
+        selectedUsersList.querySelector('button').addEventListener('click', function() {
+            selectedUserId = null;
+            userSearchInput.value = '';
+            selectedUsersList.innerHTML = '';
+            selectedUserHeading.classList.add('d-none');
         });
-        
-        // Also close when clicking backdrop
-        backdrop.addEventListener('click', function() {
-            modalEl.style.display = 'none';
-            modalEl.classList.remove('show');
-            document.body.classList.remove('modal-open');
-            if (document.body.contains(backdrop)) {
-                document.body.removeChild(backdrop);
-            }
-        });
-        
-        // Set up portfolio ID for sharing
-        const portfolioId = modalEl.dataset.portfolioId;
-        setupShareButton(portfolioId);
     }
+}
+
+// Add extra CSS styles
+document.addEventListener('DOMContentLoaded', function() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .user-dropdown-item:hover {
+            background-color: #f8f9fa;
+            cursor: pointer;
+        }
+    `;
+    document.head.appendChild(style);
 });
 
 // View Toggle Functionality
