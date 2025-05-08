@@ -1047,25 +1047,33 @@ a.action-link:hover {
     z-index: 1050;
 }
 
-/* User search dropdown styling */
+/* User search dropdown styling - improved appearance */
 #userSearchResults {
   position: absolute;
   width: 100%;
   max-height: 200px;
   overflow-y: auto;
-  background-color: var(--input-bg); /* Use the same background color as input fields */
-  border: 1px solid var(--input-border); /* Use the same border color as input fields */
-  border-radius: 0.25rem;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-top: none; /* Remove top border for seamless connection with input */
+  border-bottom-left-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
   z-index: 1050;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.3);
   display: none;
+  margin-top: -1px; /* Overlap the input border for seamless appearance */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
-/* User item styling */
+/* First user item in dropdown needs special styling */
+#userSearchResults .user-item:first-child {
+  border-top: 1px solid var(--input-border); /* Add subtle separator */
+}
+
+/* Additional styling for the user items */
 .user-item {
   cursor: pointer;
   padding: 10px 12px;
-  border-bottom: 1px solid var(--card-outline);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Lighter border between items */
   color: var(--text-primary);
   transition: all 0.2s ease;
   display: flex;
@@ -1073,23 +1081,19 @@ a.action-link:hover {
   justify-content: space-between;
 }
 
-/* User item hover effect */
-.user-item:hover {
-  background-color: rgba(255, 167, 38, 0.15);
-}
-
-/* Username styling - using normal text color */
-.user-item .username {
-  color: var(--text-primary);
-  font-weight: 500;
-  flex: 1;
-}
-
 /* Select text styling - using primary orange color */
 .user-item .select-text {
   color: var(--primary);
-  font-weight: 500;
+  font-weight: 600; /* Make it a bit bolder */
   font-size: 0.9rem;
   text-align: right;
   margin-left: 1rem;
+}
+
+/* Improve the loading and empty states */
+.user-item.loading, .user-item.no-results {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 12px;
+  border-bottom: none;
 }
