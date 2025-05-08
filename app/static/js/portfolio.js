@@ -528,6 +528,12 @@ document.addEventListener('DOMContentLoaded', function() {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
                 
+                // Check if we are in an edit link to avoid conflicts
+                if (this.classList.contains('edit') || this.href.includes('edit')) {
+                    // For edit links, let the default behavior happen (follow the link)
+                    return;
+                }
+                
                 const portfolioId = this.dataset.portfolioId;
                 const portfolioName = this.closest('tr').querySelector('.portfolio-name-cell').textContent.trim();
                 
@@ -583,29 +589,40 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        // First ensure all Edit links keep their default behavior
+        document.querySelectorAll('.action-link.edit, a[href*="edit"], a[href*="edit_portfolio"]').forEach(link => {
+            // Ensure edit links are not modified - they should follow their href normally
+            link.addEventListener('click', function(e) {
+                // Let default navigation happen - don't call preventDefault() 
+                console.log('Edit link clicked, allowing default navigation to:', this.href);
+            });
+        });
+
         // Find share links using multiple selectors
         // First clear the links array
         let shareLinks = [];
         
-        // Method 1: Find links with text content "Share"
+        // Method 1: Find links with text content "Share" but not containing edit in href or class
         document.querySelectorAll('a').forEach(link => {
-            if (link.textContent.trim() === 'Share') {
+            if (link.textContent.trim() === 'Share' && 
+                !link.classList.contains('edit') && 
+                !(link.href && link.href.includes('edit'))) {
                 shareLinks.push(link);
                 console.log('Found share link by text content:', link.outerHTML);
             }
         });
         
-        // Method 2: Use standard attribute selectors
-        document.querySelectorAll('.action-link:not(.delete), a.share-btn, button.share-btn, [data-action="share"]').forEach(link => {
+        // Method 2: Use standard attribute selectors - exclude both delete and edit links
+        document.querySelectorAll('.action-link:not(.delete):not(.edit), a.share-btn, button.share-btn, [data-action="share"]').forEach(link => {
             if (!shareLinks.includes(link)) {
                 shareLinks.push(link);
                 console.log('Found share link by class/attribute selector:', link.outerHTML);
             }
         });
         
-        // Method 3: Specifically target links in table action cells
+        // Method 3: Specifically target links in table action cells with Share text
         document.querySelectorAll('.action-cell a').forEach(link => {
-            if (link.textContent.trim() === 'Share' && !shareLinks.includes(link)) {
+            if (link.textContent.trim() === 'Share' && !shareLinks.includes(link) && !link.classList.contains('edit')) {
                 shareLinks.push(link);
                 console.log('Found share link in action cell:', link.outerHTML);
             }
@@ -615,10 +632,10 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (shareLinks.length === 0) {
             console.warn('No share links found with standard selectors, trying with plain query');
-            // Last attempt: Use direct CSS selectors to find all possible share links
-            document.querySelectorAll('.portfolios-table a:not([class*="delete"])').forEach(link => {
+            // Last attempt: Use direct CSS selectors to find all possible share links, excluding edit links
+            document.querySelectorAll('.portfolios-table a:not([class*="delete"]):not([class*="edit"])').forEach(link => {
                 console.log('Checking link:', link.outerHTML, 'Text:', link.textContent.trim());
-                if (link.textContent.trim() === 'Share') {
+                if (link.textContent.trim() === 'Share' && !link.href.includes('edit')) {
                     shareLinks.push(link);
                     console.log('Added share link with direct selection:', link.outerHTML);
                 }
@@ -636,6 +653,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Add click event listener
                 newLink.addEventListener('click', function(e) {
+                    // Double check this is not an edit link
+                    if (this.classList.contains('edit') || 
+                        (this.href && this.href.includes('edit')) || 
+                        this.textContent.trim() === 'Edit') {
+                        // Let the default behavior happen for edit links
+                        console.log('Edit link detected, allowing default navigation');
+                        return;
+                    }
+                    
                     e.preventDefault();
                     console.log('Share link clicked');
                     
@@ -879,7 +905,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // If we don't have users yet and we're trying to filter, load them first
             if (allUsers.length === 0) {
-                userSearchResults.innerHTML = '<div class="text-center p-2">Loading users...</div>';
+                userSearchResults.innerHTML = '<div class="user-item loading">Loading users...</div>';
                 userSearchResults.style.display = 'block';
                 
                 // Try to load users and then filter
@@ -894,29 +920,24 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log(`Found ${filteredUsers.length} users matching "${searchTerm}"`);
 
             if (filteredUsers.length === 0) {
-                userSearchResults.innerHTML = '<div class="text-center p-2">No users found</div>';
+                userSearchResults.innerHTML = '<div class="user-item no-results">No users found</div>';
                 return;
             }
 
             filteredUsers.forEach(user => {
                 const userItem = document.createElement('div');
-                userItem.className = 'user-item d-flex justify-content-between align-items-center p-2';
-                userItem.innerHTML = `
-                    <span>${user.username}</span>
-                    <button class="btn btn-sm btn-outline-primary select-user-btn" data-user-id="${user.id}">
-                        Select
-                    </button>
-                `;
-
-                userItem.querySelector('.select-user-btn').addEventListener('click', function () {
-                    selectUser(user.id, user.username);
-                });
+                userItem.className = 'user-item';
+                userItem.dataset.userId = user.id;
                 
-                // Also allow clicking anywhere in the item to select the user
-                userItem.addEventListener('click', function(e) {
-                    if (!e.target.classList.contains('select-user-btn')) {
-                        selectUser(user.id, user.username);
-                    }
+                // Create HTML structure with username and "Select" text (no button)
+                userItem.innerHTML = `
+                    <span class="username">${user.username}</span>
+                    <span class="select-text">Select</span>
+                `;
+                
+                // Add click event to the entire user item
+                userItem.addEventListener('click', function() {
+                    selectUser(user.id, user.username);
                 });
 
                 userSearchResults.appendChild(userItem);

@@ -1047,39 +1047,49 @@ a.action-link:hover {
     z-index: 1050;
 }
 
-.user-dropdown-item {
-    cursor: pointer;
-}
-
-.user-dropdown-item:hover {
-    background-color: rgba(255, 167, 38, 0.1);
-}
-
-.selected-user {
-    background-color: var(--bg-lighter) !important;
-    border: 1px solid var(--card-outline);
-}
-
 /* User search dropdown styling */
 #userSearchResults {
   position: absolute;
   width: 100%;
   max-height: 200px;
   overflow-y: auto;
-  background-color: white;
-  border: 1px solid #ced4da;
+  background-color: var(--input-bg); /* Use the same background color as input fields */
+  border: 1px solid var(--input-border); /* Use the same border color as input fields */
   border-radius: 0.25rem;
   z-index: 1050;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.16);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.3);
   display: none;
 }
 
+/* User item styling */
 .user-item {
   cursor: pointer;
-  padding: 8px 10px;
-  border-bottom: 1px solid #eeeeee;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--card-outline);
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
+/* User item hover effect */
 .user-item:hover {
-  background-color: #f8f9fa;
+  background-color: rgba(255, 167, 38, 0.15);
+}
+
+/* Username styling - using normal text color */
+.user-item .username {
+  color: var(--text-primary);
+  font-weight: 500;
+  flex: 1;
+}
+
+/* Select text styling - using primary orange color */
+.user-item .select-text {
+  color: var(--primary);
+  font-weight: 500;
+  font-size: 0.9rem;
+  text-align: right;
+  margin-left: 1rem;
 }
