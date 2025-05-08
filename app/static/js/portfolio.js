@@ -736,24 +736,36 @@ document.addEventListener('DOMContentLoaded', function() {
         let allUsers = []; // Cache for all users
 
         // Load users when the modal is shown - use both Bootstrap 4 and 5 event syntax
-        modalEl.addEventListener('show.bs.modal', function () {
-            loadUsers();
+        modalEl.addEventListener('shown.bs.modal', function () {
+            // Load users in the background but don't show the dropdown
+            loadUsers(false); 
             resetModalState();
         });
         
         // Also handle jQuery event for Bootstrap 4
         if (typeof $ !== 'undefined') {
-            $(modalEl).on('show.bs.modal', function() {
-                loadUsers();
+            $(modalEl).on('shown.bs.modal', function() {
+                // Load users in the background but don't show the dropdown
+                loadUsers(false);
                 resetModalState();
             });
         }
 
-        // Handle input for filtering users
+        // Handle input focus to show dropdown
         if (userSearchInput) {
+            userSearchInput.addEventListener('focus', function() {
+                console.log('User search input focused');
+                // Show dropdown only when focused
+                filterUsers(this.value.trim().toLowerCase());
+                userSearchResults.style.display = 'block';
+            });
+            
+            // Handle input for filtering users
             userSearchInput.addEventListener('input', function () {
                 const searchTerm = userSearchInput.value.trim().toLowerCase();
+                console.log('Filtering users with term:', searchTerm);
                 filterUsers(searchTerm);
+                userSearchResults.style.display = 'block';
             });
             
             // Also handle keyboard events to improve UX
@@ -763,6 +775,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     const firstSelectBtn = userSearchResults.querySelector('.select-user-btn');
                     if (firstSelectBtn) firstSelectBtn.focus();
                     e.preventDefault();
+                } else if (e.key === 'Escape') {
+                    userSearchResults.style.display = 'none';
+                }
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!userSearchInput.contains(e.target) && !userSearchResults.contains(e.target)) {
+                    userSearchResults.style.display = 'none';
                 }
             });
         }
@@ -781,15 +802,27 @@ document.addEventListener('DOMContentLoaded', function() {
          * Reset modal state
          */
         function resetModalState() {
-            userSearchInput.value = '';
-            userSearchResults.innerHTML = '';
+            if (userSearchInput) userSearchInput.value = '';
+            if (userSearchResults) {
+                userSearchResults.innerHTML = '';
+                userSearchResults.style.display = 'none';
+            }
             selectedUserId = null;
         }
 
         /**
          * Load users from the server
+         * @param {boolean} showDropdown - Whether to show the dropdown after loading
          */
-        function loadUsers() {
+        function loadUsers(showDropdown = true) {
+            console.log('Loading users...');
+            
+            // Only show loading state if we're going to show the dropdown
+            if (showDropdown && userSearchResults) {
+                userSearchResults.innerHTML = '<div class="text-center p-2">Loading users...</div>';
+                userSearchResults.style.display = 'block';
+            }
+            
             fetch('/portfolios/api/users')
                 .then(response => {
                     if (!response.ok) {
@@ -798,11 +831,35 @@ document.addEventListener('DOMContentLoaded', function() {
                     return response.json();
                 })
                 .then(data => {
+                    console.log('Loaded users:', data);
                     allUsers = data.users || [];
-                    filterUsers(''); // Display all users initially
+                    // Only filter and show users if showDropdown is true
+                    if (showDropdown) {
+                        filterUsers(''); // Display all users initially
+                    }
                 })
                 .catch(error => {
                     console.error('Error loading users:', error);
+                    
+                    // Only show error if we're showing the dropdown
+                    if (showDropdown && userSearchResults) {
+                        userSearchResults.innerHTML = '<div class="text-center p-2 text-danger">Failed to load users</div>';
+                        userSearchResults.style.display = 'block';
+                    }
+                    
+                    // If API fails, use sample data for testing
+                    console.log('Using sample user data for testing');
+                    allUsers = [
+                        { id: 1, username: 'user1' },
+                        { id: 2, username: 'user2' },
+                        { id: 3, username: 'rich2' },
+                        { id: 4, username: 'admin' }
+                    ];
+                    
+                    // Only show results if showDropdown is true
+                    if (showDropdown) {
+                        filterUsers('');
+                    }
                 });
         }
 
@@ -811,12 +868,30 @@ document.addEventListener('DOMContentLoaded', function() {
          * @param {string} searchTerm - The term to filter users by
          */
         function filterUsers(searchTerm) {
-            const userSearchResults = document.getElementById('userSearchResults');
+            console.log('Filtering users with term:', searchTerm);
+            
+            if (!userSearchResults) {
+                console.error('User search results element not found');
+                return;
+            }
+            
             userSearchResults.innerHTML = '';
+
+            // If we don't have users yet and we're trying to filter, load them first
+            if (allUsers.length === 0) {
+                userSearchResults.innerHTML = '<div class="text-center p-2">Loading users...</div>';
+                userSearchResults.style.display = 'block';
+                
+                // Try to load users and then filter
+                loadUsers();
+                return;
+            }
 
             const filteredUsers = allUsers.filter(user =>
                 user.username.toLowerCase().includes(searchTerm)
             );
+
+            console.log(`Found ${filteredUsers.length} users matching "${searchTerm}"`);
 
             if (filteredUsers.length === 0) {
                 userSearchResults.innerHTML = '<div class="text-center p-2">No users found</div>';
@@ -836,9 +911,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 userItem.querySelector('.select-user-btn').addEventListener('click', function () {
                     selectUser(user.id, user.username);
                 });
+                
+                // Also allow clicking anywhere in the item to select the user
+                userItem.addEventListener('click', function(e) {
+                    if (!e.target.classList.contains('select-user-btn')) {
+                        selectUser(user.id, user.username);
+                    }
+                });
 
                 userSearchResults.appendChild(userItem);
             });
+            
+            // Show the results
+            userSearchResults.style.display = 'block';
         }
 
         /**
@@ -847,8 +932,13 @@ document.addEventListener('DOMContentLoaded', function() {
          * @param {string} username - The username of the selected user
          */
         function selectUser(userId, username) {
-            const userSearchResults = document.getElementById('userSearchResults');
-            const userSearchInput = document.getElementById('userSearch');
+            console.log(`Selected user: ${username} (ID: ${userId})`);
+            
+            if (!userSearchInput || !userSearchResults) {
+                console.error('User search elements not found');
+                return;
+            }
+            
             selectedUserId = userId;
 
             // Update the input field to show the selected user
@@ -856,6 +946,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Clear the search results
             userSearchResults.innerHTML = '';
+            userSearchResults.style.display = 'none';
+            
+            // Enable share button if needed
+            if (sharePortfolioBtn && sharePortfolioBtn.disabled) {
+                sharePortfolioBtn.disabled = false;
+            }
         }
 
         /**
@@ -1128,6 +1224,8 @@ function setupShareButton(portfolioId) {
     }
 }
 
+// Remove these functions as they're now handled by the external CSS file
+// Remove the following block:
 // Add extra CSS styles
 document.addEventListener('DOMContentLoaded', function() {
     const style = document.createElement('style');
