@@ -1081,19 +1081,33 @@ a.action-link:hover {
   justify-content: space-between;
 }
 
-/* Select text styling - using primary orange color */
-.user-item .select-text {
-  color: var(--primary);
-  font-weight: 600; /* Make it a bit bolder */
-  font-size: 0.9rem;
-  text-align: right;
-  margin-left: 1rem;
+.user-item:hover {
+    background-color: #f8f9fa;
 }
 
-/* Improve the loading and empty states */
-.user-item.loading, .user-item.no-results {
-  text-align: center;
-  color: var(--text-secondary);
-  padding: 12px;
-  border-bottom: none;
+.user-item .select-text {
+    color: #007bff;
+    font-size: 0.9em;
+}
+
+.user-item .username {
+    font-weight: 500;
+}
+
+.user-item.no-results,
+.user-item.loading {
+    justify-content: center;
+    color: #6c757d;
+    padding: 15px;
+}
+
+/* Alert container styles */
+#global-alert-container {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    width: 80%;
+    max-width: 800px;
 }

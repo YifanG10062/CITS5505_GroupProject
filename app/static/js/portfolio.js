@@ -675,15 +675,27 @@ document.addEventListener('DOMContentLoaded', function() {
                     e.preventDefault();
                     console.log('Share link clicked');
                     
-                    // Get portfolio ID
+                    // Get portfolio ID and name
                     let portfolioId = this.dataset.portfolioId;
+                    let portfolioName = '';
                     
-                    // If link doesn't have ID, try to get from containing row
-                    if (!portfolioId) {
-                        const row = this.closest('tr');
-                        if (row) {
-                            // Try to get from row's data attributes
+                    // Try to get portfolio name from the table row first
+                    const row = this.closest('tr');
+                    if (row) {
+                        const nameCell = row.querySelector('.portfolio-name-cell');
+                        if (nameCell) {
+                            portfolioName = nameCell.textContent.trim();
+                        }
+                        
+                        // Try to get ID from row if not in the link
+                        if (!portfolioId) {
                             portfolioId = row.dataset.portfolioId;
+                            
+                            // Try to get portfolio name from the row
+                            const nameCell = row.querySelector('.portfolio-name-cell');
+                            if (nameCell) {
+                                portfolioName = nameCell.textContent.trim();
+                            }
                             
                             // If row doesn't have ID, try from other links in same row
                             if (!portfolioId) {
@@ -707,16 +719,33 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     }
                     
-                    if (!portfolioId) {
-                        console.error('Could not determine portfolio ID for sharing');
-                        alert('Error: Could not determine which portfolio to share.');
-                        return;
+                    // If name not found yet, try card view
+                    if (!portfolioName) {
+                        const card = this.closest('.portfolio-card');
+                        if (card) {
+                            const nameElement = card.querySelector('.portfolio-title, .card-title');
+                            if (nameElement) {
+                                portfolioName = nameElement.textContent.trim();
+                            }
+                        }
                     }
                     
-                    console.log('Portfolio ID for sharing:', portfolioId);
+                    console.log('Portfolio ID for sharing:', portfolioId, 'Name:', portfolioName);
                     
-                    // Store portfolio ID in modal
+                    // Store portfolio ID and name in modal data attributes
                     modalEl.dataset.portfolioId = portfolioId;
+                    modalEl.dataset.portfolioName = portfolioName;
+                    
+                    // Update modal title with more specific selector
+                    const modalTitle = document.querySelector('#sharePortfolioModal .modal-title');
+                    if (modalTitle) {
+                        console.log('Setting modal title to:', portfolioName ? 
+                            `Share Your Portfolio "${portfolioName}"` : 
+                            `Share Your Portfolio`);
+                        modalTitle.textContent = portfolioName ? 
+                            `Share Your Portfolio "${portfolioName}"` : 
+                            `Share Your Portfolio`;
+                    }
                     
                     // Clear previous user selection
                     resetModalState();
@@ -750,6 +779,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         modalEl.style.display = 'block';
                         modalEl.classList.add('show');
                     }
+                    
+                    // Just before opening the modal
+                    console.log('Modal Data Before Show:', {
+                        portfolioId: modalEl.dataset.portfolioId,
+                        portfolioName: modalEl.dataset.portfolioName,
+                        titleElement: modalEl.querySelector('.modal-title')?.textContent
+                    });
                 });
             }
         });
@@ -1016,23 +1052,54 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
                 .then(data => {
                     if (data.success) {
-                        // Replace simple alert with Bootstrap alert
+                        // Get portfolio name - directly from modal dataset first
+                        let portfolioName = modalEl.dataset.portfolioName;
+                        console.log('Initial portfolio name from dataset:', portfolioName);
+                        
+                        // If name is not available, try to extract from modal title
+                        if (!portfolioName) {
+                            const modalTitle = modalEl.querySelector('.modal-title');
+                            if (modalTitle) {
+                                const titleText = modalTitle.textContent;
+                                console.log('Modal title text:', titleText);
+                                const matches = titleText.match(/Share Your Portfolio "([^"]+)"/);
+                                if (matches && matches[1]) {
+                                    portfolioName = matches[1];
+                                    console.log('Extracted name from title:', portfolioName);
+                                }
+                            }
+                        }
+                        
+                        // Final fallback
+                        if (!portfolioName) {
+                            portfolioName = 'portfolio';
+                            console.log('Using fallback portfolio name');
+                        }
+                        
+                        // Now use the determined portfolio name in the alert
+                        // Create success alert with portfolio name
                         const alertHTML = `
                             <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                Portfolio shared successfully with ${data.shared_with.join(', ')}
+                                Portfolio "${portfolioName}" shared successfully with user ${data.shared_with.join(', ')}
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                         `;
                         
-                        // Create a container for the alert if it doesn't exist
-                        let alertContainer = document.getElementById('alert-container');
+                        // Create alert container that appears below navbar and centered
+                        let alertContainer = document.getElementById('global-alert-container');
                         if (!alertContainer) {
                             alertContainer = document.createElement('div');
-                            alertContainer.id = 'alert-container';
+                            alertContainer.id = 'global-alert-container';
+                            
+                            // Style for centered positioning below navbar
                             alertContainer.style.position = 'fixed';
-                            alertContainer.style.top = '20px';
-                            alertContainer.style.right = '20px';
+                            alertContainer.style.top = '80px'; // Position below navbar
+                            alertContainer.style.left = '50%';
+                            alertContainer.style.transform = 'translateX(-50%)';
                             alertContainer.style.zIndex = '9999';
+                            alertContainer.style.width = '80%'; // Use percentage width
+                            alertContainer.style.maxWidth = '800px'; // Maximum width
+                            
                             document.body.appendChild(alertContainer);
                         }
                         
@@ -1279,41 +1346,3 @@ function setupShareButton(portfolioId) {
         });
     }
 }
-
-// Remove these functions as they're now handled by the external CSS file
-// Remove the following block:
-// Add extra CSS styles
-document.addEventListener('DOMContentLoaded', function() {
-    const style = document.createElement('style');
-    style.textContent = `
-        .user-dropdown-item:hover {
-            background-color: #f8f9fa;
-            cursor: pointer;
-        }
-    `;
-    document.head.appendChild(style);
-});
-
-// View Toggle Functionality
-document.addEventListener('DOMContentLoaded', function() {
-    const listViewBtn = document.getElementById('listViewBtn');
-    const cardViewBtn = document.getElementById('cardViewBtn');
-    const listView = document.getElementById('listView');
-    const cardView = document.getElementById('cardView');
-    
-    if (listViewBtn && cardViewBtn) {
-        listViewBtn.addEventListener('click', function() {
-            listViewBtn.classList.add('active');
-            cardViewBtn.classList.remove('active');
-            listView.classList.remove('d-none');
-            cardView.classList.add('d-none');
-        });
-        
-        cardViewBtn.addEventListener('click', function() {
-            cardViewBtn.classList.add('active');
-            listViewBtn.classList.remove('active');
-            cardView.classList.remove('d-none');
-            listView.classList.add('d-none');
-        });
-    }
-});
