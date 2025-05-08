@@ -589,40 +589,45 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // First ensure all Edit links keep their default behavior
-        document.querySelectorAll('.action-link.edit, a[href*="edit"], a[href*="edit_portfolio"]').forEach(link => {
-            // Ensure edit links are not modified - they should follow their href normally
+        // First ensure all Edit links and portfolio title links keep their default behavior
+        document.querySelectorAll('.action-link.edit, a[href*="edit"], a[href*="edit_portfolio"], .portfolio-name-cell a, a.portfolio-title').forEach(link => {
+            // Ensure these links are not modified - they should follow their href normally
             link.addEventListener('click', function(e) {
                 // Let default navigation happen - don't call preventDefault() 
-                console.log('Edit link clicked, allowing default navigation to:', this.href);
+                console.log('Navigation link clicked, allowing default navigation to:', this.href);
             });
         });
 
-        // Find share links using multiple selectors
+        // Find share links using MUCH more specific selectors to avoid capturing navigation links
         // First clear the links array
         let shareLinks = [];
         
-        // Method 1: Find links with text content "Share" but not containing edit in href or class
-        document.querySelectorAll('a').forEach(link => {
+        // Method 1: Find links with action-link class that have exact text content "Share"
+        document.querySelectorAll('.action-link, .share-btn').forEach(link => {
             if (link.textContent.trim() === 'Share' && 
                 !link.classList.contains('edit') && 
+                !link.classList.contains('portfolio-title') &&
                 !(link.href && link.href.includes('edit'))) {
                 shareLinks.push(link);
                 console.log('Found share link by text content:', link.outerHTML);
             }
         });
         
-        // Method 2: Use standard attribute selectors - exclude both delete and edit links
-        document.querySelectorAll('.action-link:not(.delete):not(.edit), a.share-btn, button.share-btn, [data-action="share"]').forEach(link => {
-            if (!shareLinks.includes(link)) {
+        // Method 2: Use very specific attribute selectors - exclude navigation links
+        document.querySelectorAll('a.action-link:not(.delete):not(.edit):not(.portfolio-title), a.share-btn, button.share-btn, [data-action="share"]').forEach(link => {
+            // Exclude any links in the portfolio name cell
+            if (!link.closest('.portfolio-name-cell') && !shareLinks.includes(link)) {
                 shareLinks.push(link);
                 console.log('Found share link by class/attribute selector:', link.outerHTML);
             }
         });
         
-        // Method 3: Specifically target links in table action cells with Share text
+        // Method 3: Target only links in the share action cell
         document.querySelectorAll('.action-cell a').forEach(link => {
-            if (link.textContent.trim() === 'Share' && !shareLinks.includes(link) && !link.classList.contains('edit')) {
+            if (link.textContent.trim() === 'Share' && 
+                !shareLinks.includes(link) && 
+                !link.classList.contains('edit') &&
+                !link.closest('.portfolio-name-cell')) {
                 shareLinks.push(link);
                 console.log('Found share link in action cell:', link.outerHTML);
             }
@@ -632,10 +637,13 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (shareLinks.length === 0) {
             console.warn('No share links found with standard selectors, trying with plain query');
-            // Last attempt: Use direct CSS selectors to find all possible share links, excluding edit links
-            document.querySelectorAll('.portfolios-table a:not([class*="delete"]):not([class*="edit"])').forEach(link => {
+            // Last attempt: Use more specific CSS selectors for share links only
+            document.querySelectorAll('.action-cell a:not([class*="delete"]):not([class*="edit"])').forEach(link => {
+                // Only process if it's definitely a share link and not a navigation link
                 console.log('Checking link:', link.outerHTML, 'Text:', link.textContent.trim());
-                if (link.textContent.trim() === 'Share' && !link.href.includes('edit')) {
+                if (link.textContent.trim() === 'Share' && 
+                    !link.href.includes('edit') &&
+                    !link.closest('.portfolio-name-cell')) {
                     shareLinks.push(link);
                     console.log('Added share link with direct selection:', link.outerHTML);
                 }
@@ -653,12 +661,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Add click event listener
                 newLink.addEventListener('click', function(e) {
-                    // Double check this is not an edit link
+                    // Double check this is not a navigation link
                     if (this.classList.contains('edit') || 
+                        this.classList.contains('portfolio-title') ||
+                        this.closest('.portfolio-name-cell') ||
                         (this.href && this.href.includes('edit')) || 
                         this.textContent.trim() === 'Edit') {
-                        // Let the default behavior happen for edit links
-                        console.log('Edit link detected, allowing default navigation');
+                        // Let the default behavior happen for navigation links
+                        console.log('Navigation link detected, allowing default navigation');
                         return;
                     }
                     
@@ -691,17 +701,6 @@ document.addEventListener('DOMContentLoaded', function() {
                                     const deleteLink = row.querySelector('.action-link.delete');
                                     if (deleteLink) {
                                         portfolioId = deleteLink.dataset.portfolioId;
-                                    }
-                                }
-                                
-                                // Try to get from first cell link
-                                if (!portfolioId) {
-                                    const firstCellLink = row.querySelector('td:first-child a');
-                                    if (firstCellLink && firstCellLink.href) {
-                                        const matches = firstCellLink.href.match(/portfolio_id=(\d+)/);
-                                        if (matches && matches[1]) {
-                                            portfolioId = matches[1];
-                                        }
                                     }
                                 }
                             }
