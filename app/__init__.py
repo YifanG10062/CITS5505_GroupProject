@@ -6,7 +6,7 @@ from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_mail import Mail
-from flask_migrate import Migrate, upgrade
+from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect, CSRFError
 
 # Local application imports
@@ -46,8 +46,6 @@ def create_app(config_class=ProductionConfig):
     
     # Register custom commands
     with app.app_context():
-        upgrade()
-
         from app.commands import init_app as init_commands
         init_commands(app)
     
@@ -92,5 +90,8 @@ def create_app(config_class=ProductionConfig):
         return render_template('error.html', code=500, title="Server Error",
                                heading="Something went wrong", subheading="Internal Server Error",
                                details="Try again later or contact support."), 500
+
+    with app.app_context():
+        db.create_all()  # Ensure database tables are created
 
     return app
