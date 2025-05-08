@@ -1016,7 +1016,43 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
                 .then(data => {
                     if (data.success) {
-                        alert(`Portfolio shared successfully with ${data.shared_with.join(', ')}`);
+                        // Replace simple alert with Bootstrap alert
+                        const alertHTML = `
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                Portfolio shared successfully with ${data.shared_with.join(', ')}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        `;
+                        
+                        // Create a container for the alert if it doesn't exist
+                        let alertContainer = document.getElementById('alert-container');
+                        if (!alertContainer) {
+                            alertContainer = document.createElement('div');
+                            alertContainer.id = 'alert-container';
+                            alertContainer.style.position = 'fixed';
+                            alertContainer.style.top = '20px';
+                            alertContainer.style.right = '20px';
+                            alertContainer.style.zIndex = '9999';
+                            document.body.appendChild(alertContainer);
+                        }
+                        
+                        // Add the alert to the container
+                        alertContainer.innerHTML = alertHTML;
+                        
+                        // Auto-close the alert after 5 seconds
+                        setTimeout(() => {
+                            const alert = alertContainer.querySelector('.alert');
+                            if (alert) {
+                                // Try to close using Bootstrap API first
+                                try {
+                                    const bsAlert = new bootstrap.Alert(alert);
+                                    bsAlert.close();
+                                } catch (e) {
+                                    // Fallback: remove directly
+                                    alert.remove();
+                                }
+                            }
+                        }, 5000);
                         
                         // Close the modal - try multiple methods
                         try {
