@@ -1,8 +1,5 @@
-{% extends "base.html" %} {% block head %}
-<meta name="csrf-token" content="{{ csrf_token() }}" />
-{% endblock %} {% block title %}Dashboard - The Richverse{% endblock %} {% block
-styles %}
-
+{% extends "base.html" %} {% block title %}Dashboard - The Richverse{% endblock
+%} {% block styles %}
 <link
   rel="stylesheet"
   href="{{ url_for('static', filename='css/dashboard.css') }}"
