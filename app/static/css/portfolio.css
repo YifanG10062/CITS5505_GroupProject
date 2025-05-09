@@ -1038,3 +1038,76 @@ a.action-link:hover {
   text-decoration-thickness: 1px;
   text-underline-offset: 2px;
 }
+
+.user-search-dropdown {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-outline);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1050;
+}
+
+/* User search dropdown styling - improved appearance */
+#userSearchResults {
+  position: absolute;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-top: none; /* Remove top border for seamless connection with input */
+  border-bottom-left-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+  z-index: 1050;
+  display: none;
+  margin-top: -1px; /* Overlap the input border for seamless appearance */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+/* First user item in dropdown needs special styling */
+#userSearchResults .user-item:first-child {
+  border-top: 1px solid var(--input-border); /* Add subtle separator */
+}
+
+/* Additional styling for the user items */
+.user-item {
+  cursor: pointer;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Lighter border between items */
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.user-item:hover {
+    background-color: #f8f9fa;
+}
+
+.user-item .select-text {
+    color: #007bff;
+    font-size: 0.9em;
+}
+
+.user-item .username {
+    font-weight: 500;
+}
+
+.user-item.no-results,
+.user-item.loading {
+    justify-content: center;
+    color: #6c757d;
+    padding: 15px;
+}
+
+/* Alert container styles */
+#global-alert-container {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    width: 80%;
+    max-width: 800px;
+}
