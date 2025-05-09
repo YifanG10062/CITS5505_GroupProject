@@ -5,6 +5,7 @@ import os
 from werkzeug.security import generate_password_hash
 import click
 from flask.cli import with_appcontext
+import sys
 
 @click.command('refresh-user-info')
 @with_appcontext
@@ -97,7 +98,11 @@ def init_app(app):
     app.cli.add_command(setup_dev_command)
     app.cli.add_command(refresh_user_info_command)
     
-    # Setup development environment on app startup if in development mode
-    if os.environ.get('FLASK_ENV') == 'development' or app.config.get('TESTING', False):
+    # Only run dev setup if FLASK_ENV is development AND running the actual server
+    if (
+        os.environ.get('FLASK_ENV') == 'development'
+        and 'flask' in sys.argv[0]    # basic CLI check
+        and 'run' in sys.argv    # only when running `flask run`
+    ) or app.config.get('TESTING', False):
         with app.app_context():
             setup_dev_environment()
