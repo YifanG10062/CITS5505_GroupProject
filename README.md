@@ -6,7 +6,7 @@ The application is designed to support retail investors, students, and finance e
 
 ---
 
-## 👥 Group Members
+## 👥 Group Members - Masters Group 30
 
 | UWA ID     | Name                      |
 |------------|---------------------------|
