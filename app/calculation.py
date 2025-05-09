@@ -167,3 +167,41 @@ def get_spy_cumulative_returns(start_date: str, match_dates: list[str]) -> list[
     cum_returns = cum_returns.loc[cum_returns.index.intersection(pd.to_datetime(match_dates))]
 
     return cum_returns.tolist()
+
+def calculate_drawdown_series(allocation: dict, start_date: str, initial_amount: float) -> dict:
+    from app.models import Price
+
+    all_df = []
+    for asset, weight in allocation.items():
+        records = Price.query.filter(
+            Price.asset_code == asset,
+            Price.date >= start_date
+        ).order_by(Price.date.asc()).all()
+
+        if not records:
+            continue
+
+        df = pd.DataFrame([{"date": r.date, "close": r.close_price} for r in records])
+        df["date"] = pd.to_datetime(df["date"])
+        df.set_index("date", inplace=True)
+        df.rename(columns={"close": asset}, inplace=True)
+        all_df.append(df)
+
+    if not all_df:
+        return {}
+
+    combined = pd.concat(all_df, axis=1, join="inner").dropna()
+    if combined.empty:
+        return {}
+
+    start_prices = combined.iloc[0]
+    shares = {a: (initial_amount * w) / start_prices[a] for a, w in allocation.items()}
+    portfolio_value = sum(combined[a] * shares[a] for a in allocation)
+
+    returns = portfolio_value.pct_change().dropna()
+    drawdowns = qs_stats.to_drawdown_series(returns).fillna(0)
+
+    return {
+        "labels": [d.strftime("%Y-%m-%d") for d in drawdowns.index],
+        "values": drawdowns.tolist()
+    }
