@@ -91,7 +91,4 @@ def create_app(config_class=ProductionConfig):
                                heading="Something went wrong", subheading="Internal Server Error",
                                details="Try again later or contact support."), 500
 
-    with app.app_context():
-        db.create_all()  # Ensure database tables are created
-
     return app

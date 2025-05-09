@@ -3,14 +3,15 @@ import sqlite3
 import traceback
 from datetime import datetime  # Add datetime import
 
-from flask import Blueprint, redirect, render_template, request, url_for, abort
+from flask import Blueprint, redirect, render_template, request, url_for, abort, jsonify  
 from flask_login import login_required, current_user
 
 from app.calculation import calculate_portfolio_metrics
-from app.models.portfolio import PortfolioSummary, PortfolioChangeLog  # Fix the import path
+from app.models.portfolio import PortfolioSummary, PortfolioChangeLog, PortfolioShareLog  
 from app.models.asset import Price
+from app.models.user import User 
 from sqlalchemy import func
-from app import db  # Import db from app
+from app import db  
 
 # Define portfolios blueprint
 portfolios = Blueprint("portfolios", __name__, url_prefix="/portfolios")
@@ -569,3 +570,112 @@ def delete(portfolio_id):
         print(f"Error deleting portfolio: {str(e)}")
         print(traceback.format_exc())
         return {"success": False, "message": "Failed to delete portfolio"}, 500
+
+# API to get user list for sharing
+@portfolios.route("/api/users", methods=["GET"])
+@login_required
+def get_users():
+    """API endpoint to fetch all users except the current user"""
+    # Query all users except the current user
+    users = User.query.filter(User.id != current_user.id).all()
+    
+    # Format user data for response
+    user_list = [
+        {
+            "id": user.id,
+            "username": user.username
+        }
+        for user in users
+    ]
+    
+    return jsonify({"users": user_list})
+
+# API to share a portfolio
+@portfolios.route("/api/portfolios/share", methods=["POST"])
+@login_required
+def share_portfolio():
+    """API endpoint to share a portfolio with selected users"""
+    data = request.json
+    
+    # Validate request data
+    if not data or "portfolio_id" not in data or "user_ids" not in data:
+        return jsonify({"error": "Invalid request data"}), 400
+    
+    portfolio_id = data["portfolio_id"]
+    user_ids = data["user_ids"]
+    
+    # Validate the portfolio exists and belongs to the current user
+    portfolio = PortfolioSummary.query.filter_by(
+        portfolio_id=portfolio_id,
+        user_id=current_user.id
+    ).first()
+    
+    if not portfolio:
+        return jsonify({"error": "Portfolio not found or not owned by you"}), 404
+    
+    # Ensure the portfolio is shareable
+    if not portfolio.is_shareable:
+        return jsonify({"error": "This portfolio cannot be shared"}), 403
+    
+    shared_with = []
+    for user_id in user_ids:
+        # Validate the target user exists
+        target_user = User.query.get(user_id)
+        if not target_user:
+            continue
+        
+        # Create a new portfolio for the target user
+        shared_portfolio = PortfolioSummary(
+            portfolio_name=f"{portfolio.portfolio_name} (Shared by {current_user.username})",
+            user_id=target_user.id,
+            creator_id=current_user.id,
+            shared_from_id=current_user.id,
+            allocation_json=portfolio.allocation_json,
+            start_date=portfolio.start_date,
+            initial_amount=portfolio.initial_amount,
+            current_value=portfolio.current_value,
+            profit=portfolio.profit,
+            return_percent=portfolio.return_percent,
+            cagr=portfolio.cagr,
+            volatility=portfolio.volatility,
+            max_drawdown=portfolio.max_drawdown,
+            created_at=datetime.utcnow(),
+            input_updated_at=datetime.utcnow(),
+            metric_updated_at=datetime.utcnow(),
+            is_editable=False,  # Shared portfolios are read-only
+            is_shareable=False,  # Shared portfolios cannot be shared further
+            is_deletable=False   # Shared portfolios cannot be deleted
+        )
+        
+        # Update user information for the shared portfolio
+        shared_portfolio.user_username = target_user.username
+        shared_portfolio.user_email = target_user.user_email
+        shared_portfolio.creator_username = current_user.username
+        shared_portfolio.creator_email = current_user.user_email
+        
+        db.session.add(shared_portfolio)
+        db.session.flush()  # Flush to get the new portfolio ID
+        
+        # Record the share in the PortfolioShareLog
+        share_log = PortfolioShareLog(
+            from_user_id=current_user.id,
+            to_user_id=target_user.id,
+            from_portfolio_id=portfolio.portfolio_id,
+            to_portfolio_id=shared_portfolio.portfolio_id,
+            shared_at=datetime.utcnow()
+        )
+        db.session.add(share_log)
+        
+        shared_with.append(target_user.username)
+    
+    try:
+        db.session.commit()
+        return jsonify({
+            "success": True,
+            "message": f"Portfolio shared with {len(shared_with)} users",
+            "shared_with": shared_with
+        })
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error sharing portfolio: {str(e)}")
+        return jsonify({"error": "Failed to share portfolio"}), 500
