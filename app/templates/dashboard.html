@@ -88,10 +88,9 @@ styles %}
     </div>
   </div>
 </div>
-
 <!-- Bottom Chart Row -->
-<div class="container mt-4">
-  <div class="row gx-3 gy-4">
+<div class="container mt-2">
+  <div class="row gx-3 gy-1">
     <!-- Heatmap -->
     <div class="col-lg-6 col-md-12">
       <div class="card chart-glow shadow" style="height: 440px">
@@ -111,18 +110,31 @@ styles %}
         </div>
       </div>
     </div>
+
     <!-- Top Gainers & Losers -->
-<div class="col-lg-6 col-md-12">
-  <div class="card chart-glow shadow" style="height: 440px">
-    <div class="card-header">Top Gainers & Losers</div>
-    <div class="card-body d-flex flex-column justify-content-between p-3">
-      <div class="flex-grow-1">
-        <canvas id="topMoversChart" style="width: 100%; height: 100%"></canvas>
+    <div class="col-lg-6 col-md-12">
+      <div class="card chart-glow shadow" style="height: 440px">
+        <div class="card-header">Top Gainers & Losers</div>
+        <div class="card-body d-flex flex-column justify-content-between p-3">
+          <div class="flex-grow-1">
+            <canvas
+              id="topMoversChart"
+              style="width: 100%; height: 100%"
+            ></canvas>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
 
+    <!-- Underwater Risk Chart -->
+    <div class="col-lg-12">
+      <div class="card chart-glow shadow" style="height: 400px; margin-top: 0">
+        <div class="card-header">Underwater Risk Chart</div>
+        <div class="card-body">
+          <canvas id="underwaterChart"></canvas>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %} {% block scripts %}
