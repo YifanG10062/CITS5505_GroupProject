@@ -13,17 +13,7 @@
 
 <section class="ftco-section">
   <div class="wrap">
-    <div class="info-panel">
-        <img class="logo" src="{{ url_for('static', filename='icons/app-logo.svg') }}" alt="The Richverse" style="height: 40px; margin-bottom: 12px;">
-        <h1 class="brand-title">THE RICHVERSE</h1>
-        <p class="text-desc">
-          The future belongs to those who learn from the past.<br>
-          Test your insights with a $1000 investment from 2015.<br>
-          Share your portfolio. Compare strategies. Grow together.<br>
-          <strong>Join now to reflect, learn, and invest with clarity.</strong>
-        </p>
-      </div>      
-
+    {% include "user/_auth_intro_panel.html" %}
     <div class="login-wrap">
       <h3>Registration</h3>
       <form action="{{ url_for('user.register') }}" method="post" class="signin-form">
