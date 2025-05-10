@@ -1,70 +1,54 @@
-{% extends "base.html" %} {% block title %}Reset Password - The Richverse{%
-endblock %} {% block styles %}
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='css/userpage.css') }}"
-/>
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"
-/>
-{% endblock %} {% block navbar %}{% endblock %} {% block content %} {% from
-"user/_formhelpers.html" import render_field %}
+{% extends "base.html" %}
+{% block title %}Reset Password - The Richverse{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/userpage.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block navbar %}{% endblock %}
+{% block content %}
+{% from "user/_formhelpers.html" import render_field %}
 
 <section class="ftco-section">
-  <div class="row justify-content-center">
-    <div class="col-md-8 col-lg-8">
-      <div class="wrap d-md-flex auth-container">
-        {% include "user/_auth_intro_panel.html" %}
-        <div
-          class="login-wrap p-4 p-md-5"
-          style="
-            background-color: #1e1e2f;
-            border-top-right-radius: 10px;
-            border-bottom-right-radius: 10px;
-            color: #fff;
-          "
-        >
-          <h3 class="mb-4">Reset Request</h3>
-          <form
-            action="{{ url_for('user.resetrequest') }}"
-            method="post"
-            class="signin-form"
-          >
-            {{ form.csrf_token }} {{ render_field(form.Email) }}
-            <input
-              type="submit"
-              value="Send"
-              class="form-control btn btn-primary"
-            />
+  <div class="wrap">
+    <div class="info-panel">
+        <img class="logo" src="{{ url_for('static', filename='icons/app-logo.svg') }}" alt="The Richverse" style="height: 40px; margin-bottom: 12px;">
+        <h1 class="brand-title">THE RICHVERSE</h1>
+        <p class="text-desc">
+          The future belongs to those who learn from the past.<br>
+          Test your insights with a $1000 investment from 2015.<br>
+          Share your portfolio. Compare strategies. Grow together.<br>
+          <strong>Join now to reflect, learn, and invest with clarity.</strong>
+        </p>
+      </div>      
 
-            {% with errors = get_flashed_messages(category_filter=["error"]) %}
-            {% if errors %}
-            <div
-              class="alert alert-danger alert-dismissible fade show"
-              role="alert"
-              style="font-size: 12px"
-            >
-              {%- for msg in errors %} {{ msg }} {% endfor -%}
-            </div>
-            {% endif %} {% endwith %} {% with errors =
-            get_flashed_messages(category_filter=["success"]) %} {% if errors %}
-            <div
-              class="alert alert-success alert-dismissible fade show"
-              role="alert"
-              style="font-size: 12px"
-            >
-              {%- for msg in errors %} {{ msg }} {% endfor -%}
-            </div>
-            {% endif %} {% endwith %}
-          </form>
-          <br />
-          <p class="text-center">
-            Remember your password?
-            <a href="{{ url_for('user.login') }}">Login</a>
-          </p>
+    <div class="login-wrap">
+      <h3>Reset Request</h3>
+      <form action="{{ url_for('user.resetrequest') }}" method="post" class="signin-form">
+        {{ form.csrf_token }}
+        {{ render_field(form.Email) }}
+        <input type="submit" value="Send" class="form-control btn">
+
+        {% with errors = get_flashed_messages(category_filter=["error"]) %}
+        {% if errors %}
+        <div class="alert alert-danger">
+          {%- for msg in errors %}{{ msg }}{% endfor -%}
         </div>
-      </div>
+        {% endif %}
+        {% endwith %}
+
+        {% with success = get_flashed_messages(category_filter=["success"]) %}
+        {% if success %}
+        <div class="alert alert-success">
+          {%- for msg in success %}{{ msg }}{% endfor -%}
+        </div>
+        {% endif %}
+        {% endwith %}
+      </form>
+
+      <p class="text-center mt-3">Remember your password? <a href="{{ url_for('user.login') }}">Login</a></p>
     </div>
   </div>
 </section>
