@@ -3,12 +3,12 @@ import unittest
 import pandas as pd
 from app import create_app, db
 from app.models import Price
-from app.calculation import (
+from app.services.calculation import (
     calculate_portfolio_metrics,
     get_portfolio_timeseries,
     calculate_drawdown_series
 )
-from config import TestConfig
+from app.config import TestConfig
 
 
 class VisualizationTestCases(unittest.TestCase):

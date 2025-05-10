@@ -7,7 +7,7 @@ from app import db
 import json
 from datetime import datetime
 from flask import request, jsonify
-from app.calculation import calculate_portfolio_metrics
+from app.services.calculation import calculate_portfolio_metrics
 
 dashboard = Blueprint("dashboard", __name__)
 
@@ -93,7 +93,7 @@ def top_movers():
 @dashboard.route("/api/portfolio-drawdown", methods=["POST"])
 @login_required
 def portfolio_drawdown():
-    from app.calculation import calculate_drawdown_series
+    from app.services.calculation import calculate_drawdown_series
 
     data = request.get_json(force=True)
     weights = data.get("weights", {})
