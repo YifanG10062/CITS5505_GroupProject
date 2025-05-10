@@ -19,7 +19,7 @@ def login():
             login_user(user)
             return redirect(url_for('portfolios.list'))
         flash("Invalid email or password.", "error")
-    return render_template("user/login.html", form=form)  # Updated template path
+    return render_template("user/login.html", form=form, hide_footer=True)
 
 @user.route("/register", methods=["GET", "POST"])
 def register():
@@ -40,7 +40,7 @@ def register():
             db.session.commit()
             flash("Registration successful. Please log in.", "success")
             return redirect(url_for("user.login"))
-    return render_template("user/register.html", form=form)  # Updated template path
+    return render_template("user/register.html", form=form, hide_footer=True)
 
 @user.route("/resetrequest", methods=["GET", "POST"])
 def resetrequest():
@@ -53,10 +53,10 @@ def resetrequest():
             _sendEmail = sendemail(user.id, user.user_email, uid)
             if _sendEmail == '1':
                 flash("Thank you for providing your email address. We'll send you a verification code shortly.", "success")
-                return render_template('user/changepassword.html', form=ChangePasswordForm())
+                return render_template('user/changepassword.html', form=ChangePasswordForm(), hide_footer=True)
         else:
             flash("Email not found.", "error")
-    return render_template("user/resetrequest.html", form=form)  # Updated template path
+    return render_template("user/resetrequest.html", form=form, hide_footer=True)
 
 @user.route("/changepassword", methods=["GET", "POST"])
 def changepassword():
@@ -75,7 +75,7 @@ def changepassword():
                 flash("Passwords do not match.", "error")
         else:
             flash("Invalid Token, please re-enter.", "error")
-    return render_template("user/changepassword.html", form=form)  # Updated template path
+    return render_template("user/changepassword.html", form=form, hide_footer=True)  # Updated template path
 
 @user.route("/update", methods=["POST"])
 @login_required

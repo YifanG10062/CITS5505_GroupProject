@@ -1,73 +1,54 @@
-{% extends "base.html" %}
-
-{% block title %}Login - The Richverse{% endblock %}
-
+{% extends "base.html" %} {% block title %}Login - The Richverse{% endblock %}
 {% block styles %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/userpage.css') }}">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
-
-{% endblock %}
-{% block navbar %}{% endblock %}
-{% block content %}
-{% from "user/_formhelpers.html" import render_field %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/userpage.css') }}"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"
+/>
+<link
+  href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&display=swap"
+  rel="stylesheet"
+/>
+{% endblock %} {% block navbar %}{% endblock %} {% block content %} {% from
+"user/_formhelpers.html" import render_field %}
 
 <section class="ftco-section">
-    <div class="row justify-content-center">
-        <div class="col-md-6 text-center mb-5"></div>
-    </div>
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-8">
-            <div class="wrap d-md-flex auth-container" style="align-items: stretch; gap: 0;">
-                <div class="info-panel d-flex flex-column justify-content-center align-items-center p-4" style="flex: 1; background-color: #121212; border-radius: 10px 0 0 10px;">
-                    <h1 class="brand-title">THE RICHVERSE</h1>
-                    <p class="mt-3 text-center text-desc">
-                        In a parallel <strong>RICHVERSE</strong><br>
-                        10 years ago, upon investing $1,000 in BTC<br>
-                        How rich would you be today?<br>
-                        <strong>Log in and find out</strong>
-                    <p>
-                </div>
+  <div class="wrap">
+    {% include "user/_auth_intro_panel.html" %}
+    <div class="login-wrap">
+      <h3>Sign In</h3>
+      <form
+        action="{{ url_for('user.login') }}"
+        method="post"
+        class="signin-form"
+      >
+        {{ form.csrf_token }} {{ render_field(form.Email) }} {{
+        render_field(form.Password) }}
+        <input type="submit" value="Login" class="form-control btn" />
 
-                <div class="login-wrap p-4 p-md-5" style="flex: 1; background-color: #1e1e2f; border-radius: 0 10px 10px 0; color: #fff;">
-                    <div class="d-flex">
-                        <div class="w-100">
-                            <h3 class="mb-4">Sign In</h3>
-                        </div>
-                    </div>
-                    <form action="{{ url_for('user.login') }}" method="post" class="signin-form">
-                        {{ form.csrf_token }}    
-                        {{ render_field(form.Email) }}
-                        {{ render_field(form.Password) }}
-                        <input type="submit" value="Login" class="form-control btn btn-golden">
-
-                        {% with errors = get_flashed_messages(category_filter=["error"]) %}
-                        {% if errors %}
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="font-size: 12px;">
-                            {%- for msg in errors %}
-                                {{ msg }}
-                            {% endfor -%}
-                        </div>
-                        {% endif %}
-                        {% endwith %}
-
-                        {% with errors = get_flashed_messages(category_filter=["success"]) %}
-                        {% if errors %}
-                        <div class="alert alert-success alert-dismissible fade show" role="alert" style="font-size: 12px;">
-                            {%- for msg in errors %}
-                                {{ msg }}
-                            {% endfor -%}
-                        </div>
-                        {% endif %}
-                        {% endwith %}
-                    </form>
-
-                    <br>
-                    <p class="text-center">Not a member? <a href="{{ url_for('user.register') }}">Sign Up</a></p>
-                    <p class="text-center"><a href="{{ url_for('user.resetrequest') }}">Forgot Password?</a></p>
-                </div>
-            </div>
+        {% with errors = get_flashed_messages(category_filter=["error"]) %} {%
+        if errors %}
+        <div class="alert alert-danger">
+          {%- for msg in errors %}{{ msg }}{% endfor -%}
         </div>
+        {% endif %} {% endwith %} {% with success =
+        get_flashed_messages(category_filter=["success"]) %} {% if success %}
+        <div class="alert alert-success">
+          {%- for msg in success %}{{ msg }}{% endfor -%}
+        </div>
+        {% endif %} {% endwith %}
+      </form>
+
+      <p class="text-center mt-3">
+        Not a member? <a href="{{ url_for('user.register') }}">Sign Up</a>
+      </p>
+      <p class="text-center">
+        <a href="{{ url_for('user.resetrequest') }}">Forgot Password?</a>
+      </p>
     </div>
+  </div>
 </section>
 {% endblock %}
