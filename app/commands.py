@@ -99,17 +99,18 @@ def setup_dev_command():
     """Command to manually setup development environment"""
     setup_dev_environment()
     click.echo('Development environment setup completed.')
-
+    
 def init_app(app):
-    """Register commands with the Flask application"""
+    """Register CLI commands and conditionally run setup logic."""
     app.cli.add_command(setup_dev_command)
     app.cli.add_command(refresh_user_info_command)
-    
-    # Only run dev setup if FLASK_ENV is development AND running the actual server
+
+    # Only run setup when launching dev server via `flask run`
     if (
-        os.environ.get('FLASK_ENV') == 'development'
-        and 'flask' in sys.argv[0]    # basic CLI check
-        and 'run' in sys.argv    # only when running `flask run`
-    ) or app.config.get('TESTING', False):
+        os.environ.get("FLASK_ENV") == "development"
+        and "flask" in sys.argv[0]
+        and "run" in sys.argv
+    ):
         with app.app_context():
             setup_dev_environment()
+
