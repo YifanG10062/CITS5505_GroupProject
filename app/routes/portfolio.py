@@ -6,7 +6,7 @@ from datetime import datetime  # Add datetime import
 from flask import Blueprint, redirect, render_template, request, url_for, abort, jsonify  
 from flask_login import login_required, current_user
 
-from app.calculation import calculate_portfolio_metrics
+from app.services.calculation import calculate_portfolio_metrics
 from app.models.portfolio import PortfolioSummary, PortfolioChangeLog, PortfolioShareLog  
 from app.models.asset import Price
 from app.models.user import User 

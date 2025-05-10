@@ -4,7 +4,7 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from app import create_app, db
-from app.calculation import (
+from app.services.calculation import (
     calculate_portfolio_metrics,
     get_portfolio_timeseries,
     get_spy_cumulative_returns
