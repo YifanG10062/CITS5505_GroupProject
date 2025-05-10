@@ -5,9 +5,10 @@ body {
   margin: 0;
   padding: 0;
   background-color: #0f111a;
-  overflow: hidden;
   font-family: "Sora", sans-serif;
   color: #fff;
+  overflow: hidden;
+  scroll-behavior: smooth;
 }
 
 /* Centering Section */
@@ -36,7 +37,7 @@ body {
   position: relative;
 }
 
-/* Subtle card lift on hover (desktop only) */
+/* Subtle card lift on hover */
 @media (hover: hover) {
   .wrap:hover {
     transform: translateY(-2px);
@@ -173,7 +174,7 @@ input:-webkit-autofill {
   box-shadow: 0 0 0 0.25rem rgba(230, 57, 70, 0.25);
 }
 
-/* Submit Button */
+/* Primary Button */
 .btn {
   background-color: #f8a01d;
   color: #000;
@@ -201,7 +202,7 @@ input:-webkit-autofill {
   transform: translateY(0);
 }
 
-/* Ripple effect */
+/* Ripple Effect */
 .btn::after {
   content: "";
   display: block;
@@ -245,12 +246,33 @@ input:-webkit-autofill {
   text-decoration: underline;
 }
 
-/* Responsive */
+/* Accessibility outline for keyboard users */
+.btn:focus-visible {
+  outline: 2px dashed #f8a01d;
+  outline-offset: 4px;
+}
+
+/* Mobile Responsiveness */
 @media (max-width: 768px) {
+  html,
+  body {
+    height: auto;
+    overflow-y: auto;
+  }
+
+  .ftco-section {
+    height: auto;
+    min-height: 100vh;
+    align-items: flex-start;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+
   .wrap {
     flex-direction: column;
     width: 90%;
     min-width: unset;
+    margin: 0 auto;
   }
 
   .info-panel,
@@ -262,10 +284,13 @@ input:-webkit-autofill {
   .login-wrap {
     padding: 2rem 1.5rem;
   }
-}
 
-/* Responsive logo visibility */
-@media (max-width: 768px) {
+  .form-control {
+    height: 44px;
+    font-size: 15px;
+    padding: 0 0.75rem;
+  }
+
   .info-panel img.logo {
     display: none;
   }
