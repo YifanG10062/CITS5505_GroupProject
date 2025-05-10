@@ -10,7 +10,7 @@ from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect, CSRFError
 
 # Local application imports
-from config import ProductionConfig
+from app.config import ProductionConfig
 
 # --- Extensions ---
 db = SQLAlchemy()  # Create db instance first
@@ -41,12 +41,12 @@ def create_app(config_class=ProductionConfig):
         print("WARNING: Using temporary secret key")
 
     # CLI commands
-    from app.fetch_price import refresh_history_command
+    from app.services.fetch_price import refresh_history_command
     app.cli.add_command(refresh_history_command)
     
     # Register custom commands
     with app.app_context():
-        from app.commands import init_app as init_commands
+        from app.cli.commands import init_app as init_commands
         init_commands(app)
     
     # Register blueprints
@@ -54,7 +54,7 @@ def create_app(config_class=ProductionConfig):
     from app.routes.portfolio import portfolios
     from app.routes.user import user
     from app.routes.comparison import comparison
-    from app.api import api_bp
+    from app.services.api import api_bp
     from app.routes.dashboard import dashboard
 
     app.register_blueprint(main)

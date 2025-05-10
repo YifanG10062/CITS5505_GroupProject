@@ -2,7 +2,7 @@ import unittest
 from app import create_app, db
 from app.models.user import User
 from app.models.portfolio import PortfolioSummary
-from config import TestConfig
+from app.config import TestConfig
 
 class RefactoringTest(unittest.TestCase):
     def setUp(self):

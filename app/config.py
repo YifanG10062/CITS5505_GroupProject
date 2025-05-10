@@ -1,7 +1,7 @@
 import os
 from datetime import timedelta
 
-basedir = os.path.abspath(os.path.dirname(__file__))
+basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'development-key'
