@@ -49,6 +49,12 @@ def create_test_users():
     from app.models.user import User
     # Ensure User is a SQLAlchemy model
     # If User is not a subclass of db.Model, check and handle it this way
+    
+    app_env = os.environ.get('APP_ENV') or os.environ.get('FLASK_ENV')
+    if app_env != 'development' and not current_app.config.get('TESTING', False):
+        print("Skipping test user creation in non-development environment")
+        return
+    
     if not hasattr(User, 'query'):
         print("Error: User model has no query attribute, please check the User class definition")
         return
