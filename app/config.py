@@ -37,4 +37,24 @@ class TestConfig(Config):
 os.makedirs(os.path.join(basedir, 'db'), exist_ok=True)
 
 class ProductionConfig(Config):
+    DEBUG = False
     SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(basedir, 'db', 'portfolio_data.db')
+
+# Configuration mapping
+config = {
+    'development': DevelopmentConfig,
+    'testing': TestConfig,
+    'production': ProductionConfig
+}
+
+def get_config():
+    """Return the appropriate configuration object based on environment variables."""
+    # Check FLASK_DEBUG first - if it's explicitly set to 0, use production
+    if os.environ.get('FLASK_DEBUG') == '0':
+        return config['production']
+    
+    # Then check for environment name - for Flask 3.x, APP_ENV is preferred
+    env_name = os.environ.get('APP_ENV') or os.environ.get('FLASK_ENV', 'production')
+    
+    # Return the appropriate config or default to production if invalid
+    return config.get(env_name, config['production'])

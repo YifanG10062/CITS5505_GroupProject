@@ -6,7 +6,7 @@ from flask_login import LoginManager
 from flask_mail import Mail
 from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect, CSRFError
-from app.config import ProductionConfig, DevelopmentConfig, TestConfig
+from app.config import get_config, DevelopmentConfig, TestConfig, ProductionConfig
 
 
 # --- Extensions ---
@@ -18,18 +18,20 @@ login_manager = LoginManager()
 
 # --- Flask App Factory ---
 def create_app():
-    config_mapping = {
-        'development': DevelopmentConfig,
-        'testing': TestConfig,
-        'production': ProductionConfig
-    }
-    
-    config_name = os.environ.get('FLASK_ENV', 'production')
-    config_class = config_mapping.get(config_name, ProductionConfig)
+    # Use the get_config() function that handles both APP_ENV and FLASK_DEBUG
+    config_class = get_config()
     
     app = Flask(__name__)
     app.config.from_object(config_class)
 
+    # Determine environment name from the config class for migrations
+    if isinstance(config_class, DevelopmentConfig):
+        config_name = 'development'
+    elif isinstance(config_class, TestConfig):
+        config_name = 'testing'
+    else:
+        config_name = 'production'
+    
     # Initialize extensions
     db.init_app(app)  
     

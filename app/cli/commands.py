@@ -25,8 +25,9 @@ def refresh_user_info_command():
 
 def setup_dev_environment():
     """Setup test users and other configurations in development environment"""
-    # Only execute in development environment
-    if os.environ.get('FLASK_ENV') != 'development' and not current_app.config.get('TESTING', False):
+    # Only execute in development environment - check both ENV variables
+    app_env = os.environ.get('APP_ENV') or os.environ.get('FLASK_ENV')
+    if app_env != 'development' and not current_app.config.get('TESTING', False):
         return
     
     # Ensure db is initialized
@@ -108,7 +109,8 @@ def dev_db_init_command():
     # Add a local import here to ensure it's available
     import os
     
-    if os.environ.get('FLASK_ENV') != 'development':
+    app_env = os.environ.get('APP_ENV') or os.environ.get('FLASK_ENV')
+    if app_env != 'development':
         click.echo('Warning: This command should be run in development environment')
         return
     
@@ -131,7 +133,8 @@ def dev_db_init_command():
 @with_appcontext
 def dev_db_migrate_command(message):
     """Create database migration scripts for development environment"""
-    if os.environ.get('FLASK_ENV') != 'development':
+    app_env = os.environ.get('APP_ENV') or os.environ.get('FLASK_ENV')
+    if app_env != 'development':
         click.echo('Warning: This command should be run in development environment')
         return
     
@@ -144,7 +147,8 @@ def dev_db_migrate_command(message):
 @with_appcontext
 def dev_db_upgrade_command():
     """Apply database migrations for development environment"""
-    if os.environ.get('FLASK_ENV') != 'development':
+    app_env = os.environ.get('APP_ENV') or os.environ.get('FLASK_ENV')
+    if app_env != 'development':
         click.echo('Warning: This command should be run in development environment')
         return
     
@@ -162,8 +166,9 @@ def init_app(app):
     app.cli.add_command(dev_db_upgrade_command)
 
     # Only run setup when launching dev server via `flask run`
+    app_env = os.environ.get('APP_ENV') or os.environ.get('FLASK_ENV')
     if (
-        os.environ.get("FLASK_ENV") == "development"
+        app_env == "development"
         and "flask" in sys.argv[0]
         and "run" in sys.argv
     ):
