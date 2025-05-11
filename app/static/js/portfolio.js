@@ -1406,6 +1406,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(data => {
                     console.log('Loaded users:', data);
                     allUsers = data.users || [];
+                    
+                    // Check if there are no other users to share with
+                    if (allUsers.length === 0) {
+                        if (showDropdown && userSearchResults) {
+                            userSearchResults.innerHTML = '<div class="text-center p-2 text-info">No other users available to share with</div>';
+                            userSearchResults.style.display = 'block';
+                        }
+                        return;
+                    }
+                    
                     // Only filter and show users if showDropdown is true
                     if (showDropdown) {
                         filterUsers(''); // Display all users initially
@@ -1452,10 +1462,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // If we don't have users yet and we're trying to filter, load them first
             if (allUsers.length === 0) {
-                userSearchResults.innerHTML = '<div class="user-item loading">Loading users...</div>';
-                userSearchResults.style.display = 'block';
-                
-                // Try to load users and then filter
                 loadUsers();
                 return;
             }
