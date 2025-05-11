@@ -834,7 +834,246 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Initialize with "All" filter
         filterPortfolios('all');
+
+        // Initialize delete portfolio functionality
+        initDeletePortfolio();
     }
+
+    /**
+     * Initialize delete portfolio functionality
+     * Handles delete button clicks and calls the delete API
+     */
+    function initDeletePortfolio() {
+        console.log('Initializing delete portfolio functionality');
+        
+        // Find all delete buttons (both in list and card views)
+        const deleteButtons = document.querySelectorAll('.action-link.delete, .delete-portfolio-btn');
+        
+        console.log(`Found ${deleteButtons.length} delete buttons`);
+        
+        deleteButtons.forEach(button => {
+            // Replace with new button to remove any existing listeners
+            const newButton = button.cloneNode(true);
+            if (button.parentNode) {
+                button.parentNode.replaceChild(newButton, button);
+                
+                // Add click event listener to the new button
+                newButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Get portfolio ID from data attribute
+                    const portfolioId = this.dataset.portfolioId;
+                    
+                    if (!portfolioId) {
+                        console.error('No portfolio ID found for delete button');
+                        return;
+                    }
+                    
+                    console.log(`Delete button clicked for portfolio ID: ${portfolioId}`);
+                    
+                    // Confirm deletion
+                    if (confirm('Are you sure you want to delete this portfolio? This action cannot be undone.')) {
+                        console.log('Deletion confirmed, sending request to server');
+                        
+                        // Show loading state
+                        const originalText = this.textContent;
+                        this.textContent = 'Deleting...';
+                        this.disabled = true;
+                        
+                        // Send delete request to server
+                        fetch(`/portfolios/${portfolioId}/delete`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': getCsrfToken()
+                            }
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log('Delete response:', data);
+                            
+                            if (data.success) {
+                                // Remove the portfolio element from the UI
+                                const row = this.closest('tr');
+                                const card = this.closest('.portfolio-card');
+                                
+                                // Handle removal from both views
+                                if (row) {
+                                    row.remove();
+                                }
+                                
+                                if (card) {
+                                    card.remove();
+                                }
+                                
+                                // Show success message
+                                const alertHTML = `
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        Portfolio deleted successfully
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                `;
+                                
+                                // Create alert container that appears below navbar and centered
+                                let alertContainer = document.getElementById('global-alert-container');
+                                if (!alertContainer) {
+                                    alertContainer = document.createElement('div');
+                                    alertContainer.id = 'global-alert-container';
+                                    
+                                    // Style for centered positioning below navbar
+                                    alertContainer.style.position = 'fixed';
+                                    alertContainer.style.top = '80px'; // Position below navbar
+                                    alertContainer.style.left = '50%';
+                                    alertContainer.style.transform = 'translateX(-50%)';
+                                    alertContainer.style.zIndex = '9999';
+                                    alertContainer.style.width = '80%'; // Use percentage width
+                                    alertContainer.style.maxWidth = '800px'; // Maximum width
+                                    
+                                    document.body.appendChild(alertContainer);
+                                }
+                                
+                                // Add the alert to the container
+                                alertContainer.innerHTML = alertHTML;
+                                
+                                // Auto-close the alert after 5 seconds
+                                setTimeout(() => {
+                                    const alert = alertContainer.querySelector('.alert');
+                                    if (alert) {
+                                        // Try to close using Bootstrap API first
+                                        try {
+                                            const bsAlert = new bootstrap.Alert(alert);
+                                            bsAlert.close();
+                                        } catch (e) {
+                                            // Fallback: remove directly
+                                            alert.remove();
+                                        }
+                                    }
+                                }, 5000);
+                                
+                                // Check if we need to show "no data" message
+                                const tbody = document.querySelector('.portfolios-table tbody');
+                                if (tbody && tbody.querySelectorAll('tr:not(#noDataRow)').length === 0) {
+                                    const noDataRow = document.getElementById('noDataRow');
+                                    if (noDataRow) {
+                                        noDataRow.classList.remove('d-none');
+                                    }
+                                }
+                                
+                                // Check for card view
+                                const cardContainer = document.getElementById('cardView');
+                                if (cardContainer && cardContainer.querySelectorAll('.portfolio-card').length === 0) {
+                                    const noDataCards = document.getElementById('noDataCards');
+                                    if (noDataCards) {
+                                        noDataCards.classList.remove('d-none');
+                                    }
+                                }
+                            } else {
+                                // Show error message
+                                alert(`Failed to delete portfolio: ${data.message || 'Unknown error'}`);
+                                this.textContent = originalText;
+                                this.disabled = false;
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error deleting portfolio:', error);
+                            alert('Failed to delete portfolio. Please try again.');
+                            this.textContent = originalText;
+                            this.disabled = false;
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    // View switching functionality
+    const listViewBtn = document.getElementById('listViewBtn');
+    const cardViewBtn = document.getElementById('cardViewBtn');
+    const listView = document.getElementById('listView');
+    const cardView = document.getElementById('cardView');
+    
+    // Switch to list view
+    listViewBtn.addEventListener('click', function() {
+        listViewBtn.classList.add('active');
+        cardViewBtn.classList.remove('active');
+        listView.classList.remove('d-none');
+        cardView.classList.add('d-none');
+    });
+    
+    // Switch to card view
+    cardViewBtn.addEventListener('click', function() {
+        cardViewBtn.classList.add('active');
+        listViewBtn.classList.remove('active');
+        cardView.classList.remove('d-none');
+        listView.classList.add('d-none');
+    });
+    
+    // Portfolio filtering functionality for both views
+    const filterAll = document.getElementById('filterAll');
+    const filterMine = document.getElementById('filterMine');
+    const filterShared = document.getElementById('filterShared');
+    
+    // Filter function that applies to both views
+    function applyFilter(filter) {
+        // Get all portfolio rows and cards
+        const portfolioRows = document.querySelectorAll('#listView tbody tr:not(#noDataRow)');
+        const portfolioCards = document.querySelectorAll('.portfolio-card');
+        
+        let visibleCount = 0;
+        
+        // Filter list view
+        portfolioRows.forEach(row => {
+            const isShared = row.querySelector('.shared-badge') !== null;
+            
+            if (filter === 'all' || 
+                (filter === 'shared' && isShared) || 
+                (filter === 'mine' && !isShared)) {
+                row.classList.remove('d-none');
+                visibleCount++;
+            } else {
+                row.classList.add('d-none');
+            }
+        });
+        
+        // Filter card view
+        portfolioCards.forEach(card => {
+            const isShared = card.querySelector('.shared-badge') !== null;
+            
+            if (filter === 'all' || 
+                (filter === 'shared' && isShared) || 
+                (filter === 'mine' && !isShared)) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+        // Show/hide no data message for list view
+        const noDataRow = document.getElementById('noDataRow');
+        if (visibleCount === 0 && noDataRow) {
+            noDataRow.classList.remove('d-none');
+        } else if (noDataRow) {
+            noDataRow.classList.add('d-none');
+        }
+        
+        // Show/hide no data message for card view
+        const noDataCards = document.getElementById('noDataCards');
+        if (visibleCount === 0 && noDataCards) {
+            noDataCards.classList.remove('d-none');
+        } else if (noDataCards) {
+            noDataCards.classList.add('d-none');
+        }
+    }
+    
+    // Add event listeners to radio buttons
+    filterAll.addEventListener('change', () => applyFilter('all'));
+    filterMine.addEventListener('change', () => applyFilter('mine'));
+    filterShared.addEventListener('change', () => applyFilter('shared'));
 
     // Helper function to get CSRF token
     function getCsrfToken() {

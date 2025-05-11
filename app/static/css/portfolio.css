@@ -139,7 +139,7 @@
   border-radius: 0.25rem;
   font-weight: 500;
   font-size: 0.875rem;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-ui);
 }
 
 .allocation-total.valid {
@@ -190,7 +190,7 @@
 /* Allocation value display and interaction */
 .allocation-value {
   text-align: right;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-ui);
   font-weight: 500;
   color: var(--text-primary);
   display: flex;
@@ -230,7 +230,7 @@
   border-radius: 0.375rem; /* Match the standard form-control border-radius */
   padding: 0.375rem 0.75rem; /* Match standard form-control padding */
   font-weight: 600;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-ui);
   box-shadow: none;
   margin-right: 0.25rem; /* Add margin between input and percentage sign */
 }
@@ -260,7 +260,7 @@
   text-align: center;
   padding: 2rem 1rem;
   color: var(--text-secondary);
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-body);
 }
 
 .no-assets-icon {
@@ -285,6 +285,7 @@
   margin: 0 auto; /* Center horizontally */
   width: 100%;
   color: var(--text-secondary);
+  font-family: var(--font-body);
 }
 
 .no-data-message i {
@@ -307,7 +308,7 @@
   border-radius: 0.75rem;
   padding: 1.5rem;
   height: 100%;
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-body);
 }
 
 /* Configuration item layout */
@@ -323,7 +324,7 @@
 }
 
 .config-label {
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-body);
   font-weight: 400;
   font-size: 1rem;
   color: var(--text-primary);
@@ -332,7 +333,7 @@
 }
 
 .config-value {
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-body);
   font-weight: 600;
   font-size: 1rem;
   color: var(--primary);
@@ -365,7 +366,7 @@
 }
 
 .portfolio-name-text {
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-body);
   font-weight: 600;
   font-size: 1rem;
   color: var(--primary);
@@ -393,7 +394,7 @@
   background-color: transparent;
   border: none;
   color: var(--primary);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-ui);
   font-weight: 500;
   font-size: 1rem;
   text-align: right;
@@ -465,7 +466,7 @@
   color: var(--text-secondary);
   border: none;
   font-weight: 400;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-ui);
   text-decoration: none;
   padding: 0;
   font-size: 0.9rem;
@@ -619,7 +620,7 @@
 
 /* Investment period display styling */
 .investment-period {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 0.9rem;
   color: var(--text-primary);
   margin: 1rem 0 1.5rem;
@@ -674,11 +675,17 @@
 
 /* Basic Card View styling */
 #cardView {
-  position: relative;
-  min-height: 400px;
-  border: 1px solid var(--card-outline);
-  border-radius: 0.5rem;
-  overflow: hidden;
+  border: none; /* Remove border */
+  border-radius: 0; /* Remove border radius */
+  padding: 0; /* Remove padding */
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
 }
 
 .card-view-overlay {
@@ -708,7 +715,7 @@
 }
 
 .overlay-content p {
-  font-family: var(--font-ui);
+  font-family: var(--font-body);
   font-size: 1.125rem;
   color: var(--text-secondary);
   margin-bottom: 1.5rem;
@@ -724,14 +731,6 @@
   font-weight: 600;
   color: var(--primary);
   letter-spacing: 0.05em;
-}
-
-#cardView {
-  border: 1px solid var(--card-outline);
-  border-radius: 0.5rem;
-  padding: 3rem 1rem;
-  width: 100%;
-  margin-bottom: 2rem;
 }
 
 .coming-soon-placeholder {
@@ -766,14 +765,14 @@
 }
 
 .placeholder-text {
-  font-family: var(--font-ui);
+  font-family: var(--font-body);
   font-size: 1rem;
   color: var(--text-secondary);
   margin-bottom: 0.5rem;
 }
 
 .placeholder-subtext {
-  font-family: var(--font-ui);
+  font-family: var(--font-body);
   font-size: 0.9rem;
   color: var(--primary);
   font-style: italic;
@@ -820,7 +819,7 @@
 
 .portfolio-card .card-content {
   padding: 1rem;
-  font-family: var(--font-ui);
+  font-family: var(--font-body);
   font-size: 14px;
 }
 
@@ -858,17 +857,27 @@
 .portfolio-card .action-link {
   color: var(--primary);
   text-decoration: none;
-  font-weight: 500;
   font-size: 14px;
   font-family: var(--font-ui);
-  transition: color 0.2s ease;
+  font-weight: 500;
+  transition: color 0.2s;
 }
 
 .portfolio-card .action-link:hover {
   color: var(--primary-hover);
   text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 2px;
+}
+
+.portfolio-card .action-link:active {
+  color: var(--primary-active);
+}
+
+.portfolio-card .action-link.delete {
+  color: var(--red-down);
+}
+
+.portfolio-card .action-link.delete:hover {
+  color: #dc2626;
 }
 
 /* Responsive adjustments for card view */
@@ -916,6 +925,7 @@
   padding: 0;
   font-size: 14px;
   color: #fff;
+  font-family: var(--font-ui);
 }
 
 /* Hide the default radio input */
@@ -1080,6 +1090,7 @@
   color: var(--text-secondary);
   font-size: 0.9rem;
   line-height: 1.5;
+  font-family: var(--font-body);
 }
 
 .user-selector .input-group-text {
@@ -1124,6 +1135,7 @@ a.action-link {
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s ease;
+  font-family: var(--font-ui);
 }
 
 a.action-link:hover {
@@ -1131,6 +1143,18 @@ a.action-link:hover {
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 2px;
+}
+
+a.action-link:active {
+  color: var(--primary-active);
+}
+
+a.action-link.delete {
+  color: var(--red-down);
+}
+
+a.action-link.delete:hover {
+  color: #dc2626;
 }
 
 /* Global text button style for use throughout the application */
@@ -1251,6 +1275,7 @@ a.action-link:hover {
   overflow-y: auto;
   font-size: 12px;
   color: var(--text-secondary);
+  font-family: var(--font-body);
 }
 
 .share-history-item {
@@ -1320,6 +1345,7 @@ a.action-link:hover {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  font-family: var(--font-ui);
 }
 
 .user-item:hover {
@@ -1374,4 +1400,109 @@ th.sortable {
 /* Hover effect for sortable headers */
 th.sortable:hover {
   background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Card View Styles */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.portfolio-card {
+  background-color: #1a2232;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  color: #ffffff;
+}
+
+.portfolio-card .card-header {
+  padding: 15px;
+  border-bottom: 1px solid #2d3546;
+}
+
+.portfolio-card .portfolio-title {
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+.portfolio-card .portfolio-title-link {
+  color: #ff9d2d; /* Primary orange color */
+  text-decoration: none;
+}
+
+.portfolio-card .portfolio-title-link:hover {
+  text-decoration: underline;
+}
+
+.portfolio-card .portfolio-allocation {
+  font-size: 14px;
+  color: #ccd;
+  margin-bottom: 5px;
+}
+
+.portfolio-card .creator-info {
+  font-size: 14px;
+  color: #aab;
+}
+
+.portfolio-card .shared-badge {
+  background-color: #384d6b;
+  color: #fff;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 5px;
+}
+
+.portfolio-card .card-body {
+  padding: 15px;
+}
+
+.portfolio-card .metric-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.portfolio-card .metric-label {
+  color: #aab;
+}
+
+.portfolio-card .metric-value {
+  font-weight: 500;
+}
+
+.portfolio-card .return-positive {
+  color: #4CAF50; /* Green color for positive returns */
+}
+
+.portfolio-card .return-negative {
+  color: #F44336; /* Red color for negative metrics */
+}
+
+.portfolio-card .card-footer {
+  border-top: 1px solid #2d3546;
+  padding: 12px 15px;
+}
+
+.portfolio-card .action-links {
+  display: flex;
+  justify-content: flex-end; /* Right-align the action buttons */
+  gap: 15px;
+}
+
+.portfolio-card .action-link {
+  color: #ccd;
+  text-decoration: none;
+}
+
+.portfolio-card .action-link:hover {
+  text-decoration: underline;
+}
+
+.portfolio-card .action-link.primary-color, 
+.portfolio-card .action-link.delete {
+  color: #ff9d2d; /* Primary orange color */
 }

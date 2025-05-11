@@ -448,8 +448,6 @@ def edit(portfolio_id):
                 change_log = PortfolioChangeLog(
                     portfolio_id=portfolio.portfolio_id,
                     changed_by=current_user.id,
-                    changed_by_name=current_user.username,  
-                    changed_by_email=current_user.user_email,
                     field_changed="allocation", 
                     old_value=json.dumps(current_allocation), 
                     new_value=json.dumps(allocation),
@@ -463,8 +461,6 @@ def edit(portfolio_id):
                     name_change_log = PortfolioChangeLog(
                         portfolio_id=portfolio.portfolio_id,
                         changed_by=current_user.id,
-                        changed_by_name=current_user.username,  
-                        changed_by_email=current_user.user_email,  
                         field_changed="portfolio_name",
                         old_value=original_portfolio_name,
                         new_value=portfolio_name,
@@ -544,12 +540,10 @@ def delete(portfolio_id):
         # Soft delete by setting is_shown to False
         portfolio.is_shown = False
         
-        # Record the change in log
+        # Record the change in log - removing invalid fields
         change_log = PortfolioChangeLog(
             portfolio_id=portfolio.portfolio_id,
             changed_by=current_user.id,
-            changed_by_name=current_user.username,  
-            changed_by_email=current_user.user_email, 
             field_changed="visibility",
             old_value="visible",
             new_value="hidden",
@@ -559,13 +553,13 @@ def delete(portfolio_id):
         db.session.add(change_log)
         db.session.commit()
         
-        return {"success": True, "message": "Portfolio deleted successfully"}, 200
+        return jsonify({"success": True, "message": "Portfolio deleted successfully"}), 200
         
     except Exception as e:
         db.session.rollback()
         print(f"Error deleting portfolio: {str(e)}")
         print(traceback.format_exc())
-        return {"success": False, "message": "Failed to delete portfolio"}, 500
+        return jsonify({"success": False, "message": "Failed to delete portfolio"}), 500
 
 # API to get user list for sharing
 @portfolios.route("/api/users", methods=["GET"])
