@@ -158,16 +158,16 @@
           <div class="card-header">
             <div class="portfolio-info">
               <!-- Make portfolio name a primary-colored link to the dashboard -->
-              <h3 class="portfolio-title">
-                <a href="{{ url_for('dashboard.show', portfolio_id=portfolio.portfolio_id) }}" class="portfolio-title-link" target="_blank">
+              <h3 class="portfolio-title" style="text-transform: none;">
+                <a href="{{ url_for('dashboard.show', portfolio_id=portfolio.portfolio_id) }}" class="portfolio-title-link" style="text-transform: none;" target="_blank">
                   {{ portfolio.portfolio_name }}
                 </a>
               </h3>
               <!-- Allocation on the second line -->
-              <p class="portfolio-allocation">{{ portfolio.allocation }}</p>
+              <p class="portfolio-allocation" style="text-transform: none;">{{ portfolio.allocation }}</p>
               <!-- Creator on the third line -->
-              <div class="creator-info">
-                <span class="creator-label">Creator: {{ portfolio.creator_username }}</span>
+              <div class="creator-info" style="text-transform: none;">
+                <span class="creator-label" style="text-transform: none;">Creator: {{ portfolio.creator_username }}</span>
                 {% if portfolio.is_shared %}
                 <span class="badge shared-badge">Shared</span>
                 {% endif %}
@@ -204,11 +204,9 @@
           
           <div class="card-footer">
             <div class="action-links text-end">
-              <!-- Move View link to Edit/View based on editability -->
+              <!-- Only show Edit button, remove View button -->
               {% if portfolio.is_editable %}
               <a href="{{ url_for('portfolios.edit', portfolio_id=portfolio.portfolio_id) }}" class="action-link edit" target="_blank">Edit</a>
-              {% else %}
-              <a href="{{ url_for('dashboard.show', portfolio_id=portfolio.portfolio_id) }}" class="action-link view" target="_blank">View</a>
               {% endif %}
               
               {% if portfolio.is_shareable %}
