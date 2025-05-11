@@ -18,11 +18,24 @@
           <button id="cardViewBtn" class="toggle-btn">Card View</button>
         </div>
         
-        <!-- Toggle Switch -->
-        <div class="toggle-wrapper">
-          <span>All include shared</span>
-          <div class="form-check form-switch ms-2">
-            <input class="form-check-input form-switch-input" type="checkbox" id="includeSharedToggle">
+        <!-- Portfolio Filter Radio Buttons styled as circular radio buttons -->
+        <div class="portfolio-filter">
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" name="portfolioFilter" id="filterAll" value="all" checked>
+              <span class="radio-circle"></span>
+              <span class="radio-text">All</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="portfolioFilter" id="filterMine" value="mine">
+              <span class="radio-circle"></span>
+              <span class="radio-text">Mine</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="portfolioFilter" id="filterShared" value="shared">
+              <span class="radio-circle"></span>
+              <span class="radio-text">Shared</span>
+            </label>
           </div>
         </div>
       </div>
@@ -56,6 +69,16 @@
           </tr>
         </thead>
         <tbody>
+          <!-- No data message row (hidden by default) -->
+          <tr id="noDataRow" class="no-data-row d-none">
+            <td colspan="9" class="text-center py-4">
+              <div class="no-data-message">
+                <i class="bi bi-inbox fs-4 mb-2"></i>
+                <p>No portfolios found.</p>
+              </div>
+            </td>
+          </tr>
+          
           {% for portfolio in portfolios %}
           <tr>
             <td class="portfolio-name-cell">

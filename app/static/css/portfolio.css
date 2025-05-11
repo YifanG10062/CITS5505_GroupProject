@@ -118,7 +118,7 @@
 
 /* Selection indicator - hide but keep element in DOM */
 .asset-card .selection-indicator {
-  display: none !important;
+  display: none;
   visibility: hidden;
   opacity: 0;
 }
@@ -266,6 +266,39 @@
 .no-assets-icon {
   font-size: 2rem;
   margin-bottom: 0.5rem;
+}
+
+/* No data state styling - improved visibility and spacing */
+.portfolios-table .no-data-row td {
+  background-color: rgba(18, 24, 38, 0.6);
+  text-align: center;
+  padding: 4rem 1rem; /* Increased vertical padding */
+  position: relative; /* Changed from absolute */
+  box-sizing: border-box;
+}
+
+.no-data-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto; /* Center horizontally */
+  width: 100%;
+  color: var(--text-secondary);
+}
+
+.no-data-message i {
+  font-size: 2.5rem; /* Slightly larger icon */
+  margin-bottom: 1rem;
+  opacity: 0.7;
+}
+
+.no-data-message p {
+  font-family: var(--font-ui);
+  font-size: 1.1rem; /* Slightly larger text */
+  margin-bottom: 0;
+  text-align: center;
+  width: 100%;
 }
 
 /* Portfolio configuration sidebar */
@@ -857,9 +890,86 @@
 
 /* Toggle switch wrapper */
 .toggle-wrapper {
+  display: none; /* Hide the original toggle switch */
+}
+
+/* Portfolio filter styling for circular radio buttons */
+.portfolio-filter {
   display: flex;
   align-items: center;
-  white-space: nowrap;
+  margin-left: 15px;
+}
+
+.radio-group {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* Space between radio options */
+}
+
+/* Radio option container */
+.radio-option {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  color: #fff;
+}
+
+/* Hide the default radio input */
+.radio-option input {
+  position: absolute;
+  opacity: 0;
+  height: 0;
+  width: 0;
+}
+
+/* The outer circle of the custom radio button - changing border to white */
+.radio-circle {
+  position: relative;
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+  border: 2px solid #fff; 
+  border-radius: 50%;
+  transition: border-color 0.2s ease;
+}
+
+/* Change border color to orange when checked */
+.radio-option input:checked ~ .radio-circle {
+  border-color: #f59e0b; /* Orange border for selected radio */
+}
+
+/* The inner circle that appears when selected */
+.radio-circle:after {
+  content: '';
+  position: absolute;
+  display: none; /* Hidden by default */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #f59e0b; /* Orange fill when selected */
+}
+
+/* Show the inner circle when the radio is checked */
+.radio-option input:checked ~ .radio-circle:after {
+  display: block;
+}
+
+/* Style for radio text */
+.radio-text {
+  font-weight: 400;
+}
+
+/* Make text bolder when selected */
+.radio-option input:checked ~ .radio-text {
+  font-weight: 500;
 }
 
 /* Right section containing action buttons */

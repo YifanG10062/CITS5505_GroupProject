@@ -561,6 +561,80 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         });
+
+        // Portfolio filtering functionality
+        const filterRadios = document.querySelectorAll('input[name="portfolioFilter"]');
+        const portfolioRows = document.querySelectorAll('.portfolios-table tbody tr:not(#noDataRow)');
+        const noDataRow = document.getElementById('noDataRow');
+        const currentUsername = document.querySelector('meta[name="username"]')?.content;
+        
+        // Function to filter portfolios based on selection
+        function filterPortfolios(filterValue) {
+            let visibleCount = 0;
+            
+            portfolioRows.forEach(row => {
+                const creatorCell = row.querySelector('.creator-cell');
+                const creatorUsername = creatorCell.querySelector('span').textContent.trim();
+                const isShared = creatorCell.querySelector('.shared-badge') !== null;
+                
+                let isVisible = false;
+                
+                switch(filterValue) {
+                    case 'all':
+                        isVisible = true;
+                        break;
+                    case 'mine':
+                        isVisible = (creatorUsername === currentUsername);
+                        break;
+                    case 'shared':
+                        isVisible = isShared;
+                        break;
+                }
+                
+                row.style.display = isVisible ? '' : 'none';
+                
+                if (isVisible) {
+                    visibleCount++;
+                }
+            });
+            
+            // Show or hide the "no data" message based on visible rows count
+            if (visibleCount === 0) {
+                noDataRow.classList.remove('d-none');
+            } else {
+                noDataRow.classList.add('d-none');
+            }
+        }
+        
+        // Add event listeners to filter radio buttons
+        filterRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                filterPortfolios(this.value);
+            });
+        });
+        
+        // Initialize with "All" filter
+        filterPortfolios('all');
+        
+        // Portfolio filtering with tabs
+        const filterTabs = document.querySelectorAll('.filter-tab');
+        
+        // Add event listeners to filter tabs
+        filterTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs
+                filterTabs.forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Filter portfolios
+                filterPortfolios(this.dataset.filter);
+            });
+        });
+        
+        // Initialize with "All" filter
+        filterPortfolios('all');
     }
 
     // Helper function to get CSRF token

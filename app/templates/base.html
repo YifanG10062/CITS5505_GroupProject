@@ -20,6 +20,11 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     
+    <!-- Current User Info -->
+    {% if current_user.is_authenticated %}
+    <meta name="username" content="{{ current_user.username }}">
+    {% endif %}
+    
     <!-- Additional CSS blocks -->
     {% block styles %}{% endblock %}
 </head>
