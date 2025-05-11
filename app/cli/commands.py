@@ -1,17 +1,18 @@
-from app.models.user import User
-from app.models.portfolio import PortfolioSummary
-from flask import current_app
 import os
-from werkzeug.security import generate_password_hash
-import click
-from flask.cli import with_appcontext
 import sys
+import click
+from flask import current_app
+from flask.cli import with_appcontext
+from werkzeug.security import generate_password_hash
+from flask_migrate import init as migrate_init, migrate, upgrade
 
 @click.command('refresh-user-info')
 @with_appcontext
 def refresh_user_info_command():
     """Refresh all user information in portfolio summaries."""
     from app import db
+    from app.models.portfolio import PortfolioSummary
+    
     portfolios = PortfolioSummary.query.all()
     updated_count = 0
     
@@ -44,7 +45,7 @@ def setup_dev_environment():
 def create_test_users():
     """Create test users if they don't exist"""
     from app import db
-    
+    from app.models.user import User
     # Ensure User is a SQLAlchemy model
     # If User is not a subclass of db.Model, check and handle it this way
     if not hasattr(User, 'query'):
@@ -100,10 +101,65 @@ def setup_dev_command():
     setup_dev_environment()
     click.echo('Development environment setup completed.')
     
+@click.command('dev-db-init')
+@with_appcontext
+def dev_db_init_command():
+    """Initialize database migrations for development environment"""
+    # Add a local import here to ensure it's available
+    import os
+    
+    if os.environ.get('FLASK_ENV') != 'development':
+        click.echo('Warning: This command should be run in development environment')
+        return
+    
+    migrations_dev_dir = 'migrations_dev'
+    
+    # Check if directory already exists
+    if os.path.exists(migrations_dev_dir):
+        click.echo(f"Warning: {migrations_dev_dir} directory already exists")
+        if not click.confirm('Do you want to continue? This may overwrite existing files'):
+            click.echo('Operation cancelled')
+            return
+    
+    from flask_migrate import init as _init
+    click.echo("Initializing development migrations...")
+    _init(directory=migrations_dev_dir)
+    click.echo(f"Development migrations initialized in {migrations_dev_dir} directory")
+
+@click.command('dev-db-migrate')
+@click.option('--message', '-m', default=None, help='Migration message')
+@with_appcontext
+def dev_db_migrate_command(message):
+    """Create database migration scripts for development environment"""
+    if os.environ.get('FLASK_ENV') != 'development':
+        click.echo('Warning: This command should be run in development environment')
+        return
+    
+    from flask_migrate import migrate as _migrate
+    click.echo(f"Creating development migration, message: {message}")
+    _migrate(directory='migrations_dev', message=message)
+    click.echo("Migration script created.")
+    
+@click.command('dev-db-upgrade')
+@with_appcontext
+def dev_db_upgrade_command():
+    """Apply database migrations for development environment"""
+    if os.environ.get('FLASK_ENV') != 'development':
+        click.echo('Warning: This command should be run in development environment')
+        return
+    
+    from flask_migrate import upgrade as _upgrade
+    click.echo("Applying development migrations...")
+    _upgrade(directory='migrations_dev')
+    click.echo("Development database migrations applied.")
+
 def init_app(app):
     """Register CLI commands and conditionally run setup logic."""
     app.cli.add_command(setup_dev_command)
     app.cli.add_command(refresh_user_info_command)
+    app.cli.add_command(dev_db_init_command)
+    app.cli.add_command(dev_db_migrate_command)
+    app.cli.add_command(dev_db_upgrade_command)
 
     # Only run setup when launching dev server via `flask run`
     if (
@@ -113,4 +169,3 @@ def init_app(app):
     ):
         with app.app_context():
             setup_dev_environment()
-

@@ -1,36 +1,46 @@
-# Standard library imports
 import uuid
-
-# Third-party imports
+import os
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect, CSRFError
+from app.config import ProductionConfig, DevelopmentConfig, TestConfig
 
-# Local application imports
-from app.config import ProductionConfig
 
 # --- Extensions ---
-db = SQLAlchemy()  # Create db instance first
+db = SQLAlchemy() 
 migrate = Migrate()
 csrf = CSRFProtect()
 mail = Mail()
 login_manager = LoginManager()
 
 # --- Flask App Factory ---
-def create_app(config_class=ProductionConfig):
+def create_app():
+    config_mapping = {
+        'development': DevelopmentConfig,
+        'testing': TestConfig,
+        'production': ProductionConfig
+    }
+    
+    config_name = os.environ.get('FLASK_ENV', 'production')
+    config_class = config_mapping.get(config_name, ProductionConfig)
+    
     app = Flask(__name__)
     app.config.from_object(config_class)
 
     # Initialize extensions
-    db.init_app(app)  # Initialize db with app
-    migrate.init_app(app, db)
+    db.init_app(app)  
+    
+    # Choose migrations directory based on environment name rather than just DEBUG flag
+    migrations_directory = 'migrations_dev' if config_name == 'development' else 'migrations'
+    migrate.init_app(app, db, directory=migrations_directory)
+    
     csrf.init_app(app)
     mail.init_app(app)
     login_manager.init_app(app)
-    login_manager.login_view = 'user.login'  # Updated to use blueprint route
+    login_manager.login_view = 'user.login' 
 
     # Suppress the default "Please log in to access this page." message
     login_manager.login_message = None
