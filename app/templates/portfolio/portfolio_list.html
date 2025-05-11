@@ -123,10 +123,15 @@
               {% endif %}
             </td>
             <td class="current-value">${{ "{:,}".format(portfolio.current_value | int | default(12679)) }}</td>
-            <td class="return-positive">{{ "{:,}".format((portfolio.return_percent * 100) | round(2) | default(12.00)) }}%</td>
-            <td class="return-positive">{{ (portfolio.cagr * 100) | round(2) | default('14.86') }}%</td>
+            <td class="{% if portfolio.return_percent >= 0 %}return-positive{% else %}return-negative{% endif %}">
+              {{ "{:,}".format((portfolio.return_percent * 100) | round(2) | default(12.00)) }}%
+            </td>
+            <td class="{% if portfolio.cagr >= 0 %}return-positive{% else %}return-negative{% endif %}">
+              {{ (portfolio.cagr * 100) | round(2) | default('14.86') }}%
+            </td>
             <td class="metric-value">{{ (portfolio.volatility * 100) | round(2) | default('27.82') }}%</td>
-            <td class="return-negative">{{ (portfolio.max_drawdown * 100) | round(2) | default('35.78') }}%</td>
+            <td class="{% if portfolio.max_drawdown >= 0 %}return-positive{% else %}return-negative{% endif %}">
+              {{ (portfolio.max_drawdown * 100) | round(2) | default('35.78') }}%</td>
             <td class="action-cell">
               {% if portfolio.is_editable %}
               <a href="{{ url_for('portfolios.edit', portfolio_id=portfolio.portfolio_id) }}" class="action-link" target="_blank">Edit</a>

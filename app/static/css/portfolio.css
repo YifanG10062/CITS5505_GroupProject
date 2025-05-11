@@ -539,6 +539,17 @@
   white-space: nowrap; 
 }
 
+/* Table cell color styling for positive/negative returns */
+.portfolios-table .return-positive {
+  color: var(--green-up); 
+  font-weight: 500;
+}
+
+.portfolios-table .return-negative {
+  color: var(--red-down);
+  font-weight: 500;
+}
+
 /* Set some proportional column widths for table */
 .portfolios-table th:nth-child(1), 
 .portfolios-table td:nth-child(1) {
@@ -901,6 +912,15 @@
 
 .portfolio-card .action-link.delete:hover {
   color: #dc2626;
+}
+
+/* Update card view colors to also use theme variables */
+.portfolio-card .return-positive {
+  color: var(--green-up); /* Use theme variable for consistency */
+}
+
+.portfolio-card .return-negative {
+  color: var(--red-down); /* Use theme variable for consistency */
 }
 
 /* Responsive adjustments for card view */
@@ -1498,11 +1518,11 @@ th.sortable:hover {
 }
 
 .portfolio-card .return-positive {
-  color: #4CAF50; /* Green color for positive returns */
+  color: var(--green-up); /* Use theme variable for consistency */
 }
 
 .portfolio-card .return-negative {
-  color: #F44336; /* Red color for negative metrics */
+  color: var(--red-down); /* Use theme variable for consistency */
 }
 
 .portfolio-card .card-footer {
