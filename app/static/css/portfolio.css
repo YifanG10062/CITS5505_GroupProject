@@ -1149,6 +1149,137 @@ a.action-link:hover {
   text-underline-offset: 2px;
 }
 
+/* Share history tooltip styles */
+.share-history-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.share-info-icon {
+  margin-left: 4px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color 0.2s ease;
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--text-secondary);
+}
+
+.share-info-icon:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.share-history-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-outline);
+  border-radius: 4px;
+  padding: 10px;
+  width: 250px;
+  z-index: 1060; /* Increased z-index to appear above all table elements */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  pointer-events: none;
+  margin-bottom: 10px;
+}
+
+/* Adjust tooltip position on hover to ensure it's fully visible */
+.share-history-wrapper:hover .share-history-tooltip {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto; /* Allow interaction with tooltip content */
+}
+
+/* Special positioning for tooltips in table context */
+.portfolios-table .share-history-tooltip {
+  position: fixed; /* Use fixed position instead of absolute */
+  left: auto; /* Reset left positioning */
+  transform: none; /* Reset transform */
+  bottom: auto; /* Auto positioning instead of fixed bottom */
+  top: auto; /* Auto positioning for top */
+  max-width: 300px;
+  width: auto;
+  min-width: 250px;
+}
+
+/* Arrow positioning for tooltips */
+.share-history-tooltip::after {
+  content: '';
+  position: absolute;
+  border-width: 6px;
+  border-style: solid;
+}
+
+/* Default arrow (pointing down) */
+.share-history-tooltip.tooltip-top::after {
+  top: 100%;
+  left: 20px;
+  border-color: var(--card-outline) transparent transparent transparent;
+}
+
+/* Arrow pointing up when tooltip is below the trigger */
+.share-history-tooltip.tooltip-bottom::after {
+  bottom: 100%;
+  left: 20px;
+  border-color: transparent transparent var(--card-outline) transparent;
+}
+
+.share-history-title {
+  font-family: var(--font-nav);
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--card-outline);
+  padding-bottom: 5px;
+}
+
+.share-history-list {
+  max-height: 150px;
+  overflow-y: auto;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.share-history-item {
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.share-history-item:last-child {
+  border-bottom: none;
+}
+
+.share-history-username {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.share-history-time {
+  font-style: italic;
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+.no-history {
+  font-style: italic;
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 10px 0;
+}
+
 .user-search-dropdown {
     background-color: var(--card-bg);
     border: 1px solid var(--card-outline);
@@ -1163,7 +1294,7 @@ a.action-link:hover {
   width: 100%;
   max-height: 200px;
   overflow-y: auto;
-  background-color: var(--input-bg);
+  background-color: var(--card-bg); /* Ensure dark background */
   border: 1px solid var(--input-border);
   border-top: none; /* Remove top border for seamless connection with input */
   border-bottom-left-radius: 0.25rem;
@@ -1192,12 +1323,14 @@ a.action-link:hover {
 }
 
 .user-item:hover {
-    background-color: #f8f9fa;
+    background-color: rgba(56, 61, 72, 0.5); /* Dark theme hover background */
+    color: var(--text-primary);
 }
 
 .user-item .select-text {
-    color: #007bff;
+    color: var(--primary); /* Use primary orange color */
     font-size: 0.9em;
+    font-weight: 500;
 }
 
 .user-item .username {

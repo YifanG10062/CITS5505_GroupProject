@@ -82,9 +82,28 @@
           {% for portfolio in portfolios %}
           <tr>
             <td class="portfolio-name-cell">
-              <a href="{{ url_for('dashboard.show', portfolio_id=portfolio.portfolio_id) }}" class="action-link" target="_blank">
-                {{ portfolio.portfolio_name }}
-              </a>
+              <div class="share-history-wrapper">
+                <a href="{{ url_for('dashboard.show', portfolio_id=portfolio.portfolio_id) }}" class="action-link" target="_blank">
+                  {{ portfolio.portfolio_name }}
+                </a>
+                {% if portfolio.is_shareable and portfolio.share_history and portfolio.share_history|length > 0 %}
+                <span class="share-info-icon" title="Share History">i</span>
+                <div class="share-history-tooltip">
+                  <div class="share-history-title">Share History</div>
+                  <div class="share-history-list">
+                    {% for share in portfolio.share_history %}
+                    <div class="share-history-item">
+                      <div class="share-history-username">Shared to {{ share.username }}</div>
+                      <div class="share-history-time">{{ share.shared_at }}</div>
+                    </div>
+                    {% endfor %}
+                    {% if not portfolio.share_history %}
+                    <div class="no-history">No sharing history available</div>
+                    {% endif %}
+                  </div>
+                </div>
+                {% endif %}
+              </div>
             </td>
             <td class="portfolio-allocation">{{ portfolio.allocation }}</td>
             <td class="creator-cell">

@@ -2,13 +2,13 @@ import json
 import sqlite3
 import traceback
 import os
-from datetime import datetime  # Add datetime import
+from datetime import datetime, timedelta 
 
 from flask import Blueprint, redirect, render_template, request, url_for, abort, jsonify, current_app
 from flask_login import login_required, current_user
 
 from app.services.calculation import calculate_portfolio_metrics
-from app.models.portfolio import PortfolioSummary, PortfolioChangeLog, PortfolioShareLog, PortfolioVersion  # Add PortfolioVersion import
+from app.models.portfolio import PortfolioSummary, PortfolioChangeLog, PortfolioShareLog, PortfolioVersion
 from app.models.asset import Price
 from app.models.user import User 
 from sqlalchemy import func
@@ -144,6 +144,22 @@ def list():
         allocation_dict = json.loads(p.allocation_json)
         allocation_str = ", ".join([f"{k}: {int(v*100)}%" for k, v in allocation_dict.items()])
         
+        # Get share history for this portfolio
+        share_history = []
+        if p.creator_id == current_user.id:  # Only get share history for portfolios created by current user
+            share_logs = PortfolioShareLog.query.filter_by(from_portfolio_id=p.portfolio_id).all()
+            
+            for log in share_logs:
+                # Get the username of the user this portfolio was shared with
+                shared_user = User.query.get(log.to_user_id)
+                if shared_user:
+                    # Convert UTC time to Perth time (+8 hours) for display
+                    perth_time = log.shared_at + timedelta(hours=8)
+                    share_history.append({
+                        'username': shared_user.username,
+                        'shared_at': perth_time.strftime('%d/%m/%Y %H:%M') 
+                    })
+        
         portfolios_list.append({
             "portfolio_id": p.portfolio_id,
             "portfolio_name": p.portfolio_name,
@@ -151,7 +167,8 @@ def list():
             "creator_username": p.creator_username,
             "is_shared": p.shared_from_id is not None,
             "is_editable": p.is_editable and p.creator_id == current_user.id,  
-            "is_shareable": p.is_shareable and p.creator_id == current_user.id,  
+            "is_shareable": p.is_shareable and p.creator_id == current_user.id, 
+            "share_history": share_history,  # Add share history to the portfolio object
             "current_value": p.current_value,
             "return_percent": p.return_percent,
             "cagr": p.cagr,

@@ -90,6 +90,67 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
+    // Dynamic tooltip positioning
+    // Positions tooltips based on available space in viewport
+    function initTooltipPositioning() {
+        // Get all info icons that can trigger tooltips
+        const infoIcons = document.querySelectorAll('.share-info-icon');
+        
+        infoIcons.forEach(icon => {
+            // Add mouseover event to position tooltip before showing
+            icon.addEventListener('mouseover', function() {
+                const wrapper = this.closest('.share-history-wrapper');
+                const tooltip = wrapper.querySelector('.share-history-tooltip');
+                
+                if (!tooltip) return;
+                
+                // Get positions
+                const iconRect = this.getBoundingClientRect();
+                const viewportHeight = window.innerHeight;
+                const viewportWidth = window.innerWidth;
+                
+                // Remove all positioning classes
+                tooltip.classList.remove('tooltip-top', 'tooltip-bottom');
+                
+                // Calculate available space above and below
+                const spaceAbove = iconRect.top;
+                const spaceBelow = viewportHeight - iconRect.bottom;
+                
+                // Default tooltip width
+                const tooltipWidth = 250;
+                
+                // Determine left position (keep tooltip within viewport)
+                let leftPos = iconRect.left - 20; // align arrow with icon
+                
+                // Check if tooltip would go off-screen to the right
+                if (leftPos + tooltipWidth > viewportWidth) {
+                    leftPos = viewportWidth - tooltipWidth - 10;
+                }
+                
+                // Check if tooltip would go off-screen to the left
+                if (leftPos < 10) {
+                    leftPos = 10;
+                }
+                
+                // Position tooltip based on available space
+                if (spaceAbove >= 200 || spaceAbove > spaceBelow) {
+                    // Position above the icon
+                    tooltip.style.bottom = (viewportHeight - iconRect.top + 10) + 'px';
+                    tooltip.style.top = 'auto';
+                    tooltip.classList.add('tooltip-top');
+                } else {
+                    // Position below the icon
+                    tooltip.style.top = (iconRect.bottom + 10) + 'px';
+                    tooltip.style.bottom = 'auto';
+                    tooltip.classList.add('tooltip-bottom');
+                }
+                
+                // Set horizontal position
+                tooltip.style.left = leftPos + 'px';
+            });
+        });
+    }
+
     // Detect page type
     const isPortfolioCreationPage = allocationContainer && noAssetsDiv && totalAllocationDisplay;
     const isPortfolioListPage = document.getElementById('listViewBtn') || 
@@ -114,6 +175,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Portfolio list page detected, initializing list features');
         initPortfolioListView();
         initSharePortfolioModal();
+        initTooltipPositioning(); // Initialize tooltip positioning
     }
     
     /**
@@ -758,18 +820,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (row) {
                         const nameCell = row.querySelector('.portfolio-name-cell');
                         if (nameCell) {
-                            portfolioName = nameCell.textContent.trim();
+                            // Fix: Get only the direct link text without tooltip content
+                            const nameLink = nameCell.querySelector('a');
+                            if (nameLink) {
+                                portfolioName = nameLink.textContent.trim();
+                            } else {
+                                portfolioName = nameCell.textContent.trim();
+                            }
                         }
                         
                         // Try to get ID from row if not in the link
                         if (!portfolioId) {
                             portfolioId = row.dataset.portfolioId;
-                            
-                            // Try to get portfolio name from the row
-                            const nameCell = row.querySelector('.portfolio-name-cell');
-                            if (nameCell) {
-                                portfolioName = nameCell.textContent.trim();
-                            }
                             
                             // If row doesn't have ID, try from other links in same row
                             if (!portfolioId) {
