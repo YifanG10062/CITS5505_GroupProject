@@ -27,6 +27,33 @@ def list():
         is_shown=True
     ).all()
     
+    # Check for recently shared portfolios (within the last 24 hours)
+    one_day_ago = datetime.utcnow() - timedelta(hours=24)
+    recent_shares = PortfolioSummary.query.filter(
+        PortfolioSummary.user_id == current_user.id,
+        PortfolioSummary.shared_from_id.isnot(None),
+        PortfolioSummary.created_at >= one_day_ago,
+        PortfolioSummary.is_shown == True
+    ).all()
+    
+    # Prepare the alert message if there are recent shares
+    share_alert = None
+    if recent_shares:
+        # Get unique sharers' usernames
+        sharer_usernames = set(share.creator_username for share in recent_shares)
+        portfolio_count = len(recent_shares)
+        
+        if len(sharer_usernames) == 1:
+            # Single sharer
+            sharer = next(iter(sharer_usernames))
+            if portfolio_count == 1:
+                share_alert = f"{sharer} has shared a portfolio with you."
+            else:
+                share_alert = f"{sharer} has shared {portfolio_count} portfolios with you."
+        else:
+            # Multiple sharers
+            share_alert = f"{len(sharer_usernames)} users have shared {portfolio_count} portfolios with you."
+    
     # If user has no portfolios, create a demo portfolio
     if not user_portfolios:
         try:
@@ -178,7 +205,11 @@ def list():
     
     earliest_date = db.session.query(func.min(Price.date)).scalar()
     latest_date = db.session.query(func.max(Price.date)).scalar()
-    return render_template("portfolio/portfolio_list.html", portfolios=portfolios_list, earliest_date=earliest_date, latest_date=latest_date)
+    return render_template("portfolio/portfolio_list.html", 
+                          portfolios=portfolios_list, 
+                          earliest_date=earliest_date, 
+                          latest_date=latest_date,
+                          share_alert=share_alert)
 
 def get_assets():
     """Get assets directly from database without caching"""

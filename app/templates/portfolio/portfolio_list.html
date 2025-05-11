@@ -8,6 +8,15 @@
 
 {% block content %}
 <div class="container mt-4">
+  <!-- Share Alert - Only shown when there are recent shares -->
+  {% if share_alert %}
+  <div class="alert alert-info alert-dismissible fade show" role="alert">
+      <i class="bi bi-info-circle-fill me-2"></i>
+      <strong>New shared portfolios!</strong> {{ share_alert }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
+
   <div class="portfolio-view-container">
     <!-- Portfolio controls - fixed layout to match visual design -->
     <div class="top-controls-row">
