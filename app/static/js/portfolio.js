@@ -577,53 +577,190 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Setup sort functionality for table columns
-        const sortableHeaders = document.querySelectorAll('.portfolios-table th .sort-icon');
-        sortableHeaders.forEach(header => {
-            header.parentElement.addEventListener('click', function() {
-                console.log('Sort by:', this.textContent.trim());
-            });
-        });
-
-        // Setup delete functionality
-        const deleteLinks = document.querySelectorAll('.action-link.delete');
-        deleteLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                // Check if we are in an edit link to avoid conflicts
-                if (this.classList.contains('edit') || this.href.includes('edit')) {
-                    // For edit links, let the default behavior happen (follow the link)
-                    return;
+        const sortableHeaders = document.querySelectorAll('.sortable');
+        let currentSortColumn = null;
+        let currentSortDirection = 'none';
+        
+        if (sortableHeaders.length > 0) {
+            console.log('Found sortable headers, initializing sort functionality');
+            
+            sortableHeaders.forEach(header => {
+                // Initialize sort icons
+                const iconImg = header.querySelector('.sort-icon');
+                if (iconImg) {
+                    iconImg.src = "/static/icons/sort-neutral.svg";
                 }
                 
-                const portfolioId = this.dataset.portfolioId;
-                const portfolioName = this.closest('tr').querySelector('.portfolio-name-cell').textContent.trim();
-                
-                if (confirm(`Are you sure you want to delete portfolio "${portfolioName}"?`)) {
-                    fetch(`/portfolios/${portfolioId}/delete`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': document.querySelector('meta[name="csrf-token"]')?.content || ''
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // Remove row from UI
-                            this.closest('tr').remove();
+                header.addEventListener('click', function() {
+                    const sortKey = this.dataset.sort;
+                    console.log('Sort by:', sortKey);
+                    
+                    // Check if we're clicking the same column
+                    if (currentSortColumn === sortKey) {
+                        // Cycle through sort directions:
+                        // none -> desc -> asc -> none (default/creation time)
+                        if (currentSortDirection === 'none') {
+                            currentSortDirection = 'desc'; // First click: largest first (descending)
+                            const icon = this.querySelector('.sort-icon');
+                            if (icon) icon.src = "/static/icons/sort-desc.svg";
+                        } else if (currentSortDirection === 'desc') {
+                            currentSortDirection = 'asc'; // Second click: smallest first (ascending)
+                            const icon = this.querySelector('.sort-icon');
+                            if (icon) icon.src = "/static/icons/sort-asc.svg";
                         } else {
-                            alert(`Delete failed: ${data.message}`);
+                            // Third click: back to default sort
+                            currentSortDirection = 'none';
+                            currentSortColumn = null;
+                            const icon = this.querySelector('.sort-icon');
+                            if (icon) icon.src = "/static/icons/sort-neutral.svg";
                         }
-                    })
-                    .catch(error => {
-                        console.error('Error deleting portfolio:', error);
-                        alert('An error occurred during deletion');
-                    });
+                    } else {
+                        // Reset all other headers
+                        sortableHeaders.forEach(h => {
+                            h.setAttribute('data-direction', 'none');
+                            const icon = h.querySelector('.sort-icon');
+                            if (icon) icon.src = "/static/icons/sort-neutral.svg";
+                        });
+                        
+                        // New column, start with desc (largest first)
+                        currentSortDirection = 'desc';
+                        currentSortColumn = sortKey;
+                        const icon = this.querySelector('.sort-icon');
+                        if (icon) icon.src = "/static/icons/sort-desc.svg";
+                    }
+                    
+                    // Set data attribute for visual indication
+                    this.setAttribute('data-direction', currentSortDirection);
+                    
+                    // Sort the table based on current state
+                    if (currentSortColumn === null || currentSortDirection === 'none') {
+                        // Reset to default sort (by creation time, newest first)
+                        sortByCreationTime();
+                    } else {
+                        // Sort by selected column and direction
+                        sortPortfolioTable(currentSortColumn, currentSortDirection);
+                    }
+                });
+            });
+            
+            // Initial sort by creation time
+            sortByCreationTime();
+        }
+        
+        /**
+         * Sort portfolios by creation time (newest first)
+         * This is the default sort order
+         */
+        function sortByCreationTime() {
+            const table = document.querySelector('.portfolios-table');
+            if (!table) {
+                console.error('Portfolio table not found');
+                return;
+            }
+            
+            const tbody = table.querySelector('tbody');
+            if (!tbody) {
+                console.error('Table body not found');
+                return;
+            }
+            
+            // Get all rows except the "no data" row
+            const rows = Array.from(tbody.querySelectorAll('tr:not(#noDataRow)'));
+            
+            // Sort rows by creation timestamp (newest first)
+            // Using data attribute for creation time
+            rows.sort((a, b) => {
+                // Try to get timestamp from data attribute
+                const timeA = parseInt(a.dataset.createdAt || '0');
+                const timeB = parseInt(b.dataset.createdAt || '0');
+                
+                // Descending order (newest first)
+                return timeB - timeA;
+            });
+            
+            // Re-append rows in the sorted order
+            rows.forEach(row => {
+                tbody.appendChild(row);
+            });
+            
+            console.log('Sorted table by creation time (newest first)');
+        }
+        
+        /**
+         * Sort the portfolio table based on column and direction
+         * @param {string} column - The column identifier to sort by
+         * @param {string} direction - The sort direction ('asc' or 'desc')
+         */
+        function sortPortfolioTable(column, direction) {
+            const table = document.querySelector('.portfolios-table');
+            if (!table) {
+                console.error('Portfolio table not found');
+                return;
+            }
+            
+            const tbody = table.querySelector('tbody');
+            if (!tbody) {
+                console.error('Table body not found');
+                return;
+            }
+            
+            // Get all rows except the "no data" row
+            const rows = Array.from(tbody.querySelectorAll('tr:not(#noDataRow)'));
+            
+            // Sort the rows
+            rows.sort((a, b) => {
+                let valueA, valueB;
+                
+                // Extract values based on the column being sorted
+                switch(column) {
+                    case 'current-value':
+                        valueA = parseFloat(a.querySelector('.current-value').textContent.replace(/[^0-9.-]+/g, ''));
+                        valueB = parseFloat(b.querySelector('.current-value').textContent.replace(/[^0-9.-]+/g, ''));
+                        break;
+                    case 'return-percent':
+                        valueA = parseFloat(a.querySelector('.return-positive').textContent.replace(/[^0-9.-]+/g, ''));
+                        valueB = parseFloat(b.querySelector('.return-positive').textContent.replace(/[^0-9.-]+/g, ''));
+                        break;
+                    case 'cagr':
+                        // For CAGR, we need to target the second .return-positive cell in the row
+                        const cagrCellsA = a.querySelectorAll('.return-positive');
+                        const cagrCellsB = b.querySelectorAll('.return-positive');
+                        valueA = parseFloat(cagrCellsA[1]?.textContent.replace(/[^0-9.-]+/g, '') || '0');
+                        valueB = parseFloat(cagrCellsB[1]?.textContent.replace(/[^0-9.-]+/g, '') || '0');
+                        break;
+                    case 'volatility':
+                        valueA = parseFloat(a.querySelector('.metric-value').textContent.replace(/[^0-9.-]+/g, ''));
+                        valueB = parseFloat(b.querySelector('.metric-value').textContent.replace(/[^0-9.-]+/g, ''));
+                        break;
+                    case 'max-drawdown':
+                        valueA = parseFloat(a.querySelector('.return-negative').textContent.replace(/[^0-9.-]+/g, ''));
+                        valueB = parseFloat(b.querySelector('.return-negative').textContent.replace(/[^0-9.-]+/g, ''));
+                        break;
+                    default:
+                        console.warn('Unsupported sort column:', column);
+                        return 0;
+                }
+                
+                // Handle NaN values
+                if (isNaN(valueA)) valueA = 0;
+                if (isNaN(valueB)) valueB = 0;
+                
+                // Sort based on direction
+                if (direction === 'asc') {
+                    return valueA - valueB; // Ascending: smallest first
+                } else {
+                    return valueB - valueA; // Descending: largest first
                 }
             });
-        });
-
+            
+            // Re-append rows in the sorted order
+            rows.forEach(row => {
+                tbody.appendChild(row);
+            });
+            
+            console.log(`Sorted table by ${column} in ${direction} order`);
+        }
+        
         // Portfolio filtering functionality
         const filterRadios = document.querySelectorAll('input[name="portfolioFilter"]');
         const portfolioRows = document.querySelectorAll('.portfolios-table tbody tr:not(#noDataRow)');

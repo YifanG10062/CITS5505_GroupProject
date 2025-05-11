@@ -69,11 +69,11 @@
             <th>Portfolio Name</th>
             <th>Allocation</th>
             <th>Creator</th>
-            <th>Current Value</th>
-            <th>Total Return%</th>
-            <th>CAGR%</th>
-            <th>Volatility</th>
-            <th>Max Drawdown</th>
+            <th class="sortable" data-sort="current-value">Current Value <img src="{{ url_for('static', filename='icons/sort-neutral.svg') }}" class="sort-icon" alt="Sort"></th>
+            <th class="sortable" data-sort="return-percent">Total Return% <img src="{{ url_for('static', filename='icons/sort-neutral.svg') }}" class="sort-icon" alt="Sort"></th>
+            <th class="sortable" data-sort="cagr">CAGR% <img src="{{ url_for('static', filename='icons/sort-neutral.svg') }}" class="sort-icon" alt="Sort"></th>
+            <th class="sortable" data-sort="volatility">Volatility <img src="{{ url_for('static', filename='icons/sort-neutral.svg') }}" class="sort-icon" alt="Sort"></th>
+            <th class="sortable" data-sort="max-drawdown">Max Drawdown <img src="{{ url_for('static', filename='icons/sort-neutral.svg') }}" class="sort-icon" alt="Sort"></th>
             <th>Action</th>
           </tr>
         </thead>
@@ -89,7 +89,7 @@
           </tr>
           
           {% for portfolio in portfolios %}
-          <tr>
+          <tr data-created-at="{{ portfolio.created_at|default(loop.index0) }}">
             <td class="portfolio-name-cell">
               <div class="share-history-wrapper">
                 <a href="{{ url_for('dashboard.show', portfolio_id=portfolio.portfolio_id) }}" class="action-link" target="_blank">

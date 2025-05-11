@@ -1354,3 +1354,24 @@ a.action-link:hover {
     width: 80%;
     max-width: 800px;
 }
+
+/* Styling for sortable table headers */
+th.sortable {
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+}
+
+/* Sort icon styling */
+.sort-icon {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+
+/* Hover effect for sortable headers */
+th.sortable:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
