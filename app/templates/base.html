@@ -20,6 +20,11 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     
+    <!-- Current User Info -->
+    {% if current_user.is_authenticated %}
+    <meta name="username" content="{{ current_user.username }}">
+    {% endif %}
+    
     <!-- Additional CSS blocks -->
     {% block styles %}{% endblock %}
 </head>
@@ -45,7 +50,7 @@
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            {{ current_user.username }}
+                            <i class="bi bi-person-circle me-1"></i> {{ current_user.username }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             <li><a class="dropdown-item text-danger" href="{{ url_for('user.logout') }}">Log Out</a></li>

@@ -118,7 +118,7 @@
 
 /* Selection indicator - hide but keep element in DOM */
 .asset-card .selection-indicator {
-  display: none !important;
+  display: none;
   visibility: hidden;
   opacity: 0;
 }
@@ -139,7 +139,7 @@
   border-radius: 0.25rem;
   font-weight: 500;
   font-size: 0.875rem;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-ui);
 }
 
 .allocation-total.valid {
@@ -190,7 +190,7 @@
 /* Allocation value display and interaction */
 .allocation-value {
   text-align: right;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-ui);
   font-weight: 500;
   color: var(--text-primary);
   display: flex;
@@ -230,7 +230,7 @@
   border-radius: 0.375rem; /* Match the standard form-control border-radius */
   padding: 0.375rem 0.75rem; /* Match standard form-control padding */
   font-weight: 600;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-ui);
   box-shadow: none;
   margin-right: 0.25rem; /* Add margin between input and percentage sign */
 }
@@ -260,12 +260,46 @@
   text-align: center;
   padding: 2rem 1rem;
   color: var(--text-secondary);
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-body);
 }
 
 .no-assets-icon {
   font-size: 2rem;
   margin-bottom: 0.5rem;
+}
+
+/* No data state styling - improved visibility and spacing */
+.portfolios-table .no-data-row td {
+  background-color: rgba(18, 24, 38, 0.6);
+  text-align: center;
+  padding: 4rem 1rem; /* Increased vertical padding */
+  position: relative; /* Changed from absolute */
+  box-sizing: border-box;
+}
+
+.no-data-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto; /* Center horizontally */
+  width: 100%;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+}
+
+.no-data-message i {
+  font-size: 2.5rem; /* Slightly larger icon */
+  margin-bottom: 1rem;
+  opacity: 0.7;
+}
+
+.no-data-message p {
+  font-family: var(--font-ui);
+  font-size: 1.1rem; /* Slightly larger text */
+  margin-bottom: 0;
+  text-align: center;
+  width: 100%;
 }
 
 /* Portfolio configuration sidebar */
@@ -274,7 +308,7 @@
   border-radius: 0.75rem;
   padding: 1.5rem;
   height: 100%;
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-body);
 }
 
 /* Configuration item layout */
@@ -290,7 +324,7 @@
 }
 
 .config-label {
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-body);
   font-weight: 400;
   font-size: 1rem;
   color: var(--text-primary);
@@ -299,7 +333,7 @@
 }
 
 .config-value {
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-body);
   font-weight: 600;
   font-size: 1rem;
   color: var(--primary);
@@ -332,7 +366,7 @@
 }
 
 .portfolio-name-text {
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-body);
   font-weight: 600;
   font-size: 1rem;
   color: var(--primary);
@@ -360,7 +394,7 @@
   background-color: transparent;
   border: none;
   color: var(--primary);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-ui);
   font-weight: 500;
   font-size: 1rem;
   text-align: right;
@@ -432,7 +466,7 @@
   color: var(--text-secondary);
   border: none;
   font-weight: 400;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-ui);
   text-decoration: none;
   padding: 0;
   font-size: 0.9rem;
@@ -503,6 +537,17 @@
   border-bottom: 1px solid var(--card-outline);
   vertical-align: middle;
   white-space: nowrap; 
+}
+
+/* Table cell color styling for positive/negative returns */
+.portfolios-table .return-positive {
+  color: var(--green-up); 
+  font-weight: 500;
+}
+
+.portfolios-table .return-negative {
+  color: var(--red-down);
+  font-weight: 500;
 }
 
 /* Set some proportional column widths for table */
@@ -586,7 +631,7 @@
 
 /* Investment period display styling */
 .investment-period {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 0.9rem;
   color: var(--text-primary);
   margin: 1rem 0 1.5rem;
@@ -641,11 +686,39 @@
 
 /* Basic Card View styling */
 #cardView {
-  position: relative;
-  min-height: 400px;
-  border: 1px solid var(--card-outline);
-  border-radius: 0.5rem;
-  overflow: hidden;
+  border: none; /* Remove border */
+  border-radius: 0; /* Remove border radius */
+  padding: 0; /* Remove padding */
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); /* Flexible layout with min 350px width */
+  gap: 25px; /* Increased spacing between cards */
+  max-width: 100%;
+}
+
+/* 添加响应式布局断点 */
+@media (max-width: 1200px) {
+  .cards-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+  }
+}
+
+@media (max-width: 768px) {
+  .cards-grid {
+    grid-template-columns: 1fr; /* Single column on very small screens */
+  }
+}
+
+/* Add styles to prevent text transformation */
+.portfolio-card .portfolio-title,
+.portfolio-card .portfolio-allocation,
+.portfolio-card .creator-info,
+.portfolio-card .portfolio-title-link {
+  text-transform: none; /* Prevent text from being transformed to uppercase */
 }
 
 .card-view-overlay {
@@ -675,7 +748,7 @@
 }
 
 .overlay-content p {
-  font-family: var(--font-ui);
+  font-family: var(--font-body);
   font-size: 1.125rem;
   color: var(--text-secondary);
   margin-bottom: 1.5rem;
@@ -691,14 +764,6 @@
   font-weight: 600;
   color: var(--primary);
   letter-spacing: 0.05em;
-}
-
-#cardView {
-  border: 1px solid var(--card-outline);
-  border-radius: 0.5rem;
-  padding: 3rem 1rem;
-  width: 100%;
-  margin-bottom: 2rem;
 }
 
 .coming-soon-placeholder {
@@ -733,14 +798,14 @@
 }
 
 .placeholder-text {
-  font-family: var(--font-ui);
+  font-family: var(--font-body);
   font-size: 1rem;
   color: var(--text-secondary);
   margin-bottom: 0.5rem;
 }
 
 .placeholder-subtext {
-  font-family: var(--font-ui);
+  font-family: var(--font-body);
   font-size: 0.9rem;
   color: var(--primary);
   font-style: italic;
@@ -787,7 +852,7 @@
 
 .portfolio-card .card-content {
   padding: 1rem;
-  font-family: var(--font-ui);
+  font-family: var(--font-body);
   font-size: 14px;
 }
 
@@ -822,20 +887,40 @@
   border-top: 1px solid var(--card-outline);
 }
 
+.portfolio-card .action-links {
+  display: flex;
+  justify-content: flex-end; /* Right-align the action buttons */
+  gap: 15px;
+}
+
 .portfolio-card .action-link {
-  color: var(--primary);
+  color: #ff9d2d; /* Primary orange color for all action links */
   text-decoration: none;
-  font-weight: 500;
-  font-size: 14px;
-  font-family: var(--font-ui);
-  transition: color 0.2s ease;
 }
 
 .portfolio-card .action-link:hover {
-  color: var(--primary-hover);
   text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 2px;
+}
+
+.portfolio-card .action-link:active {
+  color: var(--primary-active);
+}
+
+.portfolio-card .action-link.delete {
+  color: var(--red-down);
+}
+
+.portfolio-card .action-link.delete:hover {
+  color: #dc2626;
+}
+
+/* Update card view colors to also use theme variables */
+.portfolio-card .return-positive {
+  color: var(--green-up); /* Use theme variable for consistency */
+}
+
+.portfolio-card .return-negative {
+  color: var(--red-down); /* Use theme variable for consistency */
 }
 
 /* Responsive adjustments for card view */
@@ -857,9 +942,87 @@
 
 /* Toggle switch wrapper */
 .toggle-wrapper {
+  display: none; /* Hide the original toggle switch */
+}
+
+/* Portfolio filter styling for circular radio buttons */
+.portfolio-filter {
   display: flex;
   align-items: center;
-  white-space: nowrap;
+  margin-left: 15px;
+}
+
+.radio-group {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* Space between radio options */
+}
+
+/* Radio option container */
+.radio-option {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  color: #fff;
+  font-family: var(--font-ui);
+}
+
+/* Hide the default radio input */
+.radio-option input {
+  position: absolute;
+  opacity: 0;
+  height: 0;
+  width: 0;
+}
+
+/* The outer circle of the custom radio button - changing border to white */
+.radio-circle {
+  position: relative;
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+  border: 2px solid #fff; 
+  border-radius: 50%;
+  transition: border-color 0.2s ease;
+}
+
+/* Change border color to orange when checked */
+.radio-option input:checked ~ .radio-circle {
+  border-color: #f59e0b; /* Orange border for selected radio */
+}
+
+/* The inner circle that appears when selected */
+.radio-circle:after {
+  content: '';
+  position: absolute;
+  display: none; /* Hidden by default */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #f59e0b; /* Orange fill when selected */
+}
+
+/* Show the inner circle when the radio is checked */
+.radio-option input:checked ~ .radio-circle:after {
+  display: block;
+}
+
+/* Style for radio text */
+.radio-text {
+  font-weight: 400;
+}
+
+/* Make text bolder when selected */
+.radio-option input:checked ~ .radio-text {
+  font-weight: 500;
 }
 
 /* Right section containing action buttons */
@@ -970,6 +1133,7 @@
   color: var(--text-secondary);
   font-size: 0.9rem;
   line-height: 1.5;
+  font-family: var(--font-body);
 }
 
 .user-selector .input-group-text {
@@ -1014,6 +1178,7 @@ a.action-link {
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s ease;
+  font-family: var(--font-ui);
 }
 
 a.action-link:hover {
@@ -1021,6 +1186,18 @@ a.action-link:hover {
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 2px;
+}
+
+a.action-link:active {
+  color: var(--primary-active);
+}
+
+a.action-link.delete {
+  color: var(--red-down);
+}
+
+a.action-link.delete:hover {
+  color: #dc2626;
 }
 
 /* Global text button style for use throughout the application */
@@ -1039,6 +1216,138 @@ a.action-link:hover {
   text-underline-offset: 2px;
 }
 
+/* Share history tooltip styles */
+.share-history-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.share-info-icon {
+  margin-left: 4px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color 0.2s ease;
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--text-secondary);
+}
+
+.share-info-icon:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.share-history-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-outline);
+  border-radius: 4px;
+  padding: 10px;
+  width: 250px;
+  z-index: 1060; /* Increased z-index to appear above all table elements */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  pointer-events: none;
+  margin-bottom: 10px;
+}
+
+/* Adjust tooltip position on hover to ensure it's fully visible */
+.share-history-wrapper:hover .share-history-tooltip {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto; /* Allow interaction with tooltip content */
+}
+
+/* Special positioning for tooltips in table context */
+.portfolios-table .share-history-tooltip {
+  position: fixed; /* Use fixed position instead of absolute */
+  left: auto; /* Reset left positioning */
+  transform: none; /* Reset transform */
+  bottom: auto; /* Auto positioning instead of fixed bottom */
+  top: auto; /* Auto positioning for top */
+  max-width: 300px;
+  width: auto;
+  min-width: 250px;
+}
+
+/* Arrow positioning for tooltips */
+.share-history-tooltip::after {
+  content: '';
+  position: absolute;
+  border-width: 6px;
+  border-style: solid;
+}
+
+/* Default arrow (pointing down) */
+.share-history-tooltip.tooltip-top::after {
+  top: 100%;
+  left: 20px;
+  border-color: var(--card-outline) transparent transparent transparent;
+}
+
+/* Arrow pointing up when tooltip is below the trigger */
+.share-history-tooltip.tooltip-bottom::after {
+  bottom: 100%;
+  left: 20px;
+  border-color: transparent transparent var(--card-outline) transparent;
+}
+
+.share-history-title {
+  font-family: var(--font-nav);
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--card-outline);
+  padding-bottom: 5px;
+}
+
+.share-history-list {
+  max-height: 150px;
+  overflow-y: auto;
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+}
+
+.share-history-item {
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.share-history-item:last-child {
+  border-bottom: none;
+}
+
+.share-history-username {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.share-history-time {
+  font-style: italic;
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+.no-history {
+  font-style: italic;
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 10px 0;
+}
+
 .user-search-dropdown {
     background-color: var(--card-bg);
     border: 1px solid var(--card-outline);
@@ -1053,7 +1362,7 @@ a.action-link:hover {
   width: 100%;
   max-height: 200px;
   overflow-y: auto;
-  background-color: var(--input-bg);
+  background-color: var(--card-bg); /* Ensure dark background */
   border: 1px solid var(--input-border);
   border-top: none; /* Remove top border for seamless connection with input */
   border-bottom-left-radius: 0.25rem;
@@ -1079,15 +1388,18 @@ a.action-link:hover {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  font-family: var(--font-ui);
 }
 
 .user-item:hover {
-    background-color: #f8f9fa;
+    background-color: rgba(56, 61, 72, 0.5); /* Dark theme hover background */
+    color: var(--text-primary);
 }
 
 .user-item .select-text {
-    color: #007bff;
+    color: var(--primary); /* Use primary orange color */
     font-size: 0.9em;
+    font-weight: 500;
 }
 
 .user-item .username {
@@ -1110,4 +1422,234 @@ a.action-link:hover {
     z-index: 9999;
     width: 80%;
     max-width: 800px;
+}
+
+/* Styling for sortable table headers */
+th.sortable {
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+}
+
+/* Sort icon styling */
+.sort-icon {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+
+/* Hover effect for sortable headers */
+th.sortable:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Card View Styles */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 25px;
+}
+
+.portfolio-card {
+  background-color: #1a2232;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  color: #ffffff;
+}
+
+.portfolio-card .card-header {
+  padding: 15px;
+  border-bottom: 1px solid #2d3546;
+}
+
+.portfolio-card .portfolio-title {
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+.portfolio-card .portfolio-title-link {
+  color: #ff9d2d; /* Primary orange color */
+  text-decoration: none;
+}
+
+.portfolio-card .portfolio-title-link:hover {
+  text-decoration: underline;
+}
+
+.portfolio-card .portfolio-allocation {
+  font-size: 14px;
+  color: #ccd;
+  margin-bottom: 5px;
+}
+
+.portfolio-card .creator-info {
+  font-size: 14px;
+  color: #aab;
+}
+
+.portfolio-card .shared-badge {
+  background-color: #384d6b;
+  color: #fff;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 5px;
+}
+
+.portfolio-card .card-body {
+  padding: 15px;
+}
+
+.portfolio-card .metric-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.portfolio-card .metric-label {
+  color: #aab;
+}
+
+.portfolio-card .metric-value {
+  font-weight: 500;
+}
+
+.portfolio-card .return-positive {
+  color: var(--green-up); /* Use theme variable for consistency */
+}
+
+.portfolio-card .return-negative {
+  color: var(--red-down); /* Use theme variable for consistency */
+}
+
+.portfolio-card .card-footer {
+  border-top: 1px solid #2d3546;
+  padding: 12px 15px;
+}
+
+.portfolio-card .action-links {
+  display: flex;
+  justify-content: flex-end; /* Right-align the action buttons */
+  gap: 15px;
+}
+
+.portfolio-card .action-link {
+  color: #ff9d2d; /* Primary orange color for all action links */
+  text-decoration: none;
+}
+
+.portfolio-card .action-link:hover {
+  text-decoration: underline;
+}
+
+.portfolio-card .action-link.primary-color, 
+.portfolio-card .action-link.delete {
+  color: #ff9d2d; /* Primary orange color */
+}
+
+/* Custom modal styling for delete confirmation */
+.delete-confirm-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+}
+
+.delete-confirm-modal.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.delete-modal-content {
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+  padding: 0;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.delete-modal-header {
+  padding: 15px 20px;
+  border-bottom: 1px solid var(--card-outline);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.delete-modal-title {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  margin: 0;
+  font-family: var(--font-nav);
+}
+
+.delete-modal-body {
+  padding: 20px;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.delete-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 15px 20px;
+  border-top: 1px solid var(--card-outline);
+  gap: 10px;
+}
+
+.delete-modal-cancel {
+  background-color: transparent;
+  border: 1px solid var(--card-outline);
+  color: var(--text-primary);
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.delete-modal-cancel:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.delete-modal-confirm {
+  background-color: var(--red-down);
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.delete-modal-confirm:hover {
+  background-color: #d32f2f;
+}
+
+.delete-modal-close {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.delete-modal-close:hover {
+  color: var(--text-primary);
 }
