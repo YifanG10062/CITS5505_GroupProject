@@ -8,7 +8,6 @@ from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect, CSRFError
 from app.config import get_config, DevelopmentConfig, TestConfig, ProductionConfig
 
-
 # --- Extensions ---
 db = SQLAlchemy() 
 migrate = Migrate()
