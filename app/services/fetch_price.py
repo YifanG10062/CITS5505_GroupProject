@@ -112,9 +112,11 @@ def fetch_all_history():
                     try:
                         df = pd.read_csv(
                             cache_file,
-                            parse_dates=["Date"],
-                            index_col="Date"
+                            parse_dates=["date"],
+                            index_col="date"
                         )
+                        df.index.name = "Date" 
+                        df.rename(columns={"close_price": "Close"}, inplace=True)
                         print(f"ℹ️ Loaded cache for {ticker} from {cache_file}")
                     except Exception as e2:
                         print(f"❌ Loading cache failed for {ticker}: {e2}")
@@ -140,7 +142,7 @@ def fetch_all_history():
     db.session.commit()
     print("🎉 All historical prices saved successfully!")
 
-# Flask CLI command to refresh prices from yfinance
+# Flask CLI command to refresh prices
 @click.command("refresh-history")
 @with_appcontext
 
