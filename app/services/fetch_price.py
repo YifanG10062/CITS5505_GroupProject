@@ -1,3 +1,4 @@
+import os
 import yfinance as yf
 import pandas as pd
 from datetime import datetime
@@ -29,17 +30,8 @@ def fetch_all_history():
 
     # Default logo URLs for each asset
     default_logos = {
-        "AAPL": "/static/icons/aapl.svg",
-        "MSFT": "/static/icons/msft.svg",
-        "TSLA": "/static/icons/tsla.svg",
-        "NVDA": "/static/icons/nvda.svg",
-        "AMZN": "/static/icons/amzn.svg",
-        "GOOGL": "/static/icons/googl.svg",
-        "BRK-B": "/static/icons/brk-b.svg",
-        "BTC-USD": "/static/icons/btc-usd.svg",
-        "MSTR": "/static/icons/mstr.svg",
-        "AMD": "/static/icons/amd.svg",
-        "SPY": "/static/icons/spy.svg"
+        code: f"/static/icons/{code.lower().replace('.', '-')}.svg"
+        for code in asset_metadata
     }
 
     # Strategy description for each asset
@@ -57,13 +49,11 @@ def fetch_all_history():
         "SPY": "Tracks the S&P 500, broad-market exposure"
     }
 
-    # Insert or update asset metadata into the database
+    print(f"🚀 Starting asset metadata upsert for {len(asset_metadata)} assets...")
+    # Insert or update asset metadata
     for code, (display, full, typ, curr) in asset_metadata.items():
-        # Use existing logo if available
         existing = db.session.get(Asset, code)
         logo = existing.logo_url if existing else default_logos.get(code)
-
-        # Create or update Asset record
         asset = Asset(
             asset_code=code,
             display_name=display,
@@ -73,45 +63,89 @@ def fetch_all_history():
             logo_url=logo,
             strategy_description=ASSET_STRATEGY.get(code)
         )
-        db.session.merge(asset)  # Merge ensures insert or update
+        db.session.merge(asset)
+    db.session.commit()
+    print("✅ Asset metadata upsert complete.")
 
     start_date = "2015-01-01"
     end_date = datetime.today().strftime("%Y-%m-%d")
+    print(f"🚀 Fetching price data from {start_date} to {end_date}...")
 
     # Download and insert historical price data
     for ticker in asset_metadata:
         print(f"📈 Fetching: {ticker}")
+        df = None
+        # Primary: yfinance
         try:
-            df = yf.download(ticker, start=start_date, end=end_date, interval="1d", progress=False, session=session)
-
-            if "Close" not in df:
-                print(f"⚠️  Skipped {ticker}, no 'Close' column.")
-                continue
-
-            df = df.reset_index()[["Date", "Close"]]
-            df.columns = ["date", "close_price"]
-            df["asset_code"] = ticker
-            df["date"] = pd.to_datetime(df["date"]).dt.date
-
-            # Insert or update daily prices
-            for _, row in df.iterrows():
-                price = Price(
-                    asset_code=row["asset_code"],
-                    date=row["date"],
-                    close_price=row["close_price"]
-                )
-                db.session.merge(price)
-
+            df = yf.download(
+                ticker,
+                start=start_date,
+                end=end_date,
+                interval="1d",
+                progress=False,
+                session=session
+            )
+            if df.empty or "Close" not in df:
+                raise ValueError("No 'Close' data returned")
         except Exception as e:
-            print(f"❌ Error fetching {ticker}: {e}")
+            print(f"⚠️ yfinance failed for {ticker}: {e}")
+            # Fallback 1: Stooq
+            try:
+                sym = ticker.lower().replace("-", ".")
+                if ".us" not in sym:
+                    sym += ".us"
+                d1 = start_date.replace("-", "")
+                d2 = end_date.replace("-", "")
+                url = f"https://stooq.com/q/d/l/?s={sym}&d1={d1}&d2={d2}&i=d"
+                df = pd.read_csv(
+                    url,
+                    parse_dates=["Date"],
+                    index_col="Date",
+                    usecols=["Date", "Close"]
+                )
+                print(f"ℹ️ Using Stooq data source for {ticker}")
+            except Exception as e1:
+                print(f"⚠️ Stooq failed for {ticker}: {e1}")
+                # Fallback 2: Local CSV cache
+                cache_file = os.path.join('data', f"{ticker}.csv")
+                if os.path.exists(cache_file):
+                    try:
+                        df = pd.read_csv(
+                            cache_file,
+                            parse_dates=["Date"],
+                            index_col="Date"
+                        )
+                        print(f"ℹ️ Loaded cache for {ticker} from {cache_file}")
+                    except Exception as e2:
+                        print(f"❌ Loading cache failed for {ticker}: {e2}")
+                else:
+                    print(f"❌ All data sources failed for {ticker}")
 
+        if df is None or df.empty or "Close" not in df:
+            print(f"⚠️  Skipped {ticker}, no 'Close' data available.")
+            continue
+
+        df = df.reset_index()[["Date", "Close"]]
+        df.columns = ["date", "close_price"]
+        df["asset_code"] = ticker
+        df["date"] = pd.to_datetime(df["date"]).dt.date
+
+        for _, row in df.iterrows():
+            price = Price(
+                asset_code=row["asset_code"],
+                date=row["date"],
+                close_price=row["close_price"]
+            )
+            db.session.merge(price)
     db.session.commit()
-    print("✅ Historical price data and asset metadata saved.")
+    print("🎉 All historical prices saved successfully!")
 
 # Flask CLI command to refresh prices from yfinance
 @click.command("refresh-history")
 @with_appcontext
+
 def refresh_history_command():
     """Fetch all historical asset prices and update asset metadata"""
+    click.echo("🔄 Starting full history refresh...")
     fetch_all_history()
-    click.echo("✅ Prices refreshed.")
+    click.echo("✅ Full history refresh complete.")
