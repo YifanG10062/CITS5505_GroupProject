@@ -413,11 +413,13 @@ def edit(portfolio_id):
             portfolio.allocation_json = json.dumps(allocation)
             # Use dictionary get() method with original values as defaults
             portfolio.current_value = metrics.get('current_value', portfolio.current_value or initial_amount)
+            portfolio.profit = metrics.get('profit', portfolio.profit or 0.0)  # Update profit
             portfolio.return_percent = metrics.get('return_percent', portfolio.return_percent or 0.0)
             portfolio.cagr = metrics.get('cagr', portfolio.cagr or 0.0)
             portfolio.volatility = metrics.get('volatility', portfolio.volatility or 0.0)
             portfolio.max_drawdown = metrics.get('max_drawdown', portfolio.max_drawdown or 0.0)
             portfolio.input_updated_at = datetime.utcnow()
+            portfolio.metric_updated_at = datetime.utcnow()  # Update metric_updated_at
             
             # Update user information in case it changed
             portfolio.user_username = current_user.username
