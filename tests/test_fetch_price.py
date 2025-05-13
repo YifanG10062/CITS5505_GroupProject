@@ -45,8 +45,8 @@ class TestFetchAllHistory(unittest.TestCase):
 
         # Should attempt yfinance and not hit fallback
         self.assertIn('📈 Fetching: AAPL', output)
-        self.assertNotIn('ℹ️ Using Stooq', output)
-        self.assertIn('🎉 All historical prices saved successfully', output)
+        self.assertNotIn('Using Stooq', output)
+        self.assertIn('✔ All historical prices saved successfully', output)
         print("✔ Test yfinance_success passed", file=sys.__stdout__)
 
     @patch('os.path.exists', return_value=False)
@@ -62,9 +62,9 @@ class TestFetchAllHistory(unittest.TestCase):
         fetch_all_history()
         output = sys.stdout.getvalue()
 
-        self.assertIn('⚠️ yfinance failed for AAPL', output)
-        self.assertIn('ℹ️ Using Stooq data source for AAPL', output)
-        self.assertIn('🎉 All historical prices saved successfully', output)
+        self.assertIn('✘ yfinance failed for AAPL', output)
+        self.assertIn('Using Stooq data source for AAPL', output)
+        self.assertIn('✔ All historical prices saved successfully', output)
         print("✔ Test stooq_fallback passed", file=sys.__stdout__)
 
     @patch('os.path.exists', return_value=True)
@@ -85,9 +85,9 @@ class TestFetchAllHistory(unittest.TestCase):
         fetch_all_history()
         output = sys.stdout.getvalue()
 
-        self.assertIn('⚠️ Stooq failed for AAPL', output)
-        self.assertIn('ℹ️ Loaded cache for AAPL', output)
-        self.assertIn('🎉 All historical prices saved successfully', output)
+        self.assertIn('✘ Stooq failed for AAPL', output)
+        self.assertIn('Loaded cache for AAPL', output)
+        self.assertIn('✔ All historical prices saved successfully', output)
         print("✔ Test cache_fallback passed", file=sys.__stdout__)
 
 if __name__ == '__main__':

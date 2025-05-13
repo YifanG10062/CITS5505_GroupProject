@@ -49,7 +49,7 @@ def fetch_all_history():
         "SPY": "Tracks the S&P 500, broad-market exposure"
     }
 
-    print(f"🚀 Starting asset metadata upsert for {len(asset_metadata)} assets...")
+    print(f"Starting asset metadata upsert for {len(asset_metadata)} assets...")
     # Insert or update asset metadata
     for code, (display, full, typ, curr) in asset_metadata.items():
         existing = db.session.get(Asset, code)
@@ -65,11 +65,11 @@ def fetch_all_history():
         )
         db.session.merge(asset)
     db.session.commit()
-    print("✅ Asset metadata upsert complete.")
+    print("✔ Asset metadata upsert complete.")
 
     start_date = "2015-01-01"
     end_date = datetime.today().strftime("%Y-%m-%d")
-    print(f"🚀 Fetching price data from {start_date} to {end_date}...")
+    print(f"Fetching price data from {start_date} to {end_date}...")
 
     # Download and insert historical price data
     for ticker in asset_metadata:
@@ -88,7 +88,7 @@ def fetch_all_history():
             if df.empty or "Close" not in df:
                 raise ValueError("No 'Close' data returned")
         except Exception as e:
-            print(f"⚠️ yfinance failed for {ticker}: {e}")
+            print(f"✘ yfinance failed for {ticker}: {e}")
             # Fallback 1: Stooq
             try:
                 sym = ticker.lower().replace("-", ".")
@@ -103,9 +103,9 @@ def fetch_all_history():
                     index_col="Date",
                     usecols=["Date", "Close"]
                 )
-                print(f"ℹ️ Using Stooq data source for {ticker}")
+                print(f"Using Stooq data source for {ticker}")
             except Exception as e1:
-                print(f"⚠️ Stooq failed for {ticker}: {e1}")
+                print(f"✘ Stooq failed for {ticker}: {e1}")
                 # Fallback 2: Local CSV cache
                 cache_file = os.path.join('data', f"{ticker}.csv")
                 if os.path.exists(cache_file):
@@ -117,14 +117,14 @@ def fetch_all_history():
                         )
                         df.index.name = "Date" 
                         df.rename(columns={"close_price": "Close"}, inplace=True)
-                        print(f"ℹ️ Loaded cache for {ticker} from {cache_file}")
+                        print(f"Loaded cache for {ticker} from {cache_file}")
                     except Exception as e2:
-                        print(f"❌ Loading cache failed for {ticker}: {e2}")
+                        print(f"✘ Loading cache failed for {ticker}: {e2}")
                 else:
-                    print(f"❌ All data sources failed for {ticker}")
+                    print(f"✘ All data sources failed for {ticker}")
 
         if df is None or df.empty or "Close" not in df:
-            print(f"⚠️  Skipped {ticker}, no 'Close' data available.")
+            print(f"Skipped {ticker}, no 'Close' data available.")
             continue
 
         df = df.reset_index()[["Date", "Close"]]
@@ -140,7 +140,7 @@ def fetch_all_history():
             )
             db.session.merge(price)
     db.session.commit()
-    print("🎉 All historical prices saved successfully!")
+    print("✔ All historical prices saved successfully!")
 
 # Flask CLI command to refresh prices
 @click.command("refresh-history")
@@ -148,6 +148,6 @@ def fetch_all_history():
 
 def refresh_history_command():
     """Fetch all historical asset prices and update asset metadata"""
-    click.echo("🔄 Starting full history refresh...")
+    click.echo("Starting full history refresh...")
     fetch_all_history()
-    click.echo("✅ Full history refresh complete.")
+    click.echo("✔ Full history refresh complete.")

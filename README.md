@@ -69,7 +69,7 @@ python -m unittest tests/test_visualization.py
 
 > **Note:** Replace `test_visualization.py` with the actual test file name you want to run, e.g.:
 > ```bash
-> python -m unittest tests.test_file_name.py
+> python -m unittest tests/test_file_name.py
 > ```
 
 Expected output:
