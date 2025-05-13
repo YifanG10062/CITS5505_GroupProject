@@ -45,10 +45,10 @@ class PortfolioTestCase(unittest.TestCase):
         db.create_all()
         
         # Create test users directly for better test isolation
+        # Fixing User model initialization - removing 'email' parameter
         self.test_user1 = User(
             username='testuser1', 
-            email='test1@example.com',
-            user_email='test1@example.com',  # Match the field used in portfolio model
+            user_email='test1@example.com',  # Only use user_email as per model
             user_fName='Test',
             user_lName='User1'
         )
@@ -56,8 +56,7 @@ class PortfolioTestCase(unittest.TestCase):
         
         self.test_user2 = User(
             username='testuser2', 
-            email='test2@example.com',
-            user_email='test2@example.com',  # Match the field used in portfolio model
+            user_email='test2@example.com',  # Only use user_email as per model
             user_fName='Test',
             user_lName='User2'
         )
