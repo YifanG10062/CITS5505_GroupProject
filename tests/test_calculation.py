@@ -14,8 +14,7 @@ from app.services.calculation import (
 
 class CalculationEdgeCases(unittest.TestCase):
     def setUp(self):
-        self.app = create_app()
-        self.app.config.from_object(TestConfig)
+        self.app = create_app(TestConfig)
         self.ctx = self.app.app_context()
         self.ctx.push()
         db.create_all()
