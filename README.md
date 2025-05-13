@@ -48,13 +48,8 @@ pip install -r requirements.txt
 flask db upgrade
 ```
 
-### 5. Populate historical price data
-This fetches asset prices (BTC-USD, AAPL, SPY, etc.) from 2015 to today:
-```bash
-flask --app run.py refresh-history
-```
-
-### 6. Run the application
+### 5. Check historical price data and Run the application
+This will fetch any missing price data from 2015 to today for the assets and then start the Flask server.
 ```bash
 python run.py
 ```
@@ -69,12 +64,12 @@ The project includes unit tests for portfolio metric calculations and drawdown l
 
 To run the tests:
 ```bash
-python -m unittest tests.test_visualization.py
+python -m unittest tests/test_visualization.py
 ```
 
 > **Note:** Replace `test_visualization.py` with the actual test file name you want to run, e.g.:
 > ```bash
-> python -m unittest tests.test_file_name.py
+> python -m unittest tests/test_file_name.py
 > ```
 
 Expected output:
