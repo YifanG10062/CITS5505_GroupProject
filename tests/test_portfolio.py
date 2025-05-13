@@ -9,22 +9,24 @@ from flask_login import login_user, current_user
 # Add parent directory to path to import from app
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+# Import create_app instead of app directly
 from app import create_app, db
 from app.config import TestConfig
 from app.models.user import User
 from app.models.portfolio import PortfolioSummary, PortfolioVersion, PortfolioChangeLog, PortfolioShareLog
 from app.routes.portfolio import portfolios
-from app.cli.commands import create_test_users
 
 class PortfolioTestCase(unittest.TestCase):
     """Test cases for portfolio functionality"""
     
     def setUp(self):
         """Set up test environment before each test"""
-        # Create app with test configuration
-        self.app = create_app(TestConfig)
+        # Create a test Flask app using the application factory
+        self.app = create_app()
+        self.app.config.from_object(TestConfig)
         self.app.config['TESTING'] = True
         self.app.config['WTF_CSRF_ENABLED'] = False  # Disable CSRF for testing
+        self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'  # Use in-memory database
         
         # Create app context and request context
         self.app_context = self.app.app_context()
