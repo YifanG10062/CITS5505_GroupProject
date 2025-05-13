@@ -16,12 +16,12 @@ mail = Mail()
 login_manager = LoginManager()
 
 # --- Flask App Factory ---
-def create_app():
+def create_app(config_class=None):
     # Use the get_config() function that handles both APP_ENV and FLASK_DEBUG
-    config_class = get_config()
+    config_obj = config_class or get_config()
     
     app = Flask(__name__)
-    app.config.from_object(config_class)
+    app.config.from_object(config_obj)
 
     # Determine environment name from the config class for migrations
     if isinstance(config_class, DevelopmentConfig):

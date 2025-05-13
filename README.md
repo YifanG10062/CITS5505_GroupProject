@@ -64,7 +64,7 @@ The project includes unit tests for portfolio metric calculations and drawdown l
 
 To run the tests:
 ```bash
-python -m unittest tests.test_visualization.py
+python -m unittest tests/test_visualization.py
 ```
 
 > **Note:** Replace `test_visualization.py` with the actual test file name you want to run, e.g.:
