@@ -36,7 +36,8 @@ class DevelopmentConfig(Config):
 class TestConfig(Config):
     TESTING = True
     WTF_CSRF_ENABLED = False
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'db', 'test-database.sqlite')
+
 
 # Create database directory if it doesn't exist for production config
 os.makedirs(os.path.join(basedir, 'db'), exist_ok=True)
