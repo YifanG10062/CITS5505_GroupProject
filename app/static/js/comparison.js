@@ -130,6 +130,28 @@ function handleResponsiveLayout() {
       });
     }
     
+    // make the height of the key metrics consistent
+    const equalizeKeyMetricsHeight = () => {
+      // get all the numeric cards
+      const metricValues = document.querySelectorAll('.metric-value');
+      
+      // set the fixed height style for the numeric elements
+      metricValues.forEach(value => {
+        value.style.height = '2rem';
+        value.style.display = 'flex';
+        value.style.alignItems = 'center';
+        value.style.justifyContent = 'center';
+      });
+      
+      // ensure the height of the second row card title area is consistent
+      const metricHeaders = document.querySelectorAll('.metric-header');
+      metricHeaders.forEach(header => {
+        header.style.height = '2.5rem';
+        header.style.display = 'flex';
+        header.style.alignItems = 'center';
+      });
+    };
+    
     // Ensure all cards in the same row have equal height
     const equalizeMiniMetricHeight = () => {
       const rows = document.querySelectorAll('.description-metrics-row');
@@ -155,6 +177,7 @@ function handleResponsiveLayout() {
     
     // Execute height equalization after DOM rendering is complete
     setTimeout(() => {
+      equalizeKeyMetricsHeight();
       equalizeMiniMetricHeight();
       equalizeCardWidths();
     }, 100);
@@ -165,6 +188,9 @@ function handleResponsiveLayout() {
   
   // Listen for window resize events
   window.addEventListener('resize', adjustLayout);
+  
+  // execute the layout adjustment once after the page loads
+  window.addEventListener('load', adjustLayout);
 }
 
 // Fix weight displays to show integer percentages only

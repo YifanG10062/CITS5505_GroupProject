@@ -107,6 +107,7 @@
   margin-top: 0.4rem !important;
   padding: 0 !important;
   overflow: hidden !important;
+  align-items: stretch !important; 
 }
 
 /* 1 card equals 1 division */
@@ -131,6 +132,8 @@
   padding: 0.6rem; /* Reduced padding */
   overflow: hidden;
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .mini-metric:hover {
@@ -151,6 +154,10 @@
   font-weight: 600;
   text-align: center;
   padding: 0.2rem 0;
+  height: 2rem; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* First row metrics center style */
@@ -177,10 +184,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 0.4rem; /* Reduced bottom margin */
+  margin-bottom: 0.4rem; 
   flex-wrap: wrap;
   border-bottom: 1px solid var(--card-outline);
-  padding-bottom: 0.3rem; /* Reduced bottom padding */
+  padding-bottom: 0.3rem; 
+  height: 2.5rem; 
 }
 
 /* Stock info styles */
