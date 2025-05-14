@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.services.calculation import calculate_portfolio_metrics, get_portfolio_timeseries, get_spy_cumulative_returns
+from app.services.calculation import calculate_portfolio_metrics, get_portfolio_timeseries, get_spy_cumulative_returns, calculate_comparison_radar_metrics
 import pandas as pd
 
 api_bp = Blueprint('api', __name__, url_prefix='/api')
@@ -174,6 +174,32 @@ def comparison_metrics():
         return jsonify({
             "summary": summary
         }), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# 5. radar chart
+@api_bp.route("/comparison-radar", methods=["POST"])
+def comparison_radar():
+    try:
+        data = request.get_json(force=True)
+        weights_a = data["weights_a"]
+        weights_b = data["weights_b"]
+        start_date = data.get("start_date", "2015-01-01")
+        initial_amount = float(data.get("initial_investment", 10000))
+
+        # calculate radar chart metrics
+        metrics = calculate_comparison_radar_metrics(
+            weights_a=weights_a,
+            weights_b=weights_b,
+            start_date=start_date,
+            initial_amount=initial_amount
+        )
+
+        if not metrics:
+            return jsonify({"error": "Failed to calculate metrics"}), 400
+
+        return jsonify(metrics), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500

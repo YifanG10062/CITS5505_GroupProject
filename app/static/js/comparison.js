@@ -1,4 +1,5 @@
 import { renderComparisonCumulativeChart } from "./charts/cumulativeChartComparison.js";
+import { renderComparisonRadarChart } from "./charts/comparisonRadarChart.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const {
@@ -32,6 +33,16 @@ document.addEventListener("DOMContentLoaded", () => {
     benchmarkName: nameSPY,
     elementId: "cumulativeChartComparison"
   });
+
+  // render comparison radar chart
+  renderComparisonRadarChart(
+    formattedWeightsA,
+    formattedWeightsB,
+    startDate,
+    initialInvestment,
+    nameA,
+    nameB
+  );
 
   // Enhance responsive layout for comparison page
   handleResponsiveLayout();
