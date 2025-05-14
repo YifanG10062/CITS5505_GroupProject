@@ -14,13 +14,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   console.log("Portfolio A weights:", weightsA);
   console.log("Portfolio B weights:", weightsB);
+  console.log("SPY weights:", weightsSPY);
 
   // Format weights data for chart rendering
   const formattedWeightsA = convertToDictFormat(weightsA);
   const formattedWeightsB = convertToDictFormat(weightsB);
-  const formattedWeightsSPY = typeof weightsSPY === 'object' && !Array.isArray(weightsSPY) 
-    ? weightsSPY 
-    : convertToDictFormat(weightsSPY);
+  const formattedWeightsSPY = convertToDictFormat(weightsSPY);
 
   renderComparisonCumulativeChart({
     weights_a: formattedWeightsA,
@@ -63,16 +62,69 @@ function convertToDictFormat(weights) {
 
 // Calculate key metrics for portfolios
 function calculatePortfolioMetrics(weightsA, weightsB) {
-
-  // Portfolio A metrics
-  document.getElementById('volatilityA').textContent = '15.8%';
-  document.getElementById('cagrA').textContent = '12.3%';
-  document.getElementById('maxDrawdownA').textContent = '-23.5%';
+  const formattedWeightsA = convertToDictFormat(weightsA);
+  const formattedWeightsB = convertToDictFormat(weightsB);
   
-  // Portfolio B metrics
-  document.getElementById('volatilityB').textContent = '18.2%';
-  document.getElementById('cagrB').textContent = '14.7%';
-  document.getElementById('maxDrawdownB').textContent = '-27.1%';
+  const config = window.comparisonConfig || {};
+  const startDate = config.startDate || "2015-01-01";
+  const initialInvestment = config.initialInvestment || 1000;
+  
+  const payload = {
+    weights_a: formattedWeightsA,
+    weights_b: formattedWeightsB,
+    start_date: startDate,
+    initial_investment: initialInvestment
+  };
+  
+  fetch("/api/comparison_metrics", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  })
+  .then(res => {
+    if (!res.ok) {
+      console.error("Error fetching metrics:", res.status);
+      return;
+    }
+    return res.json();
+  })
+  .then(data => {
+    if (!data) return;
+    
+    const { summary } = data;
+    
+    // Portfolio A metrics
+    document.getElementById('volatilityA').textContent = 
+      (summary.portfolio_a.volatility * 100).toFixed(1) + "%";
+    document.getElementById('volatilityA').classList.add('volatility-value');
+    document.getElementById('volatilityA').closest('.mini-metric').classList.add('volatility-card');
+
+    document.getElementById('cagrA').textContent = 
+      (summary.portfolio_a.cagr * 100).toFixed(1) + "%";
+    document.getElementById('cagrA').classList.add('cagr-value');
+    document.getElementById('cagrA').closest('.mini-metric').classList.add('cagr-card');
+
+    document.getElementById('maxDrawdownA').textContent = 
+      (summary.portfolio_a.maxDrawdown * 100).toFixed(1) + "%";
+    document.getElementById('maxDrawdownA').classList.add('drawdown-value');
+    document.getElementById('maxDrawdownA').closest('.mini-metric').classList.add('drawdown-card');
+    
+    // Portfolio B metrics
+    document.getElementById('volatilityB').textContent = 
+      (summary.portfolio_b.volatility * 100).toFixed(1) + "%";
+    document.getElementById('volatilityB').classList.add('volatility-value');
+    document.getElementById('volatilityB').closest('.mini-metric').classList.add('volatility-card');
+
+    document.getElementById('cagrB').textContent = 
+      (summary.portfolio_b.cagr * 100).toFixed(1) + "%";
+    document.getElementById('cagrB').classList.add('cagr-value');
+    document.getElementById('cagrB').closest('.mini-metric').classList.add('cagr-card');
+
+    document.getElementById('maxDrawdownB').textContent = 
+      (summary.portfolio_b.maxDrawdown * 100).toFixed(1) + "%";
+    document.getElementById('maxDrawdownB').classList.add('drawdown-value');
+    document.getElementById('maxDrawdownB').closest('.mini-metric').classList.add('drawdown-card');
+  });
 }
 
 function handleResponsiveLayout() {
@@ -121,7 +173,7 @@ function handleResponsiveLayout() {
     if (!isMobile) {
       // Fixed height on desktop view
       descriptionMetrics.forEach(metric => {
-        metric.style.minHeight = '100px'; // Restore original height
+        metric.style.minHeight = '100px';
       });
     } else {
       // Adapt to content on mobile view
@@ -130,27 +182,20 @@ function handleResponsiveLayout() {
       });
     }
     
-    // make the height of the key metrics consistent
-    const equalizeKeyMetricsHeight = () => {
-      // get all the numeric cards
-      const metricValues = document.querySelectorAll('.metric-value');
-      
-      // set the fixed height style for the numeric elements
-      metricValues.forEach(value => {
-        value.style.height = '2rem';
-        value.style.display = 'flex';
-        value.style.alignItems = 'center';
-        value.style.justifyContent = 'center';
-      });
-      
-      // ensure the height of the second row card title area is consistent
-      const metricHeaders = document.querySelectorAll('.metric-header');
-      metricHeaders.forEach(header => {
-        header.style.height = '2.5rem';
-        header.style.display = 'flex';
-        header.style.alignItems = 'center';
-      });
-    };
+    // beautify the second row of performance, AI, Leverage
+    const descriptionLabels = document.querySelectorAll('.stock-name');
+    descriptionLabels.forEach(label => {
+      if (label.textContent.includes('Performance')) {
+        label.style.color = '#6366f1';
+        label.style.fontWeight = '600';
+      } else if (label.textContent.includes('AI')) {
+        label.style.color = '#3b82f6';
+        label.style.fontWeight = '600';
+      } else if (label.textContent.includes('Leverage')) {
+        label.style.color = '#f97316';
+        label.style.fontWeight = '600';
+      }
+    });
     
     // Ensure all cards in the same row have equal height
     const equalizeMiniMetricHeight = () => {
@@ -177,7 +222,6 @@ function handleResponsiveLayout() {
     
     // Execute height equalization after DOM rendering is complete
     setTimeout(() => {
-      equalizeKeyMetricsHeight();
       equalizeMiniMetricHeight();
       equalizeCardWidths();
     }, 100);
@@ -221,10 +265,8 @@ function fixWeightDisplays() {
 const equalizeCardWidths = () => {
   const rows = document.querySelectorAll('.description-metrics-row');
   rows.forEach(row => {
-    // Get column count
     const numCols = parseInt(row.className.match(/cols-(\d+)/)[1]);
     
-    // Only handle card styles, don't change column count
     const cards = row.querySelectorAll('.mini-metric');
     cards.forEach(card => {
       card.style.overflow = 'hidden';

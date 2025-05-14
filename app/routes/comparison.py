@@ -39,7 +39,6 @@ def view_comparison():
         weights_b = json.loads(p_b.allocation_json) or {}
         name_b = p_b.portfolio_name
     else:
-        # Use larger values as defaults to ensure they remain valid percentages after rounding
         weights_b = {"MSFT": 0.5, "AMZN": 0.3, "AMD": 0.2}
         name_b = "Sample Portfolio B"
         p_b = None
@@ -138,16 +137,15 @@ def format_weights(weights_dict):
     """Format weight dictionary for frontend use"""
     result = []
     for ticker, weight in weights_dict.items():
-        # Keep original weight value, let frontend handle percentage display
         result.append({
             "ticker": ticker,
-            "weight": weight,  # Keep original value
-            "name": ticker  # Default to using ticker as name
+            "weight": weight,
+            "name": ticker
         })
     return result
 
 def get_weight_value(weights_dict, asset_code):
     """Get weight value for an asset"""
     if isinstance(weights_dict, dict):
-        return weights_dict.get(asset_code, 0)  # Keep original value
+        return weights_dict.get(asset_code, 0)
     return 0

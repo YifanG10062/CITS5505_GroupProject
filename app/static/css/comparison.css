@@ -7,18 +7,16 @@
   width: 100%;
   height: 100%;
   transition: all 0.3s ease;
-  padding: 0.75rem !important; /* Reduced padding */
-  overflow: hidden; /* Ensure content doesn't overflow */
+  padding: 0.75rem !important; 
+  overflow: hidden;
 }
 
-/* Hover effects for better interaction */
 .dashboard-overview:hover {
   transform: translateY(-3px);
-  transition: transform 0.3s ease;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
-/* Enhanced comparison page specific styles */
+/* Comparison page styles */
 .comparison-label {
   display: inline-block;
   color: white;
@@ -30,14 +28,14 @@
 }
 
 .portfolio-a-label {
-  background-color: #3b82f6; /* Portfolio A - Blue */
+  background-color: #3b82f6;
 }
 
 .portfolio-b-label {
-  background-color: #f97316; /* Portfolio B - Orange */
+  background-color: #f97316;
 }
 
-/* Portfolio title and info styling */
+/* Portfolio info styling */
 .portfolio-title-comparison {
   font-size: 1.2rem;
   font-weight: 600;
@@ -81,24 +79,28 @@
   font-size: 0.75rem;
 }
 
-/* New metrics layout */
+/* Metrics layout */
 .metrics-container {
   display: flex;
   flex-direction: column;
-  gap: 0.8rem; /* Reduced spacing */
+  gap: 0.8rem;
   height: 100%;
   width: 100%;
   overflow: hidden;
   padding: 0;
+  max-width: 100%;
 }
 
+/* Metrics rows */
 .key-metrics-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 0.6rem; /* Reduced spacing */
+  gap: 0.6rem;
+  align-items: stretch;
+  width: 100%;
+  margin: 0;
 }
 
-/* Description metrics row style adjustments */
 .description-metrics-row {
   display: grid !important;
   gap: 0.6rem !important;
@@ -107,29 +109,27 @@
   margin-top: 0.4rem !important;
   padding: 0 !important;
   overflow: hidden !important;
-  align-items: stretch !important; 
+  align-items: stretch !important;
+  max-width: 100%;
 }
 
-/* 1 card equals 1 division */
 .description-metrics-row.cols-1 {
   grid-template-columns: 1fr !important;
 }
 
-/* 2 cards equal 2 divisions */
 .description-metrics-row.cols-2 {
   grid-template-columns: repeat(2, 1fr) !important;
 }
 
-/* 3 cards equal 3 divisions */
 .description-metrics-row.cols-3 {
   grid-template-columns: repeat(3, 1fr) !important;
 }
 
-/* Mini metric cards */
+/* Metric cards */
 .mini-metric {
   box-sizing: border-box;
   margin: 0;
-  padding: 0.6rem; /* Reduced padding */
+  padding: 0.6rem;
   overflow: hidden;
   width: 100%;
   display: flex;
@@ -141,6 +141,38 @@
   transform: translateY(-2px);
 }
 
+/* Key metrics styles */
+.key-metrics-row .mini-metric {
+  min-height: 5rem;
+  justify-content: center;
+  align-items: center;
+  border-left: 3px solid transparent;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-left-color 0.2s ease;
+}
+
+/* Description metrics styles */
+.description-metric {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  flex: 1 1 auto !important;
+  min-height: 100px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  height: 100%;
+}
+
+.description-metrics-row .mini-metric {
+  width: 100%;
+  box-sizing: border-box;
+  height: 100%;
+  margin: 0;
+}
+
+/* Metric labels */
 .metric-label {
   font-size: 0.8rem;
   font-weight: 500;
@@ -149,49 +181,92 @@
   margin-bottom: 0.4rem;
 }
 
+.key-metrics-row .metric-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #94a3b8;
+  letter-spacing: 0.3px;
+  margin-bottom: 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+/* Metric values */
 .metric-value {
-  font-size: 1.2rem; /* Increased font size */
+  font-size: 1.2rem;
   font-weight: 600;
   text-align: center;
   padding: 0.2rem 0;
-  height: 2rem; 
+  height: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* First row metrics center style */
+.key-metrics-row .metric-value {
+  font-size: 1.4rem;
+  height: 2.5rem;
+  font-weight: 600;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  transition: color 0.2s ease-in-out;
+}
+
+.description-value {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: var(--text-secondary);
+  margin-top: auto;
+  flex-grow: 1;
+  padding: 0 0.2rem;
+  word-break: break-word;
+  height: auto;
+}
+
+/* Color classes */
+.volatility-value {
+  color: #6366f1 !important;
+}
+
+.cagr-value {
+  color: #22c55e !important;
+}
+
+.drawdown-value {
+  color: #ef4444 !important;
+}
+
+.volatility-card {
+  border-left-color: #6366f1 !important;
+}
+
+.cagr-card {
+  border-left-color: #22c55e !important;
+}
+
+.drawdown-card {
+  border-left-color: #ef4444 !important;
+}
+
 .text-center {
   text-align: center;
 }
 
-/* Description metrics style adjustments */
-.description-metric {
-  width: 100% !important;
-  min-width: 0 !important;
-  max-width: none !important;
-  box-sizing: border-box !important;
-  margin: 0 !important;
-  flex: 1 1 auto !important;
-  min-height: 100px !important; /* Maintain minimum height */
-  display: flex !important;
-  flex-direction: column !important;
-  overflow: hidden !important;
-}
-
-/* Description metrics header and weight */
+/* Stock info styles */
 .metric-header {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 0.4rem; 
+  margin-bottom: 0.4rem;
   flex-wrap: wrap;
   border-bottom: 1px solid var(--card-outline);
-  padding-bottom: 0.3rem; 
-  height: 2.5rem; 
+  padding-bottom: 0.3rem;
+  height: 2.5rem;
 }
 
-/* Stock info styles */
 .stock-info {
   display: flex;
   align-items: center;
@@ -205,11 +280,11 @@
   font-weight: 600;
   font-size: 0.9rem;
   color: var(--primary);
-  margin-right: 0.15rem; /* Reduced right margin */
+  margin-right: 0.15rem;
 }
 
 .stock-weight {
-  display: inline-block; /* Restore display */
+  display: inline-block;
   font-size: 0.85rem;
   color: var(--text-secondary);
   margin-left: 0.15rem;
@@ -220,7 +295,6 @@
   color: #3b82f6;
 }
 
-/* Custom asset icon image styles */
 .asset-icon-img {
   width: 16px;
   height: 16px;
@@ -228,28 +302,44 @@
   border-radius: 2px;
 }
 
-.asset-icon, .asset-icon-img {
-  color: #3b82f6; /* Unified blue color */
+/* Portfolio-specific colors */
+.col-lg-6:nth-child(1) .asset-icon {
+  color: #3b82f6;
 }
 
-/* Adjust description text styles */
-.description-value {
-  font-size: 0.85rem;
-  line-height: 1.4;
-  color: var(--text-secondary);
-  margin-top: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  flex-grow: 1;
-  overflow: hidden;
-  padding: 0 0.2rem; /* Reduced left/right padding */
-  word-break: break-word;
-  height: auto;
+.col-lg-6:nth-child(2) .asset-icon {
+  color: #f97316;
 }
 
-/* Media queries - Mobile devices */
+.col-lg-6:nth-child(1) .asset-icon-img {
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.col-lg-6:nth-child(2) .asset-icon-img {
+  border: 1px solid rgba(249, 115, 22, 0.3);
+}
+
+/* Chart container */
+.chart-glow {
+  width: 100%;
+}
+
+/* Container styles */
+.container,
+.container-fluid {
+  width: 100%;
+  max-width: 1450px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.container-fluid.mt-4,
+.container-fluid.mt-5 {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+/* Responsive layout */
 @media (max-width: 576px) {
   .container.mt-4 {
     padding-left: 0.5rem;
@@ -257,36 +347,20 @@
   }
   
   .dashboard-overview {
-    padding: 0.75rem !important;
     margin-bottom: 1rem;
   }
 }
 
-/* Media queries - Tablets */
-@media (max-width: 991.98px) {
-  /* Ensure first card has sufficient bottom margin in vertical layout */
-  .col-lg-6:first-child .dashboard-overview {
-    margin-bottom: 1.5rem;
-  }
-}
-
-/* Media queries - Mobile responsive adjustments */
 @media (max-width: 767.98px) {
   .key-metrics-row {
-    grid-template-columns: repeat(3, 1fr);
     gap: 0.5rem;
   }
   
-  /* Ensure always display in single column on phones */
   .description-metrics-row.cols-1,
   .description-metrics-row.cols-2,
   .description-metrics-row.cols-3 {
     grid-template-columns: 1fr;
     gap: 0.5rem;
-  }
-  
-  .mini-metric {
-    padding: 0.6rem;
   }
   
   .metric-value {
@@ -318,75 +392,47 @@
   }
 }
 
-/* Media queries - Medium devices */
+@media (max-width: 991.98px) {
+  .col-lg-6:first-child .dashboard-overview {
+    margin-bottom: 1.5rem;
+  }
+}
+
 @media (min-width: 768px) and (max-width: 991.98px) {
-  /* Ensure 2 columns display on medium screens */
   .description-metrics-row.cols-2,
   .description-metrics-row.cols-3 {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* Media queries - Large screen devices */
 @media (min-width: 992px) {
-  /* Maintain increased container width */
-  .container.mt-4 {
-    max-width: 1800px !important; /* Significantly increase container width */
-    width: 100%;
-    padding-left: 30px;
-    padding-right: 30px;
-    margin-right: auto;
-    margin-left: auto;
+  .container.mt-4,
+  .container.mt-5 {
+    max-width: 1450px !important;
+    padding-left: 20px;
+    padding-right: 20px;
   }
   
-  /* Ensure card container doesn't overflow */
-  .card.dashboard-overview {
-    width: 100%;
-    overflow: hidden;
+  .portfolio-cards-container,
+  .container-fluid.mt-5 {
+    max-width: 1450px;
+    padding-left: 20px;
+    padding-right: 20px;
   }
   
-  /* Ensure row container doesn't overflow - fix class name */
-  .row.g-4 {
-    width: 100%;
-    margin-left: 0;
-    margin-right: 0;
-    overflow: hidden;
-  }
-  
-  /* Ensure inner rows don't overflow either */
-  .row.g-3 {
-    width: 100%;
-    margin-left: 0;
-    margin-right: 0;
-    overflow: hidden;
-  }
-  
-  /* Description metrics row spacing */
-  .description-metrics-row.cols-3 {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.75rem; /* Restore original spacing */
-  }
-  
-  /* Adjust card layout proportions */
   .col-lg-4 {
     flex: 0 0 33.333333%;
     max-width: 33.333333%;
+    padding-right: 10px;
+    padding-left: 10px;
   }
   
   .col-lg-8 {
     flex: 0 0 66.666667%;
     max-width: 66.666667%;
-    padding-right: 15px;
-    padding-left: 15px;
-    overflow: hidden; /* Prevent content overflow */
-  }
-  
-  /* Adjust overall card layout, instead of increasing internal card width */
-  .row.g-4 {
-    display: flex;
-    flex-wrap: wrap;
-    margin-right: -15px;
-    margin-left: -15px;
+    padding-right: 10px;
+    padding-left: 10px;
+    overflow: hidden;
   }
   
   .col-lg-6 {
@@ -396,236 +442,17 @@
     padding-left: 15px;
   }
   
-  .dashboard-overview {
-    height: 100%;
-  }
-  
-  /* Ensure second row metric cards have equal height */
-  .description-metrics-row {
-    display: grid;
-    grid-auto-rows: 1fr;
-    width: 100%;
-  }
-  
-  /* Applicable for desktop devices */
-  .description-metrics-row {
-    display: grid;
-    width: 100%;
-  }
-  
-  .description-metrics-row.cols-3 {
-    grid-template-columns: repeat(3, 1fr);
-    width: 100%;
-    margin-left: 0;
-    margin-right: 0;
-  }
-  
-  .description-metrics-row .mini-metric {
-    width: 100%;
-    box-sizing: border-box;
-    margin: 0;
-    overflow: hidden; /* Prevent overflow */
-  }
-  
-  /* Increase chart container width */
-  .container.mt-5 {
-    max-width: 1800px !important;
-    margin-right: auto;
-    margin-left: auto;
-  }
-  
-  /* Adjust fluid container padding to make it tighter */
-  .container-fluid.mt-4,
-  .container-fluid.mt-5 {
-    max-width: 1450px;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 15px; /* Reduce left padding */
-    padding-right: 15px; /* Reduce right padding */
-  }
-  
-  /* Adjust column spacing */
-  .col-lg-4,
-  .col-lg-8 {
-    padding-right: 10px; /* Reduce right padding */
-    padding-left: 10px; /* Reduce left padding */
-  }
-  
-  /* Adjust spacing between rows */
   .row.g-2 {
     margin-right: -10px;
     margin-left: -10px;
   }
   
-  /* Reduce spacing between columns */
   .container-fluid .row.g-4 {
     gap: 0 !important;
   }
-}
-
-/* Set icon colors based on different portfolios */
-.col-lg-6:nth-child(1) .asset-icon {
-  color: #3b82f6; /* Portfolio A icon color - Blue */
-}
-
-.col-lg-6:nth-child(2) .asset-icon {
-  color: #f97316; /* Portfolio B icon color - Orange */
-}
-
-/* Set icon border colors based on different portfolios */
-.col-lg-6:nth-child(1) .asset-icon-img {
-  border: 1px solid rgba(59, 130, 246, 0.3); /* Portfolio A - Blue border */
-}
-
-.col-lg-6:nth-child(2) .asset-icon-img {
-  border: 1px solid rgba(249, 115, 22, 0.3); /* Portfolio B - Orange border */
-}
-
-/* Adjust row layout */
-.row.g-3 {
-  display: flex;
-  flex-wrap: wrap;
-  margin-right: -15px;
-  margin-left: -15px;
-  width: 100%; /* Ensure 100% width */
-}
-
-/* Fix overall layout structure */
-.container.mt-4 {
-  width: 100%;
-  overflow: hidden;
-}
-
-.row.g-4 {
-  width: 100%;
-  overflow: hidden;
-}
-
-.row.g-3 {
-  width: 100%;
-  overflow: hidden;
-}
-
-.col-lg-8 {
-  overflow: hidden;
-}
-
-/* Ensure max 3 cards per row and keep within container */
-.description-metrics-row {
-  display: grid;
-  gap: 0.6rem; /* Reduce card spacing */
-  margin-top: 0.4rem; /* Reduce top margin */
-  max-width: 100%;
-  overflow: hidden;
-}
-
-.description-metrics-row.cols-3 {
-  grid-template-columns: repeat(3, 1fr);
-  max-width: 100%;
-  overflow: hidden;
-}
-
-/* Ensure each metric card is contained within its container */
-.description-metric {
-  min-height: 100px;
-  max-width: 100%;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Ensure metrics container doesn't overflow */
-.metrics-container {
-  width: 100%;
-  max-width: 100%;
-  overflow: hidden;
-}
-
-/* Chart container styles */
-.chart-glow {
-  width: 100%;
-}
-
-/* Set fluid container width limits and padding */
-.container-fluid.mt-4,
-.container-fluid.mt-5 {
-  max-width: 1450px;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 15px; /* Reduce left padding */
-  padding-right: 15px; /* Reduce right padding */
-}
-
-/* Maintain consistent width styles */
-@media (min-width: 992px) {
-  .portfolio-cards-container,
-  .container-fluid.mt-5 {
-    width: 100%;
-    max-width: 1450px;
-    padding-left: 20px;
-    padding-right: 20px;
-  }
   
-  /* Remove old container styles */
-  .container.mt-4,
-  .container.mt-5 {
-    max-width: 1450px !important;
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-}
-
-/* Global container styles - Ensure all containers have consistent width */
-.container,
-.container-fluid {
-  width: 100%;
-  max-width: 1450px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* Card content style adjustments */
-.card.dashboard-overview,
-.card.chart-glow {
-  width: 100%;
-  margin-left: 0;
-  margin-right: 0;
-}
-
-/* Ensure both first and second rows are divided into three equal parts */
-.key-metrics-row,
-.description-metrics-row.cols-3 {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.6rem;
-  width: 100%;
-  margin: 0;
-}
-
-/* Ensure second row cards align correctly */
-.description-metrics-row .mini-metric {
-  width: 100%;
-  box-sizing: border-box;
-  height: 100%; /* Ensure consistent height */
-  margin: 0;
-}
-
-/* Clear factors that might cause inconsistent layout */
-@media (min-width: 992px) {
-  /* Description metrics row styles */
   .description-metrics-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr) !important; /* Force three equal divisions */
-    gap: 0.6rem;
-    width: 100%;
-    margin: 0;
-  }
-  
-  /* Remove fixed widths that might be set by equalizeCardWidths function */
-  .metrics-container {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-    width: 100%;
+    grid-template-columns: repeat(3, 1fr) !important;
+    grid-auto-rows: 1fr;
   }
 } 

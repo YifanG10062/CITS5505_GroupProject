@@ -142,3 +142,38 @@ def comparison_timeseries():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+# 4. Comparison metrics: Portfolio A vs Portfolio B metrics
+@api_bp.route("/comparison_metrics", methods=["POST"])
+def comparison_metrics():
+    try:
+        data = request.get_json(force=True)
+        weights_a = data["weights_a"]
+        weights_b = data["weights_b"]
+        start_date = data.get("start_date", "2015-01-01")
+        initial_amount = float(data.get("initial_investment", 1000))
+
+        def summarize(allocation):
+            m = calculate_portfolio_metrics(
+                allocation=allocation,
+                start_date=start_date,
+                initial_amount=initial_amount
+            )
+            return {
+                "cagr": m["cagr"],
+                "volatility": m["volatility"],
+                "maxDrawdown": m["max_drawdown"]
+            }
+
+        summary = {
+            "portfolio_a": summarize(weights_a),
+            "portfolio_b": summarize(weights_b),
+            "portfolio_spy": summarize({"SPY": 1.0})
+        }
+
+        return jsonify({
+            "summary": summary
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

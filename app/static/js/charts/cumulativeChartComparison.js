@@ -2,11 +2,12 @@ import { chartTheme } from "./theme.js";
 
 /**
  * Render a comparison cumulative returns chart for two portfolios against a benchmark.
- * @param {{weights_a: Object, weights_b: Object, start_date: string, initial_investment: number, nameA: string, nameB: string, benchmarkName?: string, elementId?: string}} config
+ * @param {{weights_a: Object, weights_b: Object, weights_spy: Object, start_date: string, initial_investment: number, nameA: string, nameB: string, benchmarkName?: string, elementId?: string}} config
  */
 export function renderComparisonCumulativeChart({
   weights_a,
   weights_b,
+  weights_spy = {"SPY": 1.0},
   start_date,
   initial_investment,
   nameA,
@@ -41,21 +42,7 @@ export function renderComparisonCumulativeChart({
     })
     .then(data => {
  
-      const { summary, labels, portfolio_a, portfolio_b, portfolio_spy } = data;
-    
-      document.getElementById("volatilityA").textContent  =
-        (summary.portfolio_a.volatility * 100).toFixed(1) + "%";
-      document.getElementById("cagrA").textContent        =
-        (summary.portfolio_a.cagr * 100).toFixed(1) + "%";
-      document.getElementById("maxDrawdownA").textContent =
-        (summary.portfolio_a.maxDrawdown * 100).toFixed(1) + "%";
-    
-      document.getElementById("volatilityB").textContent  =
-        (summary.portfolio_b.volatility * 100).toFixed(1) + "%";
-      document.getElementById("cagrB").textContent        =
-        (summary.portfolio_b.cagr * 100).toFixed(1) + "%";
-      document.getElementById("maxDrawdownB").textContent =
-        (summary.portfolio_b.maxDrawdown * 100).toFixed(1) + "%";
+      const { labels, portfolio_a, portfolio_b, portfolio_spy } = data;
     
       const ctx = chartEl.getContext("2d");
       new Chart(ctx, {
@@ -95,4 +82,7 @@ export function renderComparisonCumulativeChart({
         options: chartTheme
       });
     })
+    .catch(error => {
+      console.error("Error rendering cumulative comparison chart:", error);
+    });
 }
