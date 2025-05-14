@@ -1,5 +1,8 @@
-{% extends "base.html" %} {% block title %}Dashboard - The Richverse{% endblock
-%} {% block styles %}
+{% extends "base.html" %} {% block head %}
+<meta name="csrf-token" content="{{ csrf_token() }}" />
+{% endblock %} {% block title %}Dashboard - The Richverse{% endblock %} {% block
+styles %}
+
 <link
   rel="stylesheet"
   href="{{ url_for('static', filename='css/dashboard.css') }}"
@@ -26,26 +29,26 @@
 
       <!-- Metric Grid Right -->
       <div class="col-lg-8">
-        <div class="row g-3">
-          <div class="col-6 col-md-4">
+        <div class="row gx-3 gy-2">
+          <div class="col-6 col-md-3">
             <div class="card mini-metric shadow-sm p-3">
               <div class="metric-label">Current Value</div>
               <div class="metric-value" id="netWorth">$0</div>
             </div>
           </div>
-          <div class="col-6 col-md-4">
+          <div class="col-6 col-md-3">
             <div class="card mini-metric shadow-sm p-3">
               <div class="metric-label">Profit</div>
               <div class="metric-value" id="profit">$0</div>
             </div>
           </div>
-          <div class="col-6 col-md-4">
+          <div class="col-6 col-md-3">
             <div class="card mini-metric shadow-sm p-3">
               <div class="metric-label">Volatility</div>
               <div class="metric-value" id="volatility">0%</div>
             </div>
           </div>
-          <div class="col-6 col-md-4">
+          <div class="col-6 col-md-3">
             <div class="card mini-metric shadow-sm p-3">
               <div class="metric-label">Total Return%</div>
               <div class="metric-value text-success" id="cumulativeReturn">
@@ -53,19 +56,19 @@
               </div>
             </div>
           </div>
-          <div class="col-6 col-md-4">
+          <div class="col-6 col-md-3">
             <div class="card mini-metric shadow-sm p-3">
               <div class="metric-label">CAGR%</div>
               <div class="metric-value text-success" id="cagr">0%</div>
             </div>
           </div>
-          <div class="col-6 col-md-4">
+          <div class="col-6 col-md-3">
             <div class="card mini-metric shadow-sm p-3">
               <div class="metric-label">Max Drawdown</div>
               <div class="metric-value text-danger" id="maxDrawdown">0%</div>
             </div>
           </div>
-          <div class="col-6 col-md-4">
+          <div class="col-6 col-md-3">
             <div class="card mini-metric shadow-sm p-3">
               <div class="metric-label">Longest DD Days</div>
               <div class="metric-value" id="longestDD">0</div>
@@ -77,7 +80,7 @@
   </div>
 </div>
 <!-- Cumulative Chart -->
-<div class="container mt-5">
+<div class="container mt-4">
   <div class="card chart-glow shadow" style="height: 400px">
     <div class="card-header">Cumulative Returns vs SPY</div>
     <div class="card-body">
@@ -85,10 +88,9 @@
     </div>
   </div>
 </div>
-
 <!-- Bottom Chart Row -->
-<div class="container mt-4">
-  <div class="row gx-3 gy-4">
+<div class="container mt-2">
+  <div class="row gx-3 gy-1">
     <!-- Heatmap -->
     <div class="col-lg-6 col-md-12">
       <div class="card chart-glow shadow" style="height: 440px">
@@ -108,18 +110,31 @@
         </div>
       </div>
     </div>
+
     <!-- Top Gainers & Losers -->
-<div class="col-lg-6 col-md-12">
-  <div class="card chart-glow shadow" style="height: 440px">
-    <div class="card-header">Top Gainers & Losers</div>
-    <div class="card-body d-flex flex-column justify-content-between p-3">
-      <div class="flex-grow-1">
-        <canvas id="topMoversChart" style="width: 100%; height: 100%"></canvas>
+    <div class="col-lg-6 col-md-12">
+      <div class="card chart-glow shadow" style="height: 440px">
+        <div class="card-header">Top Gainers & Losers</div>
+        <div class="card-body d-flex flex-column justify-content-between p-3">
+          <div class="flex-grow-1">
+            <canvas
+              id="topMoversChart"
+              style="width: 100%; height: 100%"
+            ></canvas>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
 
+    <!-- Underwater Risk Chart -->
+    <div class="col-lg-12">
+      <div class="card chart-glow shadow" style="height: 400px; margin-top: 0">
+        <div class="card-header">Underwater Risk Chart</div>
+        <div class="card-body">
+          <canvas id="underwaterChart"></canvas>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %} {% block scripts %}

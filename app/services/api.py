@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.calculation import calculate_portfolio_metrics, get_portfolio_timeseries, get_spy_cumulative_returns
+from app.services.calculation import calculate_portfolio_metrics, get_portfolio_timeseries, get_spy_cumulative_returns
 import pandas as pd
 
 api_bp = Blueprint('api', __name__, url_prefix='/api')

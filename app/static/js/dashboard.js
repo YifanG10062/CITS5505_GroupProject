@@ -2,6 +2,8 @@ import { renderCumulativeChart } from "./charts/cumulativeChart.js";
 import { renderHeatmapChart } from "./charts/heatmapChart.js";
 import { renderPortfolioSummary } from "./charts/summary.js";
 import { renderTopMoversChart } from "./charts/topMoversChart.js";
+import { renderUnderwaterChart } from "./charts/underwaterChart.js";
+
 document.addEventListener("DOMContentLoaded", () => {
   const weights = window.dashboardData?.weights || { MSFT: 0.6, TSLA: 0.4 };
   const start_date = window.dashboardData?.start_date || "2015-01-01";
@@ -10,7 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
   renderCumulativeChart(weights, start_date, initial_investment);
   renderHeatmapChart(weights, start_date, initial_investment);
   renderPortfolioSummary(weights, start_date, initial_investment);
-  renderTopMoversChart(weights); 
+  renderTopMoversChart(weights);
+  renderUnderwaterChart(weights, start_date, initial_investment);
 
   // Inject portfolio overview values
   const data = window.dashboardData || {};

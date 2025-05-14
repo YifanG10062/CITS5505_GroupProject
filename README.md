@@ -1,34 +1,95 @@
 # CITS5505 Group Project – The Richverse
 
-This project is built using Flask and provides an interactive dashboard to visualize portfolio returns, benchmarks, and performance metrics.
+**The Richverse** is an interactive web application built with **Flask** that allows users to track, compare, and analyze investment portfolios over time. Users can create portfolios, view cumulative returns, benchmark against SPY and explore key performance metrics via interactive charts.
 
-## 🔧 Requirements
+The application is designed to support retail investors, students, and finance enthusiasts in understanding the impact of asset allocation over time to support future investments. The dashboard visualizations are inspired by industry tear sheets, with a modern UI powered by Chart.js.
 
-- Python **3.10** or higher (due to modern type hinting syntax). However, python **3.13** is currently not recommended due to compatibility issues with certain dependencies (e.g., setuptools, pkgutil, and others).
-- `pip` (latest recommended)
-- Virtual environment setup (`venv`)
+---
 
-## 📦 Setup Instructions
+## Group Members - Masters Group 30
 
+| UWA ID     | Name                      |
+|------------|---------------------------|
+| 24365906   | Aoli Wang                 |
+| 24509011   | Farah Warnakulasuriya     |
+| 23966753   | Yifan Gao                 |
+| 23866945   | Pavan Kumar Potukuchi     |
+
+---
+
+## Launch Instructions
+
+Ensure you are using **Python 3.10+**. Python 3.13 is **not recommended** due to package compatibility issues.
+
+### 1. Clone the repository
 ```bash
-# Clone the repo
 git clone https://github.com/YifanG10062/CITS5505_GroupProject.git
 cd CITS5505_GroupProject
+```
 
-# Create and activate virtual environment
+### 2. Create and activate virtual environment
+```bash
+# Windows
 python -m venv venv
-.\venv\Scripts\activate       # On Windows
-# source venv/bin/activate   # On Mac/Linux
+.\venv\Scripts\activate
 
-# Install dependencies
+# Mac/Linux
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### 3. Install dependencies
+```bash
 pip install -r requirements.txt
+```
 
-# Initialize the database
+### 4. Initialize the database
+```bash
 flask db upgrade
+```
 
-# Populate historical asset price data
-# This will fetch prices from 2015-01-01 to today and inserts it into the database
-flask --app run.py refresh-history
-
-# Run the app
+### 5. Check historical price data and Run the application
+This will fetch any missing price data from 2015 to today for the assets and then start the Flask server.
+```bash
 python run.py
+```
+
+Visit: `http://localhost:5000`
+
+---
+
+## Running Tests
+
+The project includes unit tests for portfolio metric calculations and drawdown logic.
+
+To run the tests:
+```bash
+python -m unittest tests/test_visualization.py
+```
+
+> **Note:** Replace `test_visualization.py` with the actual test file name you want to run, e.g.:
+> ```bash
+> python -m unittest tests/test_file_name.py
+> ```
+
+Expected output:
+```
+✔ Test 1 passed
+✔ Test 2 passed
+✔ Test 3 passed
+✔ Test 4 passed
+✔ Test 5 passed
+.
+----------------------------------------------------------------------
+Ran 5 tests in X.XXXs
+
+OK
+```
+
+---
+
+## Notes
+
+- The system uses mock asset data and real-time price history from Yahoo Finance.
+- Unit tests are isolated from login/auth logic and use seeded mock data.
+- CLI commands (`setup-dev`, `refresh-user-info`) are provided for local development support.
