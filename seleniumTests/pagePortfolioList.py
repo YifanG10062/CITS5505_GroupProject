@@ -12,13 +12,19 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from sqlalchemy import engine_from_config, pool
 from werkzeug.serving import make_server
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from app import create_app
 from app.config import TestConfig
+from app.models import db
 
+app = create_app(config_class=TestConfig)
+app.app_context().push()
+
+target_metadata = db.metadata
 
 class ServerThread(threading.Thread):
     def __init__(self, app):
@@ -42,9 +48,9 @@ class HomepageUITest(unittest.TestCase):
         cls.app_context = cls.app.app_context()
         cls.app_context.push()
 
-        # # Apply Alembic migrations
-        # alembic_cfg = Config(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'alembic.ini')))
-        # upgrade(alembic_cfg, "head")
+        # Apply Alembic migrations
+        alembic_cfg = Config(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'migrations', 'alembic.ini')))
+        upgrade(alembic_cfg, "head")
 
         # Start Flask server
         cls.server_thread = ServerThread(cls.app)
