@@ -199,12 +199,6 @@
 
 {% block scripts %}
     <script>
-        // Print weight information to console for debugging
-        console.log('Portfolio A weights:', {{ weights_a | tojson }});
-        console.log('Portfolio A descriptions:', {{ descriptions_a | tojson }});
-        console.log('Portfolio B weights:', {{ weights_b | tojson }});
-        console.log('Portfolio B descriptions:', {{ descriptions_b | tojson }});
-        
         window.comparisonConfig = {
             weightsA: {{ weights_a | tojson | safe }},
             weightsB: {{ weights_b | tojson | safe }},

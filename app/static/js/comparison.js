@@ -14,15 +14,12 @@ document.addEventListener("DOMContentLoaded", () => {
     nameSPY
   } = window.comparisonConfig;
 
-  console.log("Portfolio A weights:", weightsA);
-  console.log("Portfolio B weights:", weightsB);
-  console.log("SPY weights:", weightsSPY);
-
   // Format weights data for chart rendering
   const formattedWeightsA = convertToDictFormat(weightsA);
   const formattedWeightsB = convertToDictFormat(weightsB);
   const formattedWeightsSPY = convertToDictFormat(weightsSPY);
 
+  // Render cumulative returns chart
   renderComparisonCumulativeChart({
     weights_a: formattedWeightsA,
     weights_b: formattedWeightsB,
@@ -61,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Calculate and display portfolio metrics
   calculatePortfolioMetrics(weightsA, weightsB);
   
-  // Restore fixWeightDisplays function call
+  // Fix weight displays to show integer percentages only
   fixWeightDisplays();
 });
 
@@ -146,6 +143,9 @@ function calculatePortfolioMetrics(weightsA, weightsB) {
       (summary.portfolio_b.maxDrawdown * 100).toFixed(1) + "%";
     document.getElementById('maxDrawdownB').classList.add('drawdown-value');
     document.getElementById('maxDrawdownB').closest('.mini-metric').classList.add('drawdown-card');
+  })
+  .catch(err => {
+    console.error("Error calculating portfolio metrics:", err);
   });
 }
 
@@ -161,7 +161,10 @@ function handleResponsiveLayout() {
     // Adjust layout based on screen size, but maintain equal division rules
     descriptionRows.forEach(row => {
       // Get column count
-      const numCols = parseInt(row.className.match(/cols-(\d+)/)[1]);
+      const colsMatch = row.className.match(/cols-(\d+)/);
+      if (!colsMatch) return;
+      
+      const numCols = parseInt(colsMatch[1]);
       
       // Always use single column layout on mobile devices
       if (isMobile) {
@@ -204,7 +207,7 @@ function handleResponsiveLayout() {
       });
     }
     
-    // beautify the second row of performance, AI, Leverage
+    // Style specific portfolio types
     const descriptionLabels = document.querySelectorAll('.stock-name');
     descriptionLabels.forEach(label => {
       if (label.textContent.includes('Performance')) {
@@ -255,7 +258,7 @@ function handleResponsiveLayout() {
   // Listen for window resize events
   window.addEventListener('resize', adjustLayout);
   
-  // execute the layout adjustment once after the page loads
+  // Execute the layout adjustment once after the page loads
   window.addEventListener('load', adjustLayout);
 }
 
@@ -287,8 +290,6 @@ function fixWeightDisplays() {
 const equalizeCardWidths = () => {
   const rows = document.querySelectorAll('.description-metrics-row');
   rows.forEach(row => {
-    const numCols = parseInt(row.className.match(/cols-(\d+)/)[1]);
-    
     const cards = row.querySelectorAll('.mini-metric');
     cards.forEach(card => {
       card.style.overflow = 'hidden';
