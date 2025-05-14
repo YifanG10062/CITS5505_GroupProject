@@ -1,9 +1,18 @@
+import os
+import sys
+
+# Add your project root directory to Python's path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import logging
 from logging.config import fileConfig
 
-from flask import current_app
-
 from alembic import context
+from flask import current_app
+from sqlalchemy import engine_from_config, pool
+
+from app import create_app, db
+from app.config import TestConfig
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -14,6 +23,9 @@ config = context.config
 fileConfig(config.config_file_name)
 logger = logging.getLogger('alembic.env')
 
+# Setup Flask app context manually
+app = create_app(config_class=TestConfig)
+app.app_context().push()
 
 def get_engine():
     try:
@@ -37,7 +49,8 @@ def get_engine_url():
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 config.set_main_option('sqlalchemy.url', get_engine_url())
-target_db = current_app.extensions['migrate'].db
+
+target_db = db 
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -45,9 +58,11 @@ target_db = current_app.extensions['migrate'].db
 # ... etc.
 
 
+# def get_metadata():
+#     if hasattr(target_db, 'metadatas'):
+#         return target_db.metadatas[None]
+#     return target_db.metadata
 def get_metadata():
-    if hasattr(target_db, 'metadatas'):
-        return target_db.metadatas[None]
     return target_db.metadata
 
 
