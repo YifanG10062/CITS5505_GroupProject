@@ -700,7 +700,7 @@
   max-width: 100%;
 }
 
-/* 添加响应式布局断点 */
+/* Add responsive layout breakpoints */
 @media (max-width: 1200px) {
   .cards-grid {
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 

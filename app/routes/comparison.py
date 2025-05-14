@@ -39,6 +39,7 @@ def view_comparison():
         weights_b = json.loads(p_b.allocation_json) or {}
         name_b = p_b.portfolio_name
     else:
+        # Use larger values as defaults to ensure they remain valid percentages after rounding
         weights_b = {"MSFT": 0.5, "AMZN": 0.3, "AMD": 0.2}
         name_b = "Sample Portfolio B"
         p_b = None
@@ -46,6 +47,11 @@ def view_comparison():
     # Benchmark (SPY)
     weights_spy = {"SPY": 1.0}
     name_spy    = "SPY"
+
+    # Convert weight objects to processable format
+    formatted_weights_a = format_weights(weights_a)
+    formatted_weights_b = format_weights(weights_b)
+    formatted_weights_spy = format_weights(weights_spy)
 
     # Combine asset codes
     asset_codes = list(set(weights_a) | set(weights_b) | set(weights_spy))
@@ -78,27 +84,44 @@ def view_comparison():
     # Fetch asset info for descriptions
     assets_info_a = Asset.query.filter(Asset.asset_code.in_(weights_a.keys())).all()
 
-    # Construct { name, description } list
-    descriptions_a = [
-        {"name": asset.asset_code, "description": asset.strategy_description}
-        for asset in assets_info_a
-        if asset.strategy_description
-    ]
+    # Construct { name, description, weight, ticker, logo_url } list for Portfolio A
+    descriptions_a = []
+    for asset in assets_info_a:
+        if asset.strategy_description:
+            weight = get_weight_value(weights_a, asset.asset_code)
+            descriptions_a.append({
+                "name": asset.asset_code,
+                "description": asset.strategy_description,
+                "weight": weight,
+                "ticker": asset.asset_code,
+                "logo_url": asset.logo_url
+            })
 
+    # Process assets for Portfolio B
     assets_info_b = Asset.query.filter(Asset.asset_code.in_(weights_b.keys())).all()
+    
+    # Construct { name, description, weight, ticker, logo_url } list for Portfolio B
+    descriptions_b = []
+    for asset in assets_info_b:
+        if asset.strategy_description:
+            weight = get_weight_value(weights_b, asset.asset_code)
+            descriptions_b.append({
+                "name": asset.asset_code,
+                "description": asset.strategy_description,
+                "weight": weight,
+                "ticker": asset.asset_code,
+                "logo_url": asset.logo_url
+            })
 
-    descriptions_b = [
-        {"name": asset.asset_code, "description": asset.strategy_description}
-        for asset in assets_info_b
-        if asset.strategy_description
-    ]
+    # Create a string representation of asset allocation for display
+    asset_string = ", ".join(weights_a.keys())
 
     # Render the template with the data
     return render_template(
         "comparison.html",
-        weights_a=weights_a,
-        weights_b=weights_b,
-        weights_spy=weights_spy,
+        weights_a=formatted_weights_a,
+        weights_b=formatted_weights_b,
+        weights_spy=formatted_weights_spy,
         name_a=name_a,
         name_b=name_b,
         name_spy=name_spy,
@@ -107,5 +130,24 @@ def view_comparison():
         initial_investment=initial_investment,
         updated_at=updated_at,
         descriptions_a=descriptions_a,
-        descriptions_b=descriptions_b
+        descriptions_b=descriptions_b,
+        asset_string=asset_string
     )
+
+def format_weights(weights_dict):
+    """Format weight dictionary for frontend use"""
+    result = []
+    for ticker, weight in weights_dict.items():
+        # Keep original weight value, let frontend handle percentage display
+        result.append({
+            "ticker": ticker,
+            "weight": weight,  # Keep original value
+            "name": ticker  # Default to using ticker as name
+        })
+    return result
+
+def get_weight_value(weights_dict, asset_code):
+    """Get weight value for an asset"""
+    if isinstance(weights_dict, dict):
+        return weights_dict.get(asset_code, 0)  # Keep original value
+    return 0
