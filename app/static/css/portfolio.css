@@ -458,7 +458,7 @@
   padding: 0;
   box-shadow: none;
   text-transform: capitalize; 
-  margin-right: 0.5rem; 
+  margin-right: 0.5rem;
 }
 
 .portfolio-config .action-buttons .text-link {
@@ -1677,4 +1677,76 @@ th.sortable:hover {
   background: var(--primary);
   border-top-left-radius: 4px;   
   border-bottom-left-radius: 4px; 
+}
+
+/* Comparison Modal Styling */
+.portfolio-slot .empty-slot {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #6c757d;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px dashed rgba(255, 255, 255, 0.2) !important;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.portfolio-slot .empty-slot:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: var(--primary) !important;
+}
+
+.portfolio-slot .empty-slot i {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--primary);
+  opacity: 0.9;
+}
+
+.portfolio-slot .selected-portfolio {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-left: 3px solid var(--primary) !important;
+  min-height: 100px;
+  padding: 1.5rem 1rem 1rem;
+  position: relative;
+}
+
+.portfolio-slot .selected-portfolio .portfolio-name {
+  font-weight: 500;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  display: block;
+  word-break: break-word;
+}
+
+.portfolio-slot .selected-portfolio .btn-close {
+  opacity: 0.5;
+  transition: all 0.2s ease;
+  transform: scale(0.8);
+}
+
+.portfolio-slot .selected-portfolio .btn-close:hover {
+  opacity: 1;
+  transform: scale(1);
+}
+
+#portfolioListForComparison {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.25rem;
+}
+
+#portfolioListForComparison .list-group-item {
+  background-color: transparent;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+#portfolioListForComparison .list-group-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--primary);
 }

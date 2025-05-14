@@ -1865,40 +1865,211 @@ function setupShareButton(portfolioId) {
     }
 }
 
-
 // Portfolio Comparison Functionality
 document.addEventListener('DOMContentLoaded', () => {
-    const rows = document.querySelectorAll('.portfolios-table tbody tr');
     const compareBtn = document.getElementById('compareBtn');
-    let selected = [];
-  
-    rows.forEach(row => {
-      row.addEventListener('click', () => {
-        const id = row.dataset.id;
-  
-        if (selected.includes(id)) {
-          // Deselect the row
-          selected = selected.filter(x => x !== id);
-          row.classList.remove('selected');
-        } else {
-          // Allow selection of up to two rows
-          if (selected.length < 2) {
-            selected.push(id);
-            row.classList.add('selected');
-          } else {
-            alert('You can only select up to two portfolios for comparison.');
-          }
-        }
-  
-        // Compare button state
-        compareBtn.disabled = (selected.length !== 2);
-      });
-    });
-  
-    compareBtn.addEventListener('click', () => {
-      if (selected.length === 2) {
-        const [a, b] = selected;
-        window.location.href = `/comparison/?a=${a}&b=${b}`;
-      }
-    });
+    
+    if (compareBtn) {
+        compareBtn.addEventListener('click', () => {
+            initComparisonModal();
+            const modalEl = document.getElementById('comparisonModal');
+            const comparisonModal = new bootstrap.Modal(modalEl);
+            comparisonModal.show();
+        });
+    }
 });
+
+// Initialize the comparison modal
+function initComparisonModal() {
+    console.log('Initializing comparison modal');
+    
+    const modalEl = document.getElementById('comparisonModal');
+    if (!modalEl) {
+        console.warn('Comparison modal not found in the DOM, skipping initialization');
+        return;
+    }
+    
+    const portfolioListEl = document.getElementById('portfolioListForComparison');
+    const compareBtn = document.getElementById('comparePortfoliosBtn');
+    
+    // Clear previous content
+    portfolioListEl.innerHTML = '';
+    
+    // Initialize slots and compare button
+    const portfolioSlotA = document.getElementById('portfolioSlotA');
+    const portfolioSlotB = document.getElementById('portfolioSlotB');
+    
+    let selectedPortfolios = {
+        a: null,
+        b: null
+    };
+    
+    // Update the status of the compare button
+    function updateCompareButton() {
+        compareBtn.disabled = !(selectedPortfolios.a && selectedPortfolios.b);
+    }
+    
+    // Remove portfolio from slot
+    function removePortfolio(slot) {
+        const slotEl = document.getElementById(`portfolioSlot${slot.toUpperCase()}`);
+        if (slotEl) {
+            const emptySlot = slotEl.querySelector('.empty-slot');
+            const selectedSlot = slotEl.querySelector('.selected-portfolio');
+            const removedId = selectedPortfolios[slot.toLowerCase()];
+            
+            // Reset slot state
+            emptySlot.classList.remove('d-none');
+            selectedSlot.classList.add('d-none');
+            selectedPortfolios[slot.toLowerCase()] = null;
+            
+            // Update the status of the compare button
+            updateCompareButton();
+            
+            // Re-enable the item in the list
+            const listItem = portfolioListEl.querySelector(`[data-portfolio-id="${removedId}"]`);
+            if (listItem) {
+                listItem.classList.remove('disabled');
+                listItem.style.pointerEvents = '';
+                listItem.style.opacity = '';
+            }
+        }
+    }
+    
+    // Select portfolio to specified slot
+    function selectPortfolio(portfolioId, portfolioName, slot) {
+        const slotEl = document.getElementById(`portfolioSlot${slot.toUpperCase()}`);
+        if (slotEl) {
+            const emptySlot = slotEl.querySelector('.empty-slot');
+            const selectedSlot = slotEl.querySelector('.selected-portfolio');
+            const nameSpan = selectedSlot.querySelector('.portfolio-name');
+            
+            nameSpan.textContent = portfolioName;
+            selectedPortfolios[slot.toLowerCase()] = portfolioId;
+            
+            emptySlot.classList.add('d-none');
+            selectedSlot.classList.remove('d-none');
+            
+            updateCompareButton();
+        }
+    }
+    
+    // Load portfolio list
+    function loadPortfolios() {
+        // Clear existing list
+        portfolioListEl.innerHTML = '';
+        
+        // Get all portfolio data from table
+        const portfolios = [];
+        const tableRows = document.querySelectorAll('.portfolios-table tbody tr:not(.no-data-row)');
+        
+        tableRows.forEach(row => {
+            // Try to get ID from multiple possible attributes
+            const portfolioId = row.dataset.portfolioId || row.dataset.id || 
+                                row.getAttribute('data-portfolio-id') || 
+                                row.getAttribute('data-id');
+            
+            if (!portfolioId) return;
+            
+            const portfolioNameEl = row.querySelector('.portfolio-name-cell a');
+            const portfolioName = portfolioNameEl ? portfolioNameEl.textContent.trim() : 'Unknown Portfolio';
+            
+            portfolios.push({
+                id: portfolioId,
+                name: portfolioName
+            });
+        });
+        
+        // If it's card view, try to get data from cards
+        if (portfolios.length === 0) {
+            const cards = document.querySelectorAll('.portfolio-card');
+            cards.forEach(card => {
+                // Try to get ID from multiple possible attributes
+                const portfolioId = card.dataset.portfolioId || card.dataset.id || 
+                                   card.getAttribute('data-portfolio-id') || 
+                                   card.getAttribute('data-id');
+                
+                if (!portfolioId) return;
+                
+                const portfolioNameEl = card.querySelector('.portfolio-title-link');
+                const portfolioName = portfolioNameEl ? portfolioNameEl.textContent.trim() : 'Unknown Portfolio';
+                
+                portfolios.push({
+                    id: portfolioId,
+                    name: portfolioName
+                });
+            });
+        }
+        
+        // Check if any portfolios were found
+        if (portfolios.length === 0) {
+            portfolioListEl.innerHTML = '<div class="list-group-item text-center">No portfolios found</div>';
+            return;
+        }
+        
+        // Create portfolio list in modal
+        portfolios.forEach(portfolio => {
+            const item = document.createElement('a');
+            item.href = '#';
+            item.className = 'list-group-item list-group-item-action';
+            item.setAttribute('data-portfolio-id', portfolio.id);
+            item.textContent = portfolio.name;
+            
+            // Check if it's already selected, if so, disable it
+            if (selectedPortfolios.a === portfolio.id || selectedPortfolios.b === portfolio.id) {
+                item.classList.add('disabled');
+                item.style.pointerEvents = 'none';
+                item.style.opacity = '0.6';
+            }
+            
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // If item is disabled, do nothing
+                if (this.classList.contains('disabled')) {
+                    return;
+                }
+                
+                // Determine which slot to use
+                let targetSlot;
+                if (!selectedPortfolios.a) {
+                    targetSlot = 'a';
+                } else if (!selectedPortfolios.b) {
+                    targetSlot = 'b';
+                } else {
+                    // If both slots are full, need to remove one first
+                    alert('Please remove one of the selected portfolios before adding a new one');
+                    return;
+                }
+                
+                // Select portfolio and update UI
+                selectPortfolio(portfolio.id, portfolio.name, targetSlot);
+                
+                // Disable already selected item
+                this.classList.add('disabled');
+                this.style.pointerEvents = 'none';
+                this.style.opacity = '0.6';
+            });
+            
+            portfolioListEl.appendChild(item);
+        });
+    }
+    
+    // Load portfolios
+    loadPortfolios();
+    
+    // Add event listener to Remove buttons
+    document.querySelectorAll('.remove-portfolio').forEach(button => {
+        button.addEventListener('click', function() {
+            const slotEl = this.closest('.portfolio-slot');
+            const slot = slotEl.id.replace('portfolioSlot', '').toLowerCase();
+            removePortfolio(slot);
+        });
+    });
+    
+    // Click event for compare button
+    compareBtn.addEventListener('click', function() {
+        if (selectedPortfolios.a && selectedPortfolios.b) {
+            window.location.href = `/comparison/?a=${selectedPortfolios.a}&b=${selectedPortfolios.b}`;
+        }
+    });
+}
