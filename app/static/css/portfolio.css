@@ -5,7 +5,7 @@
 .page-heading {
     font-weight: 600;
     font-size: 20px;
-    font-family: var(--font-nav);
+    font-family: var(--font-body);
     color: var(--text-primary);
 }
 
@@ -17,7 +17,7 @@
 .page-subheading {
     font-size: 14px;
     font-weight: 400;
-    font-family: var(--font-nav);
+    font-family: var(--font-body);
     color: var(--text-primary);
 }
 
@@ -740,7 +740,7 @@
 }
 
 .overlay-content h3 {
-  font-family: var(--font-nav);
+  font-family: var(--font-body);
   font-size: 1.75rem;
   font-weight: 600;
   color: var(--text-primary);
@@ -759,7 +759,7 @@
 }
 
 .wip-badge span {
-  font-family: var(--font-nav);
+  font-family: var(--font-body);
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--primary);
@@ -790,7 +790,7 @@
 }
 
 .placeholder-title {
-  font-family: var(--font-nav);
+  font-family: var(--font-body);
   font-weight: 600;
   font-size: 1.5rem;
   color: var(--text-primary);
@@ -1120,7 +1120,7 @@
 }
 
 .modal-title {
-  font-family: var(--font-nav);
+  font-family: var(--font-body);
   font-weight: 600;
   color: var(--text-primary);
 }
@@ -1304,7 +1304,7 @@ a.action-link.delete:hover {
 }
 
 .share-history-title {
-  font-family: var(--font-nav);
+  font-family: var(--font-body);
   font-weight: 600;
   font-size: 14px;
   margin-bottom: 8px;
@@ -1594,7 +1594,7 @@ th.sortable:hover {
   font-size: 1.1rem;
   color: var(--text-primary);
   margin: 0;
-  font-family: var(--font-nav);
+  font-family: var(--font-body);
 }
 
 .delete-modal-body {

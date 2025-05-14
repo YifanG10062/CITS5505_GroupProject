@@ -144,7 +144,7 @@ body {
 }
 
 .card-header {
-  font-family: var(--font-nav);
+  font-family: var(--font-body);
   font-weight: 600;
   font-size: 1rem;
   letter-spacing: 0.4px;
@@ -323,7 +323,7 @@ body {
   color: var(--text-secondary);
   border-color: var(--card-outline);
   font-weight: 500;
-  font-family: var(--font-nav);
+  font-family: var(--font-body);
 }
 
 .table td {
