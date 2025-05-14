@@ -1,5 +1,6 @@
 import { renderComparisonCumulativeChart } from "./charts/cumulativeChartComparison.js";
 import { renderComparisonRadarChart } from "./charts/comparisonRadarChart.js";
+import { renderRiskReturnChart } from "./charts/riskReturnChart.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const {
@@ -34,8 +35,18 @@ document.addEventListener("DOMContentLoaded", () => {
     elementId: "cumulativeChartComparison"
   });
 
-  // render comparison radar chart
+  // Render portfolio comparison radar chart
   renderComparisonRadarChart(
+    formattedWeightsA,
+    formattedWeightsB,
+    startDate,
+    initialInvestment,
+    nameA,
+    nameB
+  );
+
+  // Render risk-return scatter plot 
+  renderRiskReturnChart(
     formattedWeightsA,
     formattedWeightsB,
     startDate,
