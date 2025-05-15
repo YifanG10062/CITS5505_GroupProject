@@ -848,6 +848,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Find all delete buttons (both in list and card views)
         const deleteButtons = document.querySelectorAll('.action-link.delete, .delete-portfolio-btn');
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+        let portfolioToDelete = null;
+        let buttonClicked = null;
         
         console.log(`Found ${deleteButtons.length} delete buttons`);
         
@@ -862,132 +865,143 @@ document.addEventListener('DOMContentLoaded', function() {
                     e.preventDefault();
                     
                     // Get portfolio ID from data attribute
-                    const portfolioId = this.dataset.portfolioId;
+                    portfolioToDelete = this.dataset.portfolioId;
+                    buttonClicked = this;
                     
-                    if (!portfolioId) {
+                    if (!portfolioToDelete) {
                         console.error('No portfolio ID found for delete button');
                         return;
                     }
                     
-                    console.log(`Delete button clicked for portfolio ID: ${portfolioId}`);
+                    console.log(`Delete button clicked for portfolio ID: ${portfolioToDelete}`);
                     
-                    // Confirm deletion
-                    if (confirm('Are you sure you want to delete this portfolio? This action cannot be undone.')) {
-                        console.log('Deletion confirmed, sending request to server');
-                        
-                        // Show loading state
-                        const originalText = this.textContent;
-                        this.textContent = 'Deleting...';
-                        this.disabled = true;
-                        
-                        // Send delete request to server
-                        fetch(`/portfolios/${portfolioId}/delete`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRFToken': getCsrfToken()
-                            }
-                        })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error(`Server returned ${response.status}: ${response.statusText}`);
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            console.log('Delete response:', data);
-                            
-                            if (data.success) {
-                                // Remove the portfolio element from the UI
-                                const row = this.closest('tr');
-                                const card = this.closest('.portfolio-card');
-                                
-                                // Handle removal from both views
-                                if (row) {
-                                    row.remove();
-                                }
-                                
-                                if (card) {
-                                    card.remove();
-                                }
-                                
-                                // Show success message
-                                const alertHTML = `
-                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                        Portfolio deleted successfully
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                    </div>
-                                `;
-                                
-                                // Create alert container that appears below navbar and centered
-                                let alertContainer = document.getElementById('global-alert-container');
-                                if (!alertContainer) {
-                                    alertContainer = document.createElement('div');
-                                    alertContainer.id = 'global-alert-container';
-                                    
-                                    // Style for centered positioning below navbar
-                                    alertContainer.style.position = 'fixed';
-                                    alertContainer.style.top = '80px'; // Position below navbar
-                                    alertContainer.style.left = '50%';
-                                    alertContainer.style.transform = 'translateX(-50%)';
-                                    alertContainer.style.zIndex = '9999';
-                                    alertContainer.style.width = '80%'; // Use percentage width
-                                    alertContainer.style.maxWidth = '800px'; // Maximum width
-                                    
-                                    document.body.appendChild(alertContainer);
-                                }
-                                
-                                // Add the alert to the container
-                                alertContainer.innerHTML = alertHTML;
-                                
-                                // Auto-close the alert after 5 seconds
-                                setTimeout(() => {
-                                    const alert = alertContainer.querySelector('.alert');
-                                    if (alert) {
-                                        // Try to close using Bootstrap API first
-                                        try {
-                                            const bsAlert = new bootstrap.Alert(alert);
-                                            bsAlert.close();
-                                        } catch (e) {
-                                            // Fallback: remove directly
-                                            alert.remove();
-                                        }
-                                    }
-                                }, 5000);
-                                
-                                // Check if we need to show "no data" message
-                                const tbody = document.querySelector('.portfolios-table tbody');
-                                if (tbody && tbody.querySelectorAll('tr:not(#noDataRow)').length === 0) {
-                                    const noDataRow = document.getElementById('noDataRow');
-                                    if (noDataRow) {
-                                        noDataRow.classList.remove('d-none');
-                                    }
-                                }
-                                
-                                // Check for card view
-                                const cardContainer = document.getElementById('cardView');
-                                if (cardContainer && cardContainer.querySelectorAll('.portfolio-card').length === 0) {
-                                    const noDataCards = document.getElementById('noDataCards');
-                                    if (noDataCards) {
-                                        noDataCards.classList.remove('d-none');
-                                    }
-                                }
-                            } else {
-                                // Show error message
-                                alert(`Failed to delete portfolio: ${data.message || 'Unknown error'}`);
-                                this.textContent = originalText;
-                                this.disabled = false;
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error deleting portfolio:', error);
-                            alert('Failed to delete portfolio. Please try again.');
-                            this.textContent = originalText;
-                            this.disabled = false;
-                        });
-                    }
+                    // Show delete confirmation modal
+                    deleteModal.show();
                 });
             }
+        });
+
+        // Handle confirm delete button click
+        document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+            if (!portfolioToDelete || !buttonClicked) return;
+
+            // Show loading state
+            this.disabled = true;
+            this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Deleting...';
+            buttonClicked.disabled = true;
+            
+            // Send delete request to server
+            fetch(`/portfolios/${portfolioToDelete}/delete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken()
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Delete response:', data);
+                
+                if (data.success) {
+                    // Remove the portfolio element from the UI
+                    const row = buttonClicked.closest('tr');
+                    const card = buttonClicked.closest('.portfolio-card');
+                    
+                    // Handle removal from both views
+                    if (row) {
+                        row.remove();
+                    }
+                    
+                    if (card) {
+                        card.remove();
+                    }
+                    
+                    // Show success message
+                    const alertHTML = `
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            Portfolio deleted successfully
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    `;
+                    
+                    // Create alert container that appears below navbar and centered
+                    let alertContainer = document.getElementById('global-alert-container');
+                    if (!alertContainer) {
+                        alertContainer = document.createElement('div');
+                        alertContainer.id = 'global-alert-container';
+                        
+                        // Style for centered positioning below navbar
+                        alertContainer.style.position = 'fixed';
+                        alertContainer.style.top = '80px'; // Position below navbar
+                        alertContainer.style.left = '50%';
+                        alertContainer.style.transform = 'translateX(-50%)';
+                        alertContainer.style.zIndex = '9999';
+                        alertContainer.style.width = '80%'; 
+                        alertContainer.style.maxWidth = '800px'; 
+                        
+                        document.body.appendChild(alertContainer);
+                    }
+                    
+                    // Add the alert to the container
+                    alertContainer.innerHTML = alertHTML;
+                    
+                    // Auto-close the alert after 5 seconds
+                    setTimeout(() => {
+                        const alert = alertContainer.querySelector('.alert');
+                        if (alert) {
+                            // Try to close using Bootstrap API first
+                            try {
+                                const bsAlert = new bootstrap.Alert(alert);
+                                bsAlert.close();
+                            } catch (e) {
+                                // Fallback: remove directly
+                                alert.remove();
+                            }
+                        }
+                    }, 5000);
+                    
+                    // Check if we need to show "no data" message
+                    const tbody = document.querySelector('.portfolios-table tbody');
+                    if (tbody && tbody.querySelectorAll('tr:not(#noDataRow)').length === 0) {
+                        const noDataRow = document.getElementById('noDataRow');
+                        if (noDataRow) {
+                            noDataRow.classList.remove('d-none');
+                        }
+                    }
+                    
+                    // Check for card view
+                    const cardContainer = document.getElementById('cardView');
+                    if (cardContainer && cardContainer.querySelectorAll('.portfolio-card').length === 0) {
+                        const noDataCards = document.getElementById('noDataCards');
+                        if (noDataCards) {
+                            noDataCards.classList.remove('d-none');
+                        }
+                    }
+
+                    // Hide the modal
+                    deleteModal.hide();
+                } else {
+                    // Show error message
+                    alert(`Failed to delete portfolio: ${data.message || 'Unknown error'}`);
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting portfolio:', error);
+                alert('Failed to delete portfolio. Please try again.');
+            })
+            .finally(() => {
+                // Reset button states
+                this.disabled = false;
+                this.innerHTML = 'Delete';
+                if (buttonClicked) {
+                    buttonClicked.disabled = false;
+                }
+            });
         });
     }
 

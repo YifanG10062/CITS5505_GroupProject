@@ -38,8 +38,12 @@ def register():
             )
             db.session.add(new_user)
             db.session.commit()
-            flash("Registration successful. Please log in.", "success")
-            return redirect(url_for("user.login"))
+            
+            # Automatically log in the new user
+            login_user(new_user)
+            flash("Registration successful. Welcome to The Richverse.", "success")
+            return redirect(url_for("portfolios.create"))
+            
     return render_template("user/register.html", form=form, hide_footer=True)
 
 @user.route("/resetrequest", methods=["GET", "POST"])
