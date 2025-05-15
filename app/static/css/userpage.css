@@ -111,6 +111,13 @@ body {
       flex-direction: column;
       gap: 20px;
   }
+} 
+
+@media (max-width: 768px) {
+  .login-page {
+      flex-direction: column;
+      gap: 20px;
+  }
 }
 
 
