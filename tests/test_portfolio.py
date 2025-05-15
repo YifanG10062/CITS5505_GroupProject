@@ -45,7 +45,7 @@ class PortfolioTestCase(unittest.TestCase):
         self.app.config.from_object(TestConfig)
         self.app.config['TESTING'] = True
         self.app.config['WTF_CSRF_ENABLED'] = False  # Disable CSRF for testing
-        self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'  # Use in-memory database
+        self.app = create_app(TestConfig)
         
         # Create app context and request context
         self.app_context = self.app.app_context()
