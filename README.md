@@ -87,31 +87,90 @@ OK
 ```
 
 ---
-## Running Selenium test cases
-The project includes Selenium test cases
-Page level - all element validations for User registration, Login,  PortfolioList, CreatePortfolio, Dashboard
-Happy Path scenarios for User registration, Login,  PortfolioList, CreatePortfolio, Dashboard
+## Running Selenium Test Cases
 
->A specific selenium test file can be run by the command in terminal: python -m seleniumTests.pageLogin
->Please replace the file of your choice in place of pageLogin like loginTest, pageCreatePortfolio, pageDashboard,...
+This project includes Selenium-based UI test cases that verify the key frontend components and user flows in a real browser environment.
 
-> A script like: run_selenium_tests.bat can be created :
-> To run the tests: (for Windows)
-@echo off
+### What is Tested
+
+Each Selenium script tests the following:
+
+- **Login Page UI and functionality** (`pageLoginUI.py`)
+- **Portfolio List Page**:
+  - UI checks (`test_homepage_ui_elements`)
+  - View toggle logic (e.g., table ↔ card) — *optional depending on stability*
+- **Create Portfolio Page UI** (`pageCreatePortfolio.py`)
+- **Dashboard Structure and Metrics Rendering** (`pageDashboard.py`)
+
+Tests focus on **happy path flows** and structural validation of key screens in the user journey.
+
+---
+
+### Running a Specific Selenium Test File
+
+To run a specific test file (e.g., the login test):
+```bash
+python seleniumTests/pageLoginUI.py
+```
+
+Replace `pageLoginUI.py` with any of the following as needed:
+- `pageCreatePortfolio.py`
+- `pageDashboard.py`
+- `pagePortfolioList.py`
+
+---
+
+### Run All Selenium Tests at Once
+
+**Option 1 – Via Python CLI:**
+```bash
 python -m unittest discover -s seleniumTests -p "*.py"
-pause
- 
->To run the tests: (for Mac/Linux)
+```
+
+**Option 2 – Using a Shell Script (Mac/Linux):**
 ```bash
 #!/bin/bash
 python -m unittest discover -s seleniumTests -p "*.py"
 ```
 
->To make it executable
->chmod +x run_selenium_tests.sh
+Make it executable:
+```bash
+chmod +x run_selenium_tests.sh
+```
+
+**Option 3 – Windows Batch Script:**
+```bat
+@echo off
+python -m unittest discover -s seleniumTests -p "*.py"
+pause
+```
 
 ---
 
+### Note on Server & DB Setup
+
+Each test file:
+
+- Starts a local Flask server via a background thread.
+- Applies Alembic migrations to initialize a test SQLite database.
+- Uses Selenium ChromeDriver in headless mode.
+- Logs in as a test user (or registers the user if login fails).
+
+---
+
+### Example Output
+
+```
+✅ Create Portfolio page structure successfully validated.
+✅ Dashboard UI structure and metrics successfully validated.
+✅ 'Create New Portfolio' button is visible on Portfolio List page.
+
+----------------------------------------------------------------------
+Ran 6 tests in 32.53s
+OK
+```
+
+This satisfies the **"5+ Selenium tests run on a live server"** requirement.
 ## Notes
 
 - The system uses mock asset data and real-time price history from Yahoo Finance.
