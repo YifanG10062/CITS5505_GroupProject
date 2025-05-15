@@ -39,7 +39,7 @@ class VisualizationTestCases(unittest.TestCase):
     def test_1_empty_allocation_returns_empty_dict(self):
         result = calculate_portfolio_metrics({}, self.start_date, self.initial_amount)
         self.assertEqual(result, {})
-        print("✔ Test 1 passed")
+        print("TEST 1 PASSED: Empty allocation returns empty result dictionary")
 
     def test_2_calculate_portfolio_metrics_returns_keys(self):
         result = calculate_portfolio_metrics(self.allocation, self.start_date, self.initial_amount)
@@ -48,7 +48,7 @@ class VisualizationTestCases(unittest.TestCase):
             "volatility", "max_drawdown", "longestDD"
         }
         self.assertTrue(expected_keys.issubset(result.keys()))
-        print("✔ Test 2 passed")
+        print("TEST 2 PASSED: Portfolio metrics return all expected keys")
 
     def test_3_get_portfolio_timeseries_returns_series(self):
         result = get_portfolio_timeseries(self.allocation, self.start_date, self.initial_amount)
@@ -56,19 +56,19 @@ class VisualizationTestCases(unittest.TestCase):
             "portfolio_value_series", "daily_returns_series", "cumulative_returns_series"
         }
         self.assertTrue(expected_keys.issubset(result.keys()))
-        print("✔ Test 3 passed")
+        print("TEST 3 PASSED: Portfolio timeseries returns correct key series")
 
     def test_4_calculate_drawdown_series_returns_dict(self):
         result = calculate_drawdown_series(self.allocation, self.start_date, self.initial_amount)
         self.assertIn("labels", result)
         self.assertIn("values", result)
         self.assertEqual(len(result["labels"]), len(result["values"]))
-        print("✔ Test 4 passed")
+        print("TEST 4 PASSED: Drawdown series returns matching label-value lengths")
 
     def test_5_drawdown_values_contain_no_nans(self):
         result = calculate_drawdown_series(self.allocation, self.start_date, self.initial_amount)
         self.assertTrue(all(pd.notna(result["values"])), "Drawdown values contain NaNs")
-        print("✔ Test 5 passed")
+        print("TEST 5 PASSED: Drawdown values contain no NaNs")
 
 
 if __name__ == "__main__":
