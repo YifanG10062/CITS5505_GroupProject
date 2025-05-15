@@ -58,7 +58,11 @@
     
     <!-- Investment period info -->
     <div class="investment-period">
-      Invested $1,000 from {{ earliest_date.strftime('%d/%m/%Y') }} to {{ latest_date.strftime('%d/%m/%Y') }}
+      {% if earliest_date and latest_date %}
+        Invested $1,000 from {{ earliest_date.strftime('%d/%m/%Y') }} to {{ latest_date.strftime('%d/%m/%Y') }}
+      {% else %}
+        Invested $1,000 from 01/01/2025 to present
+      {% endif %}
     </div>
     
     <!-- Portfolio table (List View) -->
