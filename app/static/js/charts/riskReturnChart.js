@@ -165,8 +165,8 @@ export function renderRiskReturnChart(weightsA, weightsB, startDate, initialInve
                   const point = context.raw;
                   return [
                     `${context.dataset.label}:`,
-                    `Risk: ${point.x.toFixed(2)}%`,
-                    `Return: ${point.y.toFixed(2)}%`
+                    `- Risk: ${point.x.toFixed(2)}%`,
+                    `- Return: ${point.y.toFixed(2)}%`
                   ];
                 },
                 labelColor: function(context) {
