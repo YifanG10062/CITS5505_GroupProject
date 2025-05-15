@@ -76,34 +76,76 @@ class SeleniumBaseTest(unittest.TestCase):
     def _ensure_logged_in(cls):
         cls.driver.get("http://127.0.0.1:5000/user/login")
 
-        if "/portfolios" in cls.driver.current_url:
+        # Try login first
+        try:
+            cls.driver.find_element(By.ID, "Email").send_keys("testuser@example.com")
+            cls.driver.find_element(By.ID, "Password").send_keys("password123")
+            cls.driver.find_element(By.CSS_SELECTOR, "input[type='submit']").click()
+
+            # Wait for redirect to /portfolios
+            WebDriverWait(cls.driver, 10).until(
+                EC.url_contains("/portfolios")
+            )
             return
 
-        try:
-            email_input = WebDriverWait(cls.driver, 5).until(
-                EC.presence_of_element_located((By.ID, "Email"))
-            )
-            email_input.send_keys("testuser@example.com")
-            cls.driver.find_element(By.ID, "Password").send_keys("password123")
-            cls.driver.find_element(By.CSS_SELECTOR, "input[type='submit']").click()
+        except Exception:
+            print("Login failed — attempting registration...")
 
-            WebDriverWait(cls.driver, 5).until(EC.url_contains("/portfolios"))
-        except:
-            cls.driver.get("http://127.0.0.1:5000/user/register")
+        # Try registration if login fails
+        cls.driver.get("http://127.0.0.1:5000/user/register")
+        cls.driver.find_element(By.ID, "FirstName").send_keys("Test")
+        cls.driver.find_element(By.ID, "LastName").send_keys("User")
+        cls.driver.find_element(By.ID, "Email").send_keys("testuser@example.com")
+        cls.driver.find_element(By.ID, "Password").send_keys("password123")
+        cls.driver.find_element(By.CSS_SELECTOR, "input[type='submit'][value='Sign Up']").click()
 
-            WebDriverWait(cls.driver, 5).until(
-                EC.presence_of_element_located((By.ID, "FirstName"))
-            )
-            cls.driver.find_element(By.ID, "FirstName").send_keys("Test")
-            cls.driver.find_element(By.ID, "LastName").send_keys("User")
-            cls.driver.find_element(By.ID, "Email").send_keys("testuser@example.com")
-            cls.driver.find_element(By.ID, "Password").send_keys("password123")
-            cls.driver.find_element(By.CSS_SELECTOR, "input[type='submit'][value='Sign Up']").click()
+        # Wait for successful redirect to /portfolios or /login
+        WebDriverWait(cls.driver, 10).until(
+            lambda driver: "/portfolios" in driver.current_url or "/login" in driver.current_url
+        )
 
-            WebDriverWait(cls.driver, 5).until(EC.url_contains("/user/login"))
-
+        # If redirected to login, login again
+        if "/login" in cls.driver.current_url:
+            cls.driver.find_element(By.ID, "Email").clear()
             cls.driver.find_element(By.ID, "Email").send_keys("testuser@example.com")
             cls.driver.find_element(By.ID, "Password").send_keys("password123")
             cls.driver.find_element(By.CSS_SELECTOR, "input[type='submit']").click()
 
-            WebDriverWait(cls.driver, 5).until(EC.url_contains("/portfolios"))
+            # Final confirmation
+            WebDriverWait(cls.driver, 10).until(
+                EC.url_contains("/portfolios")
+            )
+
+            cls.driver.get("http://127.0.0.1:5000/user/login")
+
+            if "/portfolios" in cls.driver.current_url:
+                return
+
+            try:
+                email_input = WebDriverWait(cls.driver, 5).until(
+                    EC.presence_of_element_located((By.ID, "Email"))
+                )
+                email_input.send_keys("testuser@example.com")
+                cls.driver.find_element(By.ID, "Password").send_keys("password123")
+                cls.driver.find_element(By.CSS_SELECTOR, "input[type='submit']").click()
+
+                WebDriverWait(cls.driver, 5).until(EC.url_contains("/portfolios"))
+            except:
+                cls.driver.get("http://127.0.0.1:5000/user/register")
+
+                WebDriverWait(cls.driver, 5).until(
+                    EC.presence_of_element_located((By.ID, "FirstName"))
+                )
+                cls.driver.find_element(By.ID, "FirstName").send_keys("Test")
+                cls.driver.find_element(By.ID, "LastName").send_keys("User")
+                cls.driver.find_element(By.ID, "Email").send_keys("testuser@example.com")
+                cls.driver.find_element(By.ID, "Password").send_keys("password123")
+                cls.driver.find_element(By.CSS_SELECTOR, "input[type='submit'][value='Sign Up']").click()
+
+                WebDriverWait(cls.driver, 5).until(EC.url_contains("/user/login"))
+
+                cls.driver.find_element(By.ID, "Email").send_keys("testuser@example.com")
+                cls.driver.find_element(By.ID, "Password").send_keys("password123")
+                cls.driver.find_element(By.CSS_SELECTOR, "input[type='submit']").click()
+
+                WebDriverWait(cls.driver, 5).until(EC.url_contains("/portfolios"))
