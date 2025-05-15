@@ -9,7 +9,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from werkzeug.serving import make_server
 
 from app import create_app
-
+from app.config import TestConfig
 
 class ServerThread(threading.Thread):
     def __init__(self, app):
@@ -28,7 +28,7 @@ class ServerThread(threading.Thread):
 class RegisterPageTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.app = create_app()
+        cls.app = create_app(TestConfig)
         cls.server_thread = ServerThread(cls.app)
         cls.server_thread.start()
         time.sleep(1)
