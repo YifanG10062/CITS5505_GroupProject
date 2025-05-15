@@ -1681,9 +1681,9 @@ th.sortable:hover {
 
 /* Comparison Modal Styling */
 .portfolio-slot .empty-slot {
-  cursor: pointer;
+  cursor: default;
   transition: all 0.2s ease;
-  color: #6c757d;
+  color: var(--text-secondary);
   background-color: rgba(255, 255, 255, 0.05);
   border: 1px dashed rgba(255, 255, 255, 0.2) !important;
   height: 100px;
@@ -1694,15 +1694,22 @@ th.sortable:hover {
 }
 
 .portfolio-slot .empty-slot:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-color: var(--primary) !important;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2) !important;
 }
 
 .portfolio-slot .empty-slot i {
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
-  color: var(--primary);
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+.portfolio-slot .empty-slot p {
+  color: var(--text-secondary);
   opacity: 0.9;
+  margin: 0;
+  font-size: 0.9rem;
 }
 
 .portfolio-slot .selected-portfolio {
