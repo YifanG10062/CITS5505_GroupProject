@@ -161,9 +161,9 @@ Each test file:
 ### Example Output
 
 ```
-✅ Create Portfolio page structure successfully validated.
-✅ Dashboard UI structure and metrics successfully validated.
-✅ 'Create New Portfolio' button is visible on Portfolio List page.
+Create Portfolio page structure successfully validated.
+Dashboard UI structure and metrics successfully validated.
+'Create New Portfolio' button is visible on Portfolio List page.
 
 ----------------------------------------------------------------------
 Ran 6 tests in 32.53s
