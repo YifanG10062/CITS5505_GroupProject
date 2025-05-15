@@ -34,19 +34,20 @@ def fetch_all_history():
         for code in asset_metadata
     }
 
+
     # Strategy description for each asset
     ASSET_STRATEGY = {
-        "AAPL": "Tech giant, stable long-term growth",
-        "MSFT": "Strong earnings, cloud leader",
-        "TSLA": "High-growth, electric vehicle pioneer",
-        "NVDA": "AI & GPU leader, explosive performance",
-        "AMZN": "eCommerce & cloud infrastructure leader",
-        "GOOGL": "Digital ad powerhouse",
-        "BRK-B": "Low-volatility, value investing benchmark",
-        "BTC-USD": "High volatility, alternative asset",
-        "MSTR": "Bitcoin proxy with leveraged exposure",
-        "AMD": "Chipmaker with strong recent growth in CPUs and GPUs",
-        "SPY": "Tracks the S&P 500, broad-market exposure"
+        "AAPL":    "Innovation",
+        "MSFT":    "Cloud",
+        "TSLA":    "Electric",
+        "NVDA":    "AI",
+        "AMZN":    "Commerce",
+        "GOOGL":   "Advertising",
+        "BRK-B":   "Value",
+        "BTC-USD": "Volatility",
+        "MSTR":    "Leverage",
+        "AMD":     "Performance",
+        "SPY":     "Benchmark"
     }
 
     print(f"Starting asset metadata upsert for {len(asset_metadata)} assets...")

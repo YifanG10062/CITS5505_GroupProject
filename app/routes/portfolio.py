@@ -348,7 +348,7 @@ def create():
                 return render_template("portfolio/portfolio_form.html", portfolio=None,
                                        error="Error saving portfolio data", assets=get_assets())
 
-            return redirect(url_for('dashboard.show', portfolio_id=new_portfolio.portfolio_id))
+            return redirect(url_for('portfolios.list', portfolio_id=new_portfolio.portfolio_id))
 
         # For GET request: prepare a suggested portfolio name for the form
         suggested_name = f"{current_user.username}'s portfolio"
@@ -484,7 +484,7 @@ def edit(portfolio_id):
                                   assets=get_assets(),
                                   error="Error calculating or saving portfolio metrics")
 
-        return redirect(url_for('dashboard.show', portfolio_id=portfolio.portfolio_id))
+        return redirect(url_for('portfolios.list', portfolio_id=portfolio.portfolio_id))
     
     # Fetch assets from the database, excluding 'etf' type
     try:

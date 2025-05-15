@@ -205,3 +205,61 @@ def calculate_drawdown_series(allocation: dict, start_date: str, initial_amount:
         "labels": [d.strftime("%Y-%m-%d") for d in drawdowns.index],
         "values": drawdowns.tolist()
     }
+
+# calculate radar chart metrics
+def calculate_comparison_radar_metrics(weights_a: dict[str, float], weights_b: dict[str, float], start_date: str, initial_amount: float) -> dict:
+    
+    # get portfolio A time series data
+    portfolio_a_data = get_portfolio_timeseries(weights_a, start_date, initial_amount)
+    # get portfolio B time series data
+    portfolio_b_data = get_portfolio_timeseries(weights_b, start_date, initial_amount)
+    
+    if not portfolio_a_data or not portfolio_b_data:
+        return {}
+    
+    # process portfolio A returns data
+    portfolio_a_returns = pd.Series(portfolio_a_data["daily_returns_series"])
+    portfolio_a_returns.index = pd.to_datetime(portfolio_a_returns.index)
+    
+    # process portfolio B returns data
+    portfolio_b_returns = pd.Series(portfolio_b_data["daily_returns_series"])
+    portfolio_b_returns.index = pd.to_datetime(portfolio_b_returns.index)
+    
+    # ensure two time series have the same dates
+    common_dates = portfolio_a_returns.index.intersection(portfolio_b_returns.index)
+    portfolio_a_returns = portfolio_a_returns.loc[common_dates]
+    portfolio_b_returns = portfolio_b_returns.loc[common_dates]
+    
+    # calculate portfolio A metrics
+    portfolio_a_metrics = {
+        "cagr": float(qs_stats.cagr(portfolio_a_returns)),
+        "volatility": float(qs_stats.volatility(portfolio_a_returns)),
+        "max_drawdown": float(qs_stats.max_drawdown(portfolio_a_returns)),
+        "sharpe": float(qs_stats.sharpe(portfolio_a_returns)),
+        "sortino": float(qs_stats.sortino(portfolio_a_returns)),
+        "calmar": float(qs_stats.calmar(portfolio_a_returns))
+    }
+    
+    # calculate additional portfolio A metrics
+    positive_days_a = (portfolio_a_returns > 0).sum()
+    total_days = len(portfolio_a_returns)
+    portfolio_a_metrics["win_rate"] = float(positive_days_a / total_days) if total_days > 0 else 0
+    
+    # calculate portfolio B metrics
+    portfolio_b_metrics = {
+        "cagr": float(qs_stats.cagr(portfolio_b_returns)),
+        "volatility": float(qs_stats.volatility(portfolio_b_returns)),
+        "max_drawdown": float(qs_stats.max_drawdown(portfolio_b_returns)),
+        "sharpe": float(qs_stats.sharpe(portfolio_b_returns)),
+        "sortino": float(qs_stats.sortino(portfolio_b_returns)),
+        "calmar": float(qs_stats.calmar(portfolio_b_returns))
+    }
+    
+    # calculate additional portfolio B metrics
+    positive_days_b = (portfolio_b_returns > 0).sum()
+    portfolio_b_metrics["win_rate"] = float(positive_days_b / total_days) if total_days > 0 else 0
+    
+    return {
+        "portfolio_a": portfolio_a_metrics,
+        "portfolio_b": portfolio_b_metrics
+    }
