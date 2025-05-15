@@ -56,10 +56,10 @@ export function renderRiskReturnChart(weightsA, weightsB, startDate, initialInve
           color: 'rgb(249, 115, 22)', // Orange
         },
         {
-          name: "S&P 500",
+          name: "SPY",
           risk: summaryData.portfolio_spy.volatility * 100,
           return: summaryData.portfolio_spy.cagr * 100,
-          color: 'rgb(107, 114, 128)', // Gray
+          color: '#E69622',
         }
       ];
 
