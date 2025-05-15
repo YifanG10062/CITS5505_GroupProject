@@ -1,12 +1,15 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
-from flask_login import login_user, logout_user, login_required
-from werkzeug.security import check_password_hash, generate_password_hash
 import uuid
-from flask_mail import Message
+from datetime import datetime
 
-from app.forms.user import LoginForm, RegistrationForm, ResetRequestForm, ChangePasswordForm
-from app.models.user import User
+from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask_login import login_required, login_user, logout_user
+from flask_mail import Message
+from werkzeug.security import check_password_hash, generate_password_hash
+
 from app import db, mail
+from app.forms.user import (ChangePasswordForm, LoginForm, RegistrationForm,
+                            ResetRequestForm)
+from app.models.user import User
 
 user = Blueprint("user", __name__, url_prefix="/user")
 
@@ -21,6 +24,27 @@ def login():
         flash("Invalid email or password.", "error")
     return render_template("user/login.html", form=form, hide_footer=True)
 
+# @user.route("/register", methods=["GET", "POST"])
+# def register():
+#     form = RegistrationForm()
+#     if form.validate_on_submit():
+#         existing_user = User.query.filter_by(user_email=form.Email.data).first()
+#         if existing_user:
+#             flash("Email already registered.", "error")
+#         else:
+#             new_user = User(
+#                 username=form.FirstName.data,  # Setting username to FirstName
+#                 user_fName=form.FirstName.data,
+#                 user_lName=form.LastName.data,
+#                 user_email=form.Email.data,
+#                 user_pswd=generate_password_hash(form.Password.data)
+#             )
+#             db.session.add(new_user)
+#             db.session.commit()
+#             flash("Registration successful. Please log in.", "success")
+#             return redirect(url_for("user.login"))
+#     return render_template("user/register.html", form=form, hide_footer=True)
+
 @user.route("/register", methods=["GET", "POST"])
 def register():
     form = RegistrationForm()
@@ -28,18 +52,23 @@ def register():
         existing_user = User.query.filter_by(user_email=form.Email.data).first()
         if existing_user:
             flash("Email already registered.", "error")
-        else:
-            new_user = User(
-                username=form.FirstName.data,  # Setting username to FirstName
-                user_fName=form.FirstName.data,
-                user_lName=form.LastName.data,
-                user_email=form.Email.data,
-                user_pswd=generate_password_hash(form.Password.data)
-            )
-            db.session.add(new_user)
-            db.session.commit()
-            flash("Registration successful. Please log in.", "success")
-            return redirect(url_for("user.login"))
+            return redirect(url_for("user.register"))
+
+        new_user = User(
+            username=form.Email.data.split('@')[0],  # or use a username field if available
+            user_email=form.Email.data,
+            user_pswd=generate_password_hash(form.Password.data),
+            user_fName="Default",  # TODO: update if you have these fields in form
+            user_lName="User",
+            user_token=str(uuid.uuid4()),
+            created_at=datetime.utcnow()
+        )
+
+        db.session.add(new_user)
+        db.session.commit()
+        login_user(new_user)
+        return redirect(url_for("portfolios.list"))
+
     return render_template("user/register.html", form=form, hide_footer=True)
 
 @user.route("/resetrequest", methods=["GET", "POST"])
