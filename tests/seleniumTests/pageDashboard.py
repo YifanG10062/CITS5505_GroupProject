@@ -217,7 +217,7 @@ class DashboardPageTest(unittest.TestCase):
             except:
                 self.fail(f"Timed out waiting for chart ID: {chart_id}")
 
-        print(" Dashboard UI structure and metrics successfully validated.")
+        print(" ✅ Dashboard UI structure and metrics successfully validated.")
 
 
 if __name__ == '__main__':

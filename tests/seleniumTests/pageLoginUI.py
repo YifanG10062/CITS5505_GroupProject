@@ -36,7 +36,7 @@ class LoginPageTest(unittest.TestCase):
         with cls.app.app_context():
             db.create_all()
 
-            # ✅ Fixed indentation here
+        
             if not User.query.filter_by(user_email="testuser@example.com").first():
                 db.session.add(User(
                     username="Test",

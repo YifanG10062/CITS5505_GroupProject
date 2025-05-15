@@ -36,7 +36,7 @@ class CreatePortfolioPageTest(SeleniumBaseTest):
         self.assertIn("pick up to", subheading.lower())
         self.assertIn("3 assets", subheading)
 
-        print(" Create Portfolio page structure successfully validated.")
+        print("✅ Create Portfolio page structure successfully validated.")
 
     def test_create_portfolio_page_has_asset_cards(self):
         self.driver.get("http://127.0.0.1:5000/portfolios/new")
