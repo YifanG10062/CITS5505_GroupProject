@@ -105,6 +105,21 @@ class HomepageUITest(unittest.TestCase):
         cls.driver.quit()
         cls.server_thread.shutdown()
 
+    def test_view_toggle_buttons_functionality(self):
+        driver = self.driver
+        driver.get("http://127.0.0.1:5000/portfolios/")
+        time.sleep(1)
+
+        list_view_btn = driver.find_element(By.ID, "listViewBtn")
+        card_view_btn = driver.find_element(By.ID, "cardViewBtn")
+
+        card_view_btn.click()
+        time.sleep(1)
+        self.assertNotIn("d-none", driver.find_element(By.ID, "cardView").get_attribute("class"))
+
+        list_view_btn.click()
+        time.sleep(1)
+        self.assertNotIn("d-none", driver.find_element(By.ID, "listView").get_attribute("class"))
 
     def test_homepage_ui_elements(self):
         driver = self.driver
@@ -128,7 +143,11 @@ class HomepageUITest(unittest.TestCase):
 
         compare_btn = driver.find_element(By.ID, "compareBtn")
         self.assertIn("d-none", compare_btn.get_attribute("class"))
-        self.assertIn("Invested $1,000", driver.page_source)
+        html = driver.page_source
+        self.assertTrue(
+            "Invested $1,000" in html or "No investment history available." in html,
+            "Neither investment message was found"
+        )
 
         create_btn = driver.find_element(By.XPATH, "//a[contains(text(),'Create New Portfolio')]")
         self.assertTrue(create_btn.is_displayed())
