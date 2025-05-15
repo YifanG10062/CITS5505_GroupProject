@@ -1,0 +1,458 @@
+/* Comparison specific styles */
+@import url('../css/dashboard.css');
+
+/* Cards layout styles */
+.dashboard-overview {
+  margin-bottom: 1rem;
+  width: 100%;
+  height: 100%;
+  transition: all 0.3s ease;
+  padding: 0.75rem !important; 
+  overflow: hidden;
+}
+
+.dashboard-overview:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Comparison page styles */
+.comparison-label {
+  display: inline-block;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.portfolio-a-label {
+  background-color: #3b82f6;
+}
+
+.portfolio-b-label {
+  background-color: #f97316;
+}
+
+/* Portfolio info styling */
+.portfolio-title-comparison {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 0.35rem;
+  line-height: 1.2;
+}
+
+.asset-composition {
+  margin-bottom: 0.75rem;
+}
+
+.overview-asset-string {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 0;
+  line-height: 1.4;
+}
+
+.portfolio-meta {
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.4rem;
+  color: var(--text-secondary);
+}
+
+.meta-icon {
+  margin-right: 0.4rem;
+  opacity: 0.7;
+  width: 12px;
+  font-size: 0.7rem;
+}
+
+.meta-text {
+  font-size: 0.75rem;
+}
+
+/* Metrics layout */
+.metrics-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  padding: 0;
+  max-width: 100%;
+}
+
+/* Metrics rows */
+.key-metrics-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+  align-items: stretch;
+  width: 100%;
+  margin: 0;
+}
+
+.description-metrics-row {
+  display: grid !important;
+  gap: 0.6rem !important;
+  width: 100% !important;
+  margin: 0 !important;
+  margin-top: 0.4rem !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  align-items: stretch !important;
+  max-width: 100%;
+}
+
+.description-metrics-row.cols-1 {
+  grid-template-columns: 1fr !important;
+}
+
+.description-metrics-row.cols-2 {
+  grid-template-columns: repeat(2, 1fr) !important;
+}
+
+.description-metrics-row.cols-3 {
+  grid-template-columns: repeat(3, 1fr) !important;
+}
+
+/* Metric cards */
+.mini-metric {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0.6rem;
+  overflow: hidden;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.mini-metric:hover {
+  box-shadow: 0 0 12px rgba(255, 167, 38, 0.2);
+  transform: translateY(-2px);
+}
+
+/* Key metrics styles */
+.key-metrics-row .mini-metric {
+  min-height: 5rem;
+  justify-content: center;
+  align-items: center;
+  border-left: 3px solid transparent;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-left-color 0.2s ease;
+}
+
+/* Description metrics styles */
+.description-metric {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  flex: 1 1 auto !important;
+  min-height: 100px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  height: 100%;
+}
+
+.description-metrics-row .mini-metric {
+  width: 100%;
+  box-sizing: border-box;
+  height: 100%;
+  margin: 0;
+}
+
+/* Metric labels */
+.metric-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-bottom: 0.4rem;
+}
+
+.key-metrics-row .metric-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #94a3b8;
+  letter-spacing: 0.3px;
+  margin-bottom: 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+/* Metric values */
+.metric-value {
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 0.2rem 0;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.key-metrics-row .metric-value {
+  font-size: 1.4rem;
+  height: 2.5rem;
+  font-weight: 600;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  transition: color 0.2s ease-in-out;
+}
+
+.description-value {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: var(--text-secondary);
+  margin-top: auto;
+  flex-grow: 1;
+  padding: 0 0.2rem;
+  word-break: break-word;
+  height: auto;
+}
+
+/* Color classes */
+.volatility-value {
+  color: #6366f1 !important;
+}
+
+.cagr-value {
+  color: #22c55e !important;
+}
+
+.drawdown-value {
+  color: #ef4444 !important;
+}
+
+.volatility-card {
+  border-left-color: #6366f1 !important;
+}
+
+.cagr-card {
+  border-left-color: #22c55e !important;
+}
+
+.drawdown-card {
+  border-left-color: #ef4444 !important;
+}
+
+.text-center {
+  text-align: center;
+}
+
+/* Stock info styles */
+.metric-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 0.4rem;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--card-outline);
+  padding-bottom: 0.3rem;
+  height: 2.5rem;
+}
+
+.stock-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+  text-align: center;
+}
+
+.stock-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--primary);
+  margin-right: 0.15rem;
+}
+
+.stock-weight {
+  display: inline-block;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-left: 0.15rem;
+}
+
+.asset-icon {
+  font-size: 0.8rem;
+  color: #3b82f6;
+}
+
+.asset-icon-img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  border-radius: 2px;
+}
+
+/* Portfolio-specific colors */
+.col-lg-6:nth-child(1) .asset-icon {
+  color: #3b82f6;
+}
+
+.col-lg-6:nth-child(2) .asset-icon {
+  color: #f97316;
+}
+
+.col-lg-6:nth-child(1) .asset-icon-img {
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.col-lg-6:nth-child(2) .asset-icon-img {
+  border: 1px solid rgba(249, 115, 22, 0.3);
+}
+
+/* Chart container */
+.chart-glow {
+  width: 100%;
+}
+
+/* Container styles */
+.container,
+.container-fluid {
+  width: 100%;
+  max-width: 1450px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.container-fluid.mt-4,
+.container-fluid.mt-5 {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+/* Responsive layout */
+@media (max-width: 576px) {
+  .container.mt-4 {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  
+  .dashboard-overview {
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .key-metrics-row {
+    gap: 0.5rem;
+  }
+  
+  .description-metrics-row.cols-1,
+  .description-metrics-row.cols-2,
+  .description-metrics-row.cols-3 {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  
+  .metric-value {
+    font-size: 0.95rem;
+  }
+  
+  .portfolio-title-comparison {
+    font-size: 1.1rem;
+  }
+  
+  .overview-asset-string {
+    font-size: 0.75rem;
+  }
+  
+  .meta-item {
+    margin-bottom: 0.25rem;
+  }
+  
+  .stock-name {
+    font-size: 0.85rem;
+  }
+  
+  .stock-weight {
+    font-size: 0.75rem;
+  }
+  
+  .asset-icon {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 991.98px) {
+  .col-lg-6:first-child .dashboard-overview {
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .description-metrics-row.cols-2,
+  .description-metrics-row.cols-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 992px) {
+  .container.mt-4,
+  .container.mt-5 {
+    max-width: 1450px !important;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  
+  .portfolio-cards-container,
+  .container-fluid.mt-5 {
+    max-width: 1450px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  
+  .col-lg-4 {
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+  
+  .col-lg-8 {
+    flex: 0 0 66.666667%;
+    max-width: 66.666667%;
+    padding-right: 10px;
+    padding-left: 10px;
+    overflow: hidden;
+  }
+  
+  .col-lg-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+  
+  .row.g-2 {
+    margin-right: -10px;
+    margin-left: -10px;
+  }
+  
+  .container-fluid .row.g-4 {
+    gap: 0 !important;
+  }
+  
+  .description-metrics-row {
+    grid-template-columns: repeat(3, 1fr) !important;
+    grid-auto-rows: 1fr;
+  }
+} 

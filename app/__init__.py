@@ -4,7 +4,7 @@ from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_mail import Mail
-from flask_migrate import Migrate
+from flask_migrate import Migrate, upgrade
 from flask_wtf.csrf import CSRFProtect, CSRFError
 from app.config import get_config, DevelopmentConfig, TestConfig, ProductionConfig
 

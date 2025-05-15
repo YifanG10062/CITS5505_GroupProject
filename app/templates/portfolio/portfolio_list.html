@@ -19,7 +19,7 @@
 
   <div class="portfolio-view-container">
     <!-- Portfolio controls - fixed layout to match visual design -->
-    <div class="top-controls-row">
+    <div class="top-controls-row d-flex justify-content-between align-items-center mb-3">
       <div class="left-section">
         <!-- View Toggle Buttons -->
         <div class="view-toggle-buttons">
@@ -51,14 +51,18 @@
       
       <div class="right-section">
         <!-- Action Buttons -->
-        <button id="compareBtn" class="btn btn-primary d-none">Compare Portfolios</button>
-        <a href="{{ url_for('portfolios.create') }}" class="btn btn-primary ms-2" target="_blank">Create New Portfolio</a>
+        <button id="compareBtn" class="btn btn-primary">Compare Portfolios</button>
+        <a href="{{ url_for('portfolios.create') }}" class="btn btn-primary ms-2">Create New Portfolio</a>
       </div>
     </div>
     
     <!-- Investment period info -->
     <div class="investment-period">
-      Invested $1,000 from {{ earliest_date.strftime('%d/%m/%Y') }} to {{ latest_date.strftime('%d/%m/%Y') }}
+      {% if earliest_date and latest_date %}
+        Invested $1,000 from {{ earliest_date.strftime('%d/%m/%Y') }} to {{ latest_date.strftime('%d/%m/%Y') }}
+      {% else %}
+        Invested $1,000 from 01/01/2025 to present
+      {% endif %}
     </div>
     
     <!-- Portfolio table (List View) -->
@@ -89,9 +93,9 @@
           </tr>
           
           {% for portfolio in portfolios %}
-          <tr data-created-at="{{ portfolio.created_at|default(loop.index0) }}">
+          <tr data-created-at="{{ portfolio.created_at|default(loop.index0) }}" data-portfolio-id="{{ portfolio.portfolio_id }}">
             <td class="portfolio-name-cell">
-              <a href="{{ url_for('dashboard.show', portfolio_id=portfolio.portfolio_id) }}" class="action-link" target="_blank">
+              <a href="{{ url_for('dashboard.show', portfolio_id=portfolio.portfolio_id) }}" class="action-link">
                 {{ portfolio.portfolio_name }}
               </a>
               
@@ -134,7 +138,7 @@
               {{ (portfolio.max_drawdown * 100) | round(2) | default('35.78') }}%</td>
             <td class="action-cell">
               {% if portfolio.is_editable %}
-              <a href="{{ url_for('portfolios.edit', portfolio_id=portfolio.portfolio_id) }}" class="action-link" target="_blank">Edit</a>
+              <a href="{{ url_for('portfolios.edit', portfolio_id=portfolio.portfolio_id) }}" class="action-link">Edit</a>
               {% endif %}
               
               {% if portfolio.is_shareable %}
@@ -159,12 +163,12 @@
       
       <div class="cards-grid">
         {% for portfolio in portfolios %}
-        <div class="portfolio-card" data-created-at="{{ portfolio.created_at|default(loop.index0) }}">
+        <div class="portfolio-card" data-created-at="{{ portfolio.created_at|default(loop.index0) }}" data-portfolio-id="{{ portfolio.portfolio_id }}">
           <div class="card-header">
             <div class="portfolio-info">
               <!-- Make portfolio name a primary-colored link to the dashboard -->
               <h3 class="portfolio-title" style="text-transform: none;">
-                <a href="{{ url_for('dashboard.show', portfolio_id=portfolio.portfolio_id) }}" class="portfolio-title-link" style="text-transform: none;" target="_blank">
+                <a href="{{ url_for('dashboard.show', portfolio_id=portfolio.portfolio_id) }}" class="portfolio-title-link" style="text-transform: none;">
                   {{ portfolio.portfolio_name }}
                 </a>
               </h3>
@@ -211,7 +215,7 @@
             <div class="action-links text-end">
               <!-- Only show Edit button, remove View button -->
               {% if portfolio.is_editable %}
-              <a href="{{ url_for('portfolios.edit', portfolio_id=portfolio.portfolio_id) }}" class="action-link edit" target="_blank">Edit</a>
+              <a href="{{ url_for('portfolios.edit', portfolio_id=portfolio.portfolio_id) }}" class="action-link edit">Edit</a>
               {% endif %}
               
               {% if portfolio.is_shareable %}
@@ -255,6 +259,65 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         <button type="button" class="btn btn-primary" id="sharePortfolioBtn">Share</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Comparison Modal -->
+<div class="modal fade" id="comparisonModal" tabindex="-1" aria-labelledby="comparisonModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="comparisonModalLabel">Compare Portfolios</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Select two portfolios to compare their performance</p>
+        <div class="portfolio-selector mt-4">
+          <div id="selectedPortfolios" class="selected-portfolios">
+            <div class="row g-4">
+              <div class="col-md-6">
+                <div class="portfolio-slot" id="portfolioSlotA">
+                  <div class="empty-slot text-center p-3 border rounded d-flex flex-column align-items-center justify-content-center">
+                    <i class="bi bi-plus-circle mb-2"></i>
+                    <p class="mb-0">Select first portfolio</p>
+                  </div>
+                  <div class="selected-portfolio d-none p-3 border rounded position-relative">
+                    <button class="btn-close btn-sm position-absolute top-0 end-0 mt-2 me-2 remove-portfolio" title="Remove"></button>
+                    <div class="d-flex align-items-center w-100">
+                      <span class="portfolio-name"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="portfolio-slot" id="portfolioSlotB">
+                  <div class="empty-slot text-center p-3 border rounded d-flex flex-column align-items-center justify-content-center">
+                    <i class="bi bi-plus-circle mb-2"></i>
+                    <p class="mb-0">Select second portfolio</p>
+                  </div>
+                  <div class="selected-portfolio d-none p-3 border rounded position-relative">
+                    <button class="btn-close btn-sm position-absolute top-0 end-0 mt-2 me-2 remove-portfolio" title="Remove"></button>
+                    <div class="d-flex align-items-center w-100">
+                      <span class="portfolio-name"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="portfolio-list mt-4">
+          <h6>Available Portfolios:</h6>
+          <div class="list-group" id="portfolioListForComparison">
+            <!-- Portfolio list items will be populated via JavaScript -->
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="comparePortfoliosBtn" disabled>Compare</button>
       </div>
     </div>
   </div>
