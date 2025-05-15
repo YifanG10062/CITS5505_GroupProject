@@ -36,6 +36,45 @@ class DashboardPageTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.app = create_app(config_class=TestConfig)
+
+        # Create schema and seed assets for in-memory DB
+        from app import db
+        from app.models.asset import Asset
+
+        with cls.app.app_context():
+            db.create_all()
+            db.session.query(Asset).delete()
+            db.session.add_all([
+                Asset(
+                    asset_code="AAPL",
+                    display_name="Apple",
+                    full_name="Apple Inc.",
+                    type="stock",
+                    currency="USD",
+                    logo_url="https://logo.clearbit.com/apple.com",
+                    strategy_description="Tech"
+                ),
+                Asset(
+                    asset_code="MSFT",
+                    display_name="Microsoft",
+                    full_name="Microsoft Corp",
+                    type="stock",
+                    currency="USD",
+                    logo_url="https://logo.clearbit.com/microsoft.com",
+                    strategy_description="Tech"
+                ),
+                Asset(
+                    asset_code="TSLA",
+                    display_name="Tesla",
+                    full_name="Tesla Inc.",
+                    type="stock",
+                    currency="USD",
+                    logo_url="https://logo.clearbit.com/tesla.com",
+                    strategy_description="EV"
+                ),
+            ])
+            db.session.commit()
+
         cls.server_thread = ServerThread(cls.app)
         cls.server_thread.start()
 
@@ -52,9 +91,7 @@ class DashboardPageTest(unittest.TestCase):
         cls.driver.maximize_window()
 
         cls.login_or_register_user()
-
         cls.ensure_portfolio_exists()
-
         cls.open_first_dashboard()
 
     @classmethod
@@ -115,9 +152,9 @@ class DashboardPageTest(unittest.TestCase):
                 EC.element_to_be_clickable((By.XPATH, "//a[contains(@href, '/dashboard')]"))
             )
             dashboard_url = first_portfolio.get_attribute("href")
-            print(f"▶ Opening dashboard for portfolio: {first_portfolio.text}")
+            print(f" Opening dashboard for portfolio: {first_portfolio.text}")
         
-            # 👉 Directly navigate instead of clicking
+            # Directly navigate instead of clicking
             cls.driver.get(dashboard_url)
 
             # Confirm dashboard has loaded
@@ -180,8 +217,7 @@ class DashboardPageTest(unittest.TestCase):
             except:
                 self.fail(f"Timed out waiting for chart ID: {chart_id}")
 
-        print("✅ Dashboard UI structure and metrics successfully validated.")
-
+        print(" Dashboard UI structure and metrics successfully validated.")
 
 
 if __name__ == '__main__':
