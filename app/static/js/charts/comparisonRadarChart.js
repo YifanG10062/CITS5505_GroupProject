@@ -1,3 +1,5 @@
+import { chartTheme } from "./theme.js";
+
 export function renderComparisonRadarChart(weightsA, weightsB, startDate, initialInvestment, nameA, nameB) {
   if (!weightsA || !weightsB) {
     console.warn("Cannot render comparison radar chart: weight data missing");
@@ -213,7 +215,6 @@ export function renderComparisonRadarChart(weightsA, weightsB, startDate, initia
                 },
                 color: "rgba(255, 255, 255, 0.75)",
                 z: 1,
-                // For percentage display
                 min: 0,
                 max: 100,
                 stepSize: 20,
@@ -246,6 +247,7 @@ export function renderComparisonRadarChart(weightsA, weightsB, startDate, initia
               }
             },
             tooltip: {
+              ...chartTheme.plugins.tooltip,
               callbacks: {
                 title: function(tooltipItems) {
                   return tooltipItems[0].label;
@@ -258,25 +260,16 @@ export function renderComparisonRadarChart(weightsA, weightsB, startDate, initia
                   const value = originalValues[label][type];
                   return `${datasetLabel}: ${value}`;
                 },
-              },
-              titleFont: {
-                size: 14,
-                weight: 'bold'
-              },
-              bodyFont: {
-                size: 13
-              },
-              padding: 12,
-              backgroundColor: 'rgba(0, 0, 0, 0.8)',
-              titleColor: 'rgba(255, 255, 255, 0.95)',
-              bodyColor: 'rgba(255, 255, 255, 0.85)', 
-              borderColor: 'rgba(255, 255, 255, 0.15)',
-              borderWidth: 1
-            },
-            title: {
-              display: false,
+                labelColor: function(context) {
+                  return {
+                    borderColor: context.dataset.borderColor,
+                    backgroundColor: "rgba(255, 255, 255, 0.85)",
+                    borderWidth: 1.2,
+                  };
+                }
+              }
             }
-          },
+          }
         },
       };
 

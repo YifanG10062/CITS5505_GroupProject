@@ -1,3 +1,5 @@
+import { chartTheme } from "./theme.js";
+
 export function renderRiskReturnChart(weightsA, weightsB, startDate, initialInvestment, nameA, nameB) {
   if (!weightsA || !weightsB) {
     console.warn("Cannot render risk-return chart: weight data missing");
@@ -157,6 +159,7 @@ export function renderRiskReturnChart(weightsA, weightsB, startDate, initialInve
               }
             },
             tooltip: {
+              ...chartTheme.plugins.tooltip,
               callbacks: {
                 label: function(context) {
                   const point = context.raw;
@@ -165,22 +168,15 @@ export function renderRiskReturnChart(weightsA, weightsB, startDate, initialInve
                     `Risk: ${point.x.toFixed(2)}%`,
                     `Return: ${point.y.toFixed(2)}%`
                   ];
+                },
+                labelColor: function(context) {
+                  return {
+                    borderColor: context.dataset.borderColor,
+                    backgroundColor: "rgba(255, 255, 255, 0.85)",
+                    borderWidth: 1.2,
+                  };
                 }
-              },
-              padding: 12,
-              backgroundColor: 'rgba(0, 0, 0, 0.8)',
-              titleColor: 'rgba(255, 255, 255, 0.95)',
-              bodyColor: 'rgba(255, 255, 255, 0.85)', 
-              borderColor: 'rgba(255, 255, 255, 0.15)',
-              borderWidth: 1,
-              titleFont: {
-                size: 14,
-                weight: 'bold'
-              },
-              bodyFont: {
-                size: 13
-              },
-              displayColors: false
+              }
             }
           },
           animation: {
