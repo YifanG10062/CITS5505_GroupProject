@@ -1,20 +1,22 @@
-
-{% extends "base.html" %}
-
-{% block title %}Portfolio - The Richverse{% endblock %}
-
-{% block styles %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/portfolio.css') }}">
-{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Portfolio - The Richverse{% endblock
+%} {% block styles %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/portfolio.css') }}"
+/>
+{% endblock %} {% block content %}
 <div class="container mt-4">
   <!-- Share Alert - Only shown when there are recent shares -->
   {% if share_alert %}
   <div class="alert alert-info alert-dismissible fade show" role="alert">
-      <i class="bi bi-info-circle-fill me-2"></i>
-      <strong>New shared portfolios!</strong> {{ share_alert }}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <i class="bi bi-info-circle-fill me-2"></i>
+    <strong>New shared portfolios!</strong> {{ share_alert }}
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="alert"
+      aria-label="Close"
+    ></button>
   </div>
   {% endif %}
 
@@ -27,54 +29,117 @@
           <button id="listViewBtn" class="toggle-btn active">List View</button>
           <button id="cardViewBtn" class="toggle-btn">Card View</button>
         </div>
-        
+
         <!-- Portfolio Filter Radio Buttons styled as circular radio buttons -->
         <div class="portfolio-filter">
           <div class="radio-group">
             <label class="radio-option">
-              <input type="radio" name="portfolioFilter" id="filterAll" value="all" checked>
+              <input
+                type="radio"
+                name="portfolioFilter"
+                id="filterAll"
+                value="all"
+                checked
+              />
               <span class="radio-circle"></span>
               <span class="radio-text">All</span>
             </label>
             <label class="radio-option">
-              <input type="radio" name="portfolioFilter" id="filterMine" value="mine">
+              <input
+                type="radio"
+                name="portfolioFilter"
+                id="filterMine"
+                value="mine"
+              />
               <span class="radio-circle"></span>
               <span class="radio-text">Mine</span>
             </label>
             <label class="radio-option">
-              <input type="radio" name="portfolioFilter" id="filterShared" value="shared">
+              <input
+                type="radio"
+                name="portfolioFilter"
+                id="filterShared"
+                value="shared"
+              />
               <span class="radio-circle"></span>
               <span class="radio-text">Shared with Me</span>
             </label>
           </div>
         </div>
       </div>
-      
+
       <div class="right-section">
         <!-- Action Buttons -->
-        <button id="compareBtn" class="btn btn-primary d-none">Compare Portfolios</button>
-        <a href="{{ url_for('portfolios.create') }}" class="btn btn-primary ms-2" target="_blank">Create New Portfolio</a>
+        <button id="compareBtn" class="btn btn-primary d-none">
+          Compare Portfolios
+        </button>
+        <a
+          href="{{ url_for('portfolios.create') }}"
+          class="btn btn-primary ms-2"
+          target="_blank"
+          >Create New Portfolio</a
+        >
       </div>
     </div>
-    
+
     <!-- Investment period info -->
+    {% if earliest_date and latest_date %}
     <div class="investment-period">
-      Invested $1,000 from {{ earliest_date.strftime('%d/%m/%Y') }} to {{ latest_date.strftime('%d/%m/%Y') }}
+      Invested $1,000 from {{ earliest_date.strftime('%d/%m/%Y') }} to {{
+      latest_date.strftime('%d/%m/%Y') }}
     </div>
-    
+    {% else %}
+    <div class="investment-period">No investment history available.</div>
+    {% endif %}
+
     <!-- Portfolio table (List View) -->
     <div id="listView">
-      <table class="portfolios-table" style="width: auto;">
+      <table class="portfolios-table" style="width: auto">
         <thead>
           <tr>
             <th>Portfolio Name</th>
             <th>Allocation</th>
             <th>Creator</th>
-            <th class="sortable" data-sort="current-value">Current Value <img src="{{ url_for('static', filename='icons/sort-neutral.svg') }}" class="sort-icon" alt="Sort"></th>
-            <th class="sortable" data-sort="return-percent">Total Return% <img src="{{ url_for('static', filename='icons/sort-neutral.svg') }}" class="sort-icon" alt="Sort"></th>
-            <th class="sortable" data-sort="cagr">CAGR% <img src="{{ url_for('static', filename='icons/sort-neutral.svg') }}" class="sort-icon" alt="Sort"></th>
-            <th class="sortable" data-sort="volatility">Volatility <img src="{{ url_for('static', filename='icons/sort-neutral.svg') }}" class="sort-icon" alt="Sort"></th>
-            <th class="sortable" data-sort="max-drawdown">Max Drawdown <img src="{{ url_for('static', filename='icons/sort-neutral.svg') }}" class="sort-icon" alt="Sort"></th>
+            <th class="sortable" data-sort="current-value">
+              Current Value
+              <img
+                src="{{ url_for('static', filename='icons/sort-neutral.svg') }}"
+                class="sort-icon"
+                alt="Sort"
+              />
+            </th>
+            <th class="sortable" data-sort="return-percent">
+              Total Return%
+              <img
+                src="{{ url_for('static', filename='icons/sort-neutral.svg') }}"
+                class="sort-icon"
+                alt="Sort"
+              />
+            </th>
+            <th class="sortable" data-sort="cagr">
+              CAGR%
+              <img
+                src="{{ url_for('static', filename='icons/sort-neutral.svg') }}"
+                class="sort-icon"
+                alt="Sort"
+              />
+            </th>
+            <th class="sortable" data-sort="volatility">
+              Volatility
+              <img
+                src="{{ url_for('static', filename='icons/sort-neutral.svg') }}"
+                class="sort-icon"
+                alt="Sort"
+              />
+            </th>
+            <th class="sortable" data-sort="max-drawdown">
+              Max Drawdown
+              <img
+                src="{{ url_for('static', filename='icons/sort-neutral.svg') }}"
+                class="sort-icon"
+                alt="Sort"
+              />
+            </th>
             <th>Action</th>
           </tr>
         </thead>
@@ -88,27 +153,38 @@
               </div>
             </td>
           </tr>
-          
+
           {% for portfolio in portfolios %}
           <tr data-created-at="{{ portfolio.created_at|default(loop.index0) }}">
             <td class="portfolio-name-cell">
-              <a href="{{ url_for('dashboard.show', portfolio_id=portfolio.portfolio_id) }}" class="action-link" target="_blank">
+              <a
+                href="{{ url_for('dashboard.show', portfolio_id=portfolio.portfolio_id) }}"
+                class="action-link"
+                target="_blank"
+              >
                 {{ portfolio.portfolio_name }}
               </a>
-              
-              {% if portfolio.is_shareable and portfolio.share_history and portfolio.share_history|length > 0 %}
-              <div class="share-history-wrapper" style="display: inline-block; margin-left: 5px;">
+
+              {% if portfolio.is_shareable and portfolio.share_history and
+              portfolio.share_history|length > 0 %}
+              <div
+                class="share-history-wrapper"
+                style="display: inline-block; margin-left: 5px"
+              >
                 <span class="share-info-icon" title="Share History">i</span>
                 <div class="share-history-tooltip">
                   <div class="share-history-title">Share History</div>
                   <div class="share-history-list">
                     {% for share in portfolio.share_history %}
                     <div class="share-history-item">
-                      <div class="share-history-username">Shared to {{ share.username }}</div>
-                      <div class="share-history-time">{{ share.shared_at }}</div>
+                      <div class="share-history-username">
+                        Shared to {{ share.username }}
+                      </div>
+                      <div class="share-history-time">
+                        {{ share.shared_at }}
+                      </div>
                     </div>
-                    {% endfor %}
-                    {% if not portfolio.share_history %}
+                    {% endfor %} {% if not portfolio.share_history %}
                     <div class="no-history">No sharing history available</div>
                     {% endif %}
                   </div>
@@ -123,33 +199,60 @@
               <span class="badge badge-default shared-badge">Shared</span>
               {% endif %}
             </td>
-            <td class="current-value">${{ "{:,}".format(portfolio.current_value | int | default(12679)) }}</td>
-            <td class="{% if portfolio.return_percent >= 0 %}return-positive{% else %}return-negative{% endif %}">
-              {{ "{:,}".format((portfolio.return_percent * 100) | round(2) | default(12.00)) }}%
+            <td class="current-value">
+              ${{ "{:,}".format(portfolio.current_value | int | default(12679))
+              }}
             </td>
-            <td class="{% if portfolio.cagr >= 0 %}return-positive{% else %}return-negative{% endif %}">
+            <td
+              class="{% if portfolio.return_percent >= 0 %}return-positive{% else %}return-negative{% endif %}"
+            >
+              {{ "{:,}".format((portfolio.return_percent * 100) | round(2) |
+              default(12.00)) }}%
+            </td>
+            <td
+              class="{% if portfolio.cagr >= 0 %}return-positive{% else %}return-negative{% endif %}"
+            >
               {{ (portfolio.cagr * 100) | round(2) | default('14.86') }}%
             </td>
-            <td class="metric-value">{{ (portfolio.volatility * 100) | round(2) | default('27.82') }}%</td>
-            <td class="{% if portfolio.max_drawdown >= 0 %}return-positive{% else %}return-negative{% endif %}">
-              {{ (portfolio.max_drawdown * 100) | round(2) | default('35.78') }}%</td>
+            <td class="metric-value">
+              {{ (portfolio.volatility * 100) | round(2) | default('27.82') }}%
+            </td>
+            <td
+              class="{% if portfolio.max_drawdown >= 0 %}return-positive{% else %}return-negative{% endif %}"
+            >
+              {{ (portfolio.max_drawdown * 100) | round(2) | default('35.78')
+              }}%
+            </td>
             <td class="action-cell">
               {% if portfolio.is_editable %}
-              <a href="{{ url_for('portfolios.edit', portfolio_id=portfolio.portfolio_id) }}" class="action-link" target="_blank">Edit</a>
+              <a
+                href="{{ url_for('portfolios.edit', portfolio_id=portfolio.portfolio_id) }}"
+                class="action-link"
+                target="_blank"
+                >Edit</a
+              >
+              {% endif %} {% if portfolio.is_shareable %}
+              <a
+                href="#"
+                class="action-link share"
+                data-portfolio-id="{{ portfolio.portfolio_id }}"
+                >Share</a
+              >
               {% endif %}
-              
-              {% if portfolio.is_shareable %}
-              <a href="#" class="action-link share" data-portfolio-id="{{ portfolio.portfolio_id }}">Share</a>
-              {% endif %}
-              
-              <a href="#" class="action-link delete" data-portfolio-id="{{ portfolio.portfolio_id }}">Delete</a>
+
+              <a
+                href="#"
+                class="action-link delete"
+                data-portfolio-id="{{ portfolio.portfolio_id }}"
+                >Delete</a
+              >
             </td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
-    
+
     <!-- Card View (Hidden by default) -->
     <div id="cardView" class="d-none">
       <!-- No data message (hidden by default) -->
@@ -157,70 +260,109 @@
         <i class="bi bi-inbox fs-4 mb-2"></i>
         <p>No portfolios found.</p>
       </div>
-      
+
       <div class="cards-grid">
         {% for portfolio in portfolios %}
-        <div class="portfolio-card" data-created-at="{{ portfolio.created_at|default(loop.index0) }}">
+        <div
+          class="portfolio-card"
+          data-created-at="{{ portfolio.created_at|default(loop.index0) }}"
+        >
           <div class="card-header">
             <div class="portfolio-info">
               <!-- Make portfolio name a primary-colored link to the dashboard -->
-              <h3 class="portfolio-title" style="text-transform: none;">
-                <a href="{{ url_for('dashboard.show', portfolio_id=portfolio.portfolio_id) }}" class="portfolio-title-link" style="text-transform: none;" target="_blank">
+              <h3 class="portfolio-title" style="text-transform: none">
+                <a
+                  href="{{ url_for('dashboard.show', portfolio_id=portfolio.portfolio_id) }}"
+                  class="portfolio-title-link"
+                  style="text-transform: none"
+                  target="_blank"
+                >
                   {{ portfolio.portfolio_name }}
                 </a>
               </h3>
               <!-- Allocation on the second line -->
-              <p class="portfolio-allocation" style="text-transform: none;">{{ portfolio.allocation }}</p>
+              <p class="portfolio-allocation" style="text-transform: none">
+                {{ portfolio.allocation }}
+              </p>
               <!-- Creator on the third line -->
-              <div class="creator-info" style="text-transform: none;">
-                <span class="creator-label" style="text-transform: none;">Creator: {{ portfolio.creator_username }}</span>
+              <div class="creator-info" style="text-transform: none">
+                <span class="creator-label" style="text-transform: none"
+                  >Creator: {{ portfolio.creator_username }}</span
+                >
                 {% if portfolio.is_shared %}
                 <span class="badge shared-badge">Shared</span>
                 {% endif %}
               </div>
             </div>
           </div>
-          
+
           <div class="card-body">
             <div class="metric-row">
               <div class="metric-label">Current Value</div>
-              <div class="metric-value">${{ "{:,}".format(portfolio.current_value | int | default(12879986)) }}</div>
+              <div class="metric-value">
+                ${{ "{:,}".format(portfolio.current_value | int |
+                default(12879986)) }}
+              </div>
             </div>
-            
+
             <div class="metric-row">
               <div class="metric-label">Total Return%</div>
-              <div class="metric-value return-positive">{{ "{:,}".format((portfolio.return_percent * 100) | round(2) | default(12000)) }}%</div>
+              <div class="metric-value return-positive">
+                {{ "{:,}".format((portfolio.return_percent * 100) | round(2) |
+                default(12000)) }}%
+              </div>
             </div>
-            
+
             <div class="metric-row">
               <div class="metric-label">CAGR%</div>
-              <div class="metric-value return-positive">{{ (portfolio.cagr * 100) | round(2) | default('20.22') }}%</div>
+              <div class="metric-value return-positive">
+                {{ (portfolio.cagr * 100) | round(2) | default('20.22') }}%
+              </div>
             </div>
-            
+
             <div class="metric-row">
               <div class="metric-label">Volatility</div>
-              <div class="metric-value">{{ (portfolio.volatility * 100) | round(2) | default('27.82') }}%</div>
+              <div class="metric-value">
+                {{ (portfolio.volatility * 100) | round(2) | default('27.82')
+                }}%
+              </div>
             </div>
-            
+
             <div class="metric-row">
               <div class="metric-label">Max Drawdown</div>
-              <div class="metric-value return-negative">{{ (portfolio.max_drawdown * 100) | round(2) | default('35.78') }}%</div>
+              <div class="metric-value return-negative">
+                {{ (portfolio.max_drawdown * 100) | round(2) | default('35.78')
+                }}%
+              </div>
             </div>
           </div>
-          
+
           <div class="card-footer">
             <div class="action-links text-end">
               <!-- Only show Edit button, remove View button -->
               {% if portfolio.is_editable %}
-              <a href="{{ url_for('portfolios.edit', portfolio_id=portfolio.portfolio_id) }}" class="action-link edit" target="_blank">Edit</a>
+              <a
+                href="{{ url_for('portfolios.edit', portfolio_id=portfolio.portfolio_id) }}"
+                class="action-link edit"
+                target="_blank"
+                >Edit</a
+              >
+              {% endif %} {% if portfolio.is_shareable %}
+              <a
+                href="#"
+                class="action-link share"
+                data-portfolio-id="{{ portfolio.portfolio_id }}"
+                >Share</a
+              >
               {% endif %}
-              
-              {% if portfolio.is_shareable %}
-              <a href="#" class="action-link share" data-portfolio-id="{{ portfolio.portfolio_id }}">Share</a>
-              {% endif %}
-              
+
               <!-- Make delete link use the primary color -->
-              <a href="#" class="action-link delete primary-color" data-portfolio-id="{{ portfolio.portfolio_id }}">Delete</a>
+              <a
+                href="#"
+                class="action-link delete primary-color"
+                data-portfolio-id="{{ portfolio.portfolio_id }}"
+                >Delete</a
+              >
             </div>
           </div>
         </div>
@@ -231,22 +373,49 @@
 </div>
 
 <!-- Share Portfolio Modal -->
-<div class="modal fade" id="sharePortfolioModal" tabindex="-1" aria-labelledby="sharePortfolioModalLabel" aria-hidden="true" data-portfolio-id="">
+<div
+  class="modal fade"
+  id="sharePortfolioModal"
+  tabindex="-1"
+  aria-labelledby="sharePortfolioModalLabel"
+  aria-hidden="true"
+  data-portfolio-id=""
+>
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="sharePortfolioModalLabel">Share Your Portfolio</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h5 class="modal-title" id="sharePortfolioModalLabel">
+          Share Your Portfolio
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
       </div>
       <div class="modal-body">
-        <p>Select Users you want to share with your portfolio. After you share this, the other users will only view your portfolio details, they can't edit or share again.</p>
+        <p>
+          Select Users you want to share with your portfolio. After you share
+          this, the other users will only view your portfolio details, they
+          can't edit or share again.
+        </p>
         <div class="user-selector mt-3 position-relative">
           <div class="input-group">
             <span class="input-group-text">@</span>
-            <input type="text" class="form-control" id="userSearch" placeholder="Type username to search" autocomplete="off">
+            <input
+              type="text"
+              class="form-control"
+              id="userSearch"
+              placeholder="Type username to search"
+              autocomplete="off"
+            />
           </div>
           <!-- Updated to match input appearance better -->
-          <div id="userSearchResults" class="position-absolute w-100 shadow-sm"></div>
+          <div
+            id="userSearchResults"
+            class="position-absolute w-100 shadow-sm"
+          ></div>
         </div>
         <div id="selectedUsers" class="mt-3">
           <h6 class="selected-user-heading d-none">Selected User:</h6>
@@ -254,16 +423,18 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="sharePortfolioBtn">Share</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary" id="sharePortfolioBtn">
+          Share
+        </button>
       </div>
     </div>
   </div>
 </div>
 
-{% endblock %}
-
-{% block scripts %}
+{% endblock %} {% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="{{ url_for('static', filename='js/portfolio.js') }}"></script>
 {% endblock %}
