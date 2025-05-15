@@ -27,11 +27,17 @@ class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'db',  'dev-database.sqlite')
+    
+    # Safari‐friendly overrides for local HTTP development:
+    SESSION_COOKIE_SAMESITE = None
+    SESSION_COOKIE_SECURE   = False
+    REMEMBER_COOKIE_SECURE  = False
 
 class TestConfig(Config):
     TESTING = True
     WTF_CSRF_ENABLED = False
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'db', 'test-database.sqlite')
+
 
 # Create database directory if it doesn't exist for production config
 os.makedirs(os.path.join(basedir, 'db'), exist_ok=True)

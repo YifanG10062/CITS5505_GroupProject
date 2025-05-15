@@ -8,7 +8,6 @@ from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect, CSRFError
 from app.config import get_config, DevelopmentConfig, TestConfig, ProductionConfig
 
-
 # --- Extensions ---
 db = SQLAlchemy() 
 migrate = Migrate()
@@ -17,12 +16,12 @@ mail = Mail()
 login_manager = LoginManager()
 
 # --- Flask App Factory ---
-def create_app():
+def create_app(config_class=None):
     # Use the get_config() function that handles both APP_ENV and FLASK_DEBUG
-    config_class = get_config()
+    config_obj = config_class or get_config()
     
     app = Flask(__name__)
-    app.config.from_object(config_class)
+    app.config.from_object(config_obj)
 
     # Determine environment name from the config class for migrations
     if isinstance(config_class, DevelopmentConfig):
@@ -76,6 +75,34 @@ def create_app():
     csrf.exempt(api_bp)
     app.register_blueprint(api_bp)
     app.register_blueprint(dashboard)
+
+    import sys
+    from datetime import date, timedelta
+    from sqlalchemy import func
+    from app.models import Price
+    from app.services.fetch_price import fetch_all_history
+
+    # Check if the app is running in CLI mode
+    # and if the command is "run"
+    cmd = os.environ.get("FLASK_CLI_COMMAND") or (sys.argv[1] if len(sys.argv) > 1 else "")
+    if cmd == "run":
+
+        # Check if the database is up-to-date
+        with app.app_context():
+            last_date = db.session.query(func.max(Price.date)).scalar()
+            yesterday = date.today() - timedelta(days=1)
+
+            if last_date and last_date >= yesterday:
+                app.logger.info(f"✅ Price data is up-to-date (latest date: {last_date})")
+            else:
+                if last_date:
+                    app.logger.warning(f"⚠️ Price data is outdated (latest date: {last_date}), fetching new data…")
+                else:
+                    app.logger.warning("⚠️ No price data found in database, fetching all history…")
+
+                fetch_all_history()
+
+                app.logger.info("✅ Historical price data fetched and saved successfully.")
 
     # User loader
     @login_manager.user_loader
