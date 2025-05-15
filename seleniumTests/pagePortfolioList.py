@@ -5,8 +5,6 @@ import time
 import unittest
 
 import requests
-from alembic.command import upgrade
-from alembic.config import Config
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -43,8 +41,9 @@ class HomepageUITest(unittest.TestCase):
         cls.app_context = cls.app.app_context()
         cls.app_context.push()
 
-        alembic_cfg = Config(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'migrations', 'alembic.ini')))
-        upgrade(alembic_cfg, "head")
+        # ✅ Use in-memory DB (no migrations)
+        with cls.app.app_context():
+            db.create_all()
 
         cls.server_thread = ServerThread(cls.app)
         cls.server_thread.start()
@@ -61,6 +60,7 @@ class HomepageUITest(unittest.TestCase):
         cls.driver = webdriver.Chrome(options=chrome_options)
         cls.driver.maximize_window()
 
+        # Register or log in user
         cls.driver.get("http://127.0.0.1:5000/user/login")
         cls.driver.find_element(By.ID, "Email").send_keys("test1@test.com")
         cls.driver.find_element(By.ID, "Password").send_keys("123456")
@@ -94,7 +94,6 @@ class HomepageUITest(unittest.TestCase):
         self.assertTrue(button.is_displayed(), "Create New Portfolio button should be visible")
         print("✅ 'Create New Portfolio' button is visible on Portfolio List page.")
 
-
     def test_homepage_ui_elements(self):
         driver = self.driver
         driver.get("http://127.0.0.1:5000/portfolios/")
@@ -113,7 +112,6 @@ class HomepageUITest(unittest.TestCase):
         self.assertIn("d-none", card_view_section.get_attribute("class"))
 
         compare_btn = driver.find_element(By.ID, "compareBtn")
-        # FIX: Just check the button exists, not if it's hidden (since visibility depends on state)
         self.assertIsNotNone(compare_btn)
 
         html = driver.page_source
