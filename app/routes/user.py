@@ -52,12 +52,9 @@ def resetrequest():
     if form.validate_on_submit():
         user = User.query.filter_by(user_email=form.Email.data).first()
         if user:
-            x = uuid.uuid1()
-            uid = str(uuid.uuid5(x, form.Email.data))
-            _sendEmail = sendemail(user.id, user.user_email, uid)
-            if _sendEmail == '1':
-                flash("Thank you for providing your email address. We'll send you a verification code shortly.", "success")
-                return render_template('user/changepassword.html', form=ChangePasswordForm(), hide_footer=True)
+            # System maintenance message
+            flash("The password reset function is currently being upgraded. Please try again later.", "success")
+            return render_template("user/resetrequest.html", form=form, hide_footer=True)
         else:
             flash("Email not found.", "error")
     return render_template("user/resetrequest.html", form=form, hide_footer=True)
@@ -67,19 +64,13 @@ def changepassword():
     form = ChangePasswordForm()
     if form.validate_on_submit():
         user = User.query.filter_by(user_email=form.Email.data).first()
-        if user and user.user_token == form.UserToken.data:
-            if form.Password.data == form.ConfirmPassword.data:
-                hashed_password = generate_password_hash(form.Password.data)
-                user.user_pswd = hashed_password
-                user.user_token = None
-                db.session.commit()
-                flash("Password has been reset successfully.", "success")
-                return redirect(url_for('user.login'))
-            else:
-                flash("Passwords do not match.", "error")
+        if user:
+            # System maintenance message
+            flash("The password reset function is currently being upgraded. Please try again later.", "success")
+            return render_template("user/changepassword.html", form=form, hide_footer=True)
         else:
-            flash("Invalid Token, please re-enter.", "error")
-    return render_template("user/changepassword.html", form=form, hide_footer=True)  # Updated template path
+            flash("Email not found or invalid token.", "error")
+    return render_template("user/changepassword.html", form=form, hide_footer=True)
 
 @user.route("/update", methods=["POST"])
 @login_required
