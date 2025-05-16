@@ -173,19 +173,12 @@ This satisfies the **"5+ Selenium tests run on a live server"** requirement.
 [2] W. F. Sharpe, "Capital Asset Prices: A Theory of Market Equilibrium under Conditions of Risk," *Journal of Finance*, vol. 19, no. 3, pp. 425–442, 1964.  
 
 ### Design Inspiration  
-[1] "Morningstar Direct Portfolio Analysis," Morningstar, Inc., 2024.  
-https://www.morningstar.com/products/portfolio-analysis (accessed May 16, 2025).  
-[2] "Backtest Portfolio Asset Allocation," www.portfoliovisualizer.com.  
-https://www.portfoliovisualizer.com/backtest-portfolio  
+[1] "Morningstar Direct Portfolio Analysis," Morningstar, Inc., 2024. https://www.morningstar.com/products/portfolio-analysis (accessed May 16, 2025).  
+[2] "Backtest Portfolio Asset Allocation," www.portfoliovisualizer.com. https://www.portfoliovisualizer.com/backtest-portfolio  
 
 ### Technical Resources  
-[1] "Chart.js documentation," www.chartjs.org.  
-https://www.chartjs.org/docs/latest/  
-[2] "Flask Documentation," Pallets, 2024.  
-https://flask.palletsprojects.com/ (accessed May 15, 2025).  
-[3] "SQLAlchemy - The Database Toolkit for Python," SQLAlchemy, 2024.  
-https://www.sqlalchemy.org/ (accessed May 16, 2025).  
-[4] "yfinance - Yahoo Finance market data downloader," PyPI, 2024.  
-https://pypi.org/project/yfinance/ (accessed May 16, 2025).  
-[5] "Selenium Documentation," Selenium Project, 2024.  
-https://www.selenium.dev/documentation/ (accessed May 16, 2025).
+[1] "Chart.js documentation," www.chartjs.org. https://www.chartjs.org/docs/latest/  
+[2] "Flask Documentation," Pallets, 2024. https://flask.palletsprojects.com/ (accessed May 15, 2025).  
+[3] "SQLAlchemy - The Database Toolkit for Python," SQLAlchemy, 2024. https://www.sqlalchemy.org/ (accessed May 16, 2025).  
+[4] "yfinance - Yahoo Finance market data downloader," PyPI, 2024. https://pypi.org/project/yfinance/ (accessed May 16, 2025).  
+[5] "Selenium Documentation," Selenium Project, 2024. https://www.selenium.dev/documentation/ (accessed May 16, 2025).
