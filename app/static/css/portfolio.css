@@ -222,17 +222,17 @@
 }
 
 .allocation-value-edit input {
-  width: 5rem; /* Increase width further for better display and margin */
+  width: 5rem; 
   text-align: right;
   background-color: transparent;
   border: none;
   color: var(--primary);
-  border-radius: 0.375rem; /* Match the standard form-control border-radius */
-  padding: 0.375rem 0.75rem; /* Match standard form-control padding */
+  border-radius: 0.375rem; 
+  padding: 0.375rem 0.75rem; 
   font-weight: 600;
   font-family: var(--font-ui);
   box-shadow: none;
-  margin-right: 0.25rem; /* Add margin between input and percentage sign */
+  margin-right: 0.25rem; 
 }
 
 .allocation-value-edit input:focus {
@@ -272,8 +272,8 @@
 .portfolios-table .no-data-row td {
   background-color: rgba(18, 24, 38, 0.6);
   text-align: center;
-  padding: 4rem 1rem; /* Increased vertical padding */
-  position: relative; /* Changed from absolute */
+  padding: 4rem 1rem; 
+  position: relative;
   box-sizing: border-box;
 }
 
@@ -282,21 +282,21 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 0 auto; /* Center horizontally */
+  margin: 0 auto; 
   width: 100%;
   color: var(--text-secondary);
   font-family: var(--font-body);
 }
 
 .no-data-message i {
-  font-size: 2.5rem; /* Slightly larger icon */
+  font-size: 2.5rem; 
   margin-bottom: 1rem;
   opacity: 0.7;
 }
 
 .no-data-message p {
   font-family: var(--font-ui);
-  font-size: 1.1rem; /* Slightly larger text */
+  font-size: 1.1rem;
   margin-bottom: 0;
   text-align: center;
   width: 100%;
@@ -423,7 +423,7 @@
 /* Hover state for edit icon */
 .portfolio-name-display:hover .edit-icon,
 .allocation-asset:hover .edit-icon {
-  filter: brightness(0) saturate(100%) invert(80%) sepia(55%) saturate(1000%) hue-rotate(340deg) brightness(101%) contrast(101%); /* Make icon primary color on hover */
+  filter: brightness(0) saturate(100%) invert(80%) sepia(55%) saturate(1000%) hue-rotate(340deg) brightness(101%) contrast(101%); 
   opacity: 1;
 }
 
@@ -434,7 +434,7 @@
   text-underline-offset: 2px;
 }
 
-/* Action container layout - update to align items to the right */
+/* Action container layout */
 .action-container {
   display: flex;
   align-items: center;
@@ -511,8 +511,8 @@
   border-collapse: separate;
   border-spacing: 0;
   color: var(--text-primary);
-  border: none; /* Remove border from table */
-  overflow: visible; /* Allow overflow for sticky column */
+  border: none; 
+  overflow: visible; 
 }
 
 /* Table header styling */
@@ -577,7 +577,7 @@
 .portfolios-table th:nth-child(8), /* Max Drawdown */
 .portfolios-table td:nth-child(8) {
   min-width: 110px;
-  text-align: right; /* Right align numeric values */
+  text-align: right; 
 }
 
 .portfolios-table th:nth-child(9), /* Action */
@@ -695,8 +695,8 @@
 
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); /* Flexible layout with min 350px width */
-  gap: 25px; /* Increased spacing between cards */
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); 
+  gap: 25px; 
   max-width: 100%;
 }
 
@@ -709,7 +709,7 @@
 
 @media (max-width: 768px) {
   .cards-grid {
-    grid-template-columns: 1fr; /* Single column on very small screens */
+    grid-template-columns: 1fr;
   }
 }
 
@@ -718,7 +718,7 @@
 .portfolio-card .portfolio-allocation,
 .portfolio-card .creator-info,
 .portfolio-card .portfolio-title-link {
-  text-transform: none; /* Prevent text from being transformed to uppercase */
+  text-transform: none; 
 }
 
 .card-view-overlay {
@@ -889,12 +889,12 @@
 
 .portfolio-card .action-links {
   display: flex;
-  justify-content: flex-end; /* Right-align the action buttons */
+  justify-content: flex-end; 
   gap: 15px;
 }
 
 .portfolio-card .action-link {
-  color: #ff9d2d; /* Primary orange color for all action links */
+  color: #ff9d2d; 
   text-decoration: none;
 }
 
@@ -916,11 +916,11 @@
 
 /* Update card view colors to also use theme variables */
 .portfolio-card .return-positive {
-  color: var(--green-up); /* Use theme variable for consistency */
+  color: var(--green-up); 
 }
 
 .portfolio-card .return-negative {
-  color: var(--red-down); /* Use theme variable for consistency */
+  color: var(--red-down);
 }
 
 /* Responsive adjustments for card view */
@@ -942,7 +942,7 @@
 
 /* Toggle switch wrapper */
 .toggle-wrapper {
-  display: none; /* Hide the original toggle switch */
+  display: none; 
 }
 
 /* Portfolio filter styling for circular radio buttons */
@@ -955,7 +955,7 @@
 .radio-group {
   display: flex;
   align-items: center;
-  gap: 20px; /* Space between radio options */
+  gap: 20px; 
 }
 
 /* Radio option container */
@@ -993,21 +993,21 @@
 
 /* Change border color to orange when checked */
 .radio-option input:checked ~ .radio-circle {
-  border-color: #f59e0b; /* Orange border for selected radio */
+  border-color: #f59e0b; 
 }
 
 /* The inner circle that appears when selected */
 .radio-circle:after {
   content: '';
   position: absolute;
-  display: none; /* Hidden by default */
+  display: none; 
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #f59e0b; /* Orange fill when selected */
+  background: #f59e0b; 
 }
 
 /* Show the inner circle when the radio is checked */
@@ -1064,7 +1064,7 @@
 
 @media (max-width: 768px) {
   .portfolios-table {
-    min-width: 1200px; /* Keep minimum width even on mobile */
+    min-width: 1200px; 
   }
 
   .left-section {
@@ -1253,7 +1253,7 @@ a.action-link.delete:hover {
   border-radius: 4px;
   padding: 10px;
   width: 250px;
-  z-index: 1060; /* Increased z-index to appear above all table elements */
+  z-index: 1060; 
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   opacity: 0;
   visibility: hidden;
@@ -1266,16 +1266,16 @@ a.action-link.delete:hover {
 .share-history-wrapper:hover .share-history-tooltip {
   opacity: 1;
   visibility: visible;
-  pointer-events: auto; /* Allow interaction with tooltip content */
+  pointer-events: auto; 
 }
 
 /* Special positioning for tooltips in table context */
 .portfolios-table .share-history-tooltip {
-  position: fixed; /* Use fixed position instead of absolute */
-  left: auto; /* Reset left positioning */
-  transform: none; /* Reset transform */
-  bottom: auto; /* Auto positioning instead of fixed bottom */
-  top: auto; /* Auto positioning for top */
+  position: fixed; 
+  left: auto; 
+  transform: none; 
+  bottom: auto; 
+  top: auto; 
   max-width: 300px;
   width: auto;
   min-width: 250px;
@@ -1362,27 +1362,27 @@ a.action-link.delete:hover {
   width: 100%;
   max-height: 200px;
   overflow-y: auto;
-  background-color: var(--card-bg); /* Ensure dark background */
+  background-color: var(--card-bg); 
   border: 1px solid var(--input-border);
-  border-top: none; /* Remove top border for seamless connection with input */
+  border-top: none; 
   border-bottom-left-radius: 0.25rem;
   border-bottom-right-radius: 0.25rem;
   z-index: 1050;
   display: none;
-  margin-top: -1px; /* Overlap the input border for seamless appearance */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  margin-top: -1px; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
 }
 
 /* First user item in dropdown needs special styling */
 #userSearchResults .user-item:first-child {
-  border-top: 1px solid var(--input-border); /* Add subtle separator */
+  border-top: 1px solid var(--input-border); 
 }
 
 /* Additional styling for the user items */
 .user-item {
   cursor: pointer;
   padding: 10px 12px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Lighter border between items */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1); 
   color: var(--text-primary);
   transition: all 0.2s ease;
   display: flex;
@@ -1392,12 +1392,12 @@ a.action-link.delete:hover {
 }
 
 .user-item:hover {
-    background-color: rgba(56, 61, 72, 0.5); /* Dark theme hover background */
+    background-color: rgba(56, 61, 72, 0.5); 
     color: var(--text-primary);
 }
 
 .user-item .select-text {
-    color: var(--primary); /* Use primary orange color */
+    color: var(--primary); 
     font-size: 0.9em;
     font-weight: 500;
 }
@@ -1471,7 +1471,7 @@ th.sortable:hover {
 }
 
 .portfolio-card .portfolio-title-link {
-  color: #ff9d2d; /* Primary orange color */
+  color: #ff9d2d; 
   text-decoration: none;
 }
 
@@ -1518,11 +1518,11 @@ th.sortable:hover {
 }
 
 .portfolio-card .return-positive {
-  color: var(--green-up); /* Use theme variable for consistency */
+  color: var(--green-up);
 }
 
 .portfolio-card .return-negative {
-  color: var(--red-down); /* Use theme variable for consistency */
+  color: var(--red-down); 
 }
 
 .portfolio-card .card-footer {
@@ -1532,12 +1532,12 @@ th.sortable:hover {
 
 .portfolio-card .action-links {
   display: flex;
-  justify-content: flex-end; /* Right-align the action buttons */
+  justify-content: flex-end; 
   gap: 15px;
 }
 
 .portfolio-card .action-link {
-  color: #ff9d2d; /* Primary orange color for all action links */
+  color: #ff9d2d; 
   text-decoration: none;
 }
 
@@ -1547,7 +1547,7 @@ th.sortable:hover {
 
 .portfolio-card .action-link.primary-color, 
 .portfolio-card .action-link.delete {
-  color: #ff9d2d; /* Primary orange color */
+  color: #ff9d2d; 
 }
 
 /* Custom modal styling for delete confirmation */
@@ -1667,13 +1667,13 @@ th.sortable:hover {
 
 /* Left-side highlight bar with high visibility */
 .portfolios-table tbody tr.selected td:first-child {
-  position: relative;            /* Reference for pseudo-element positioning */
+  position: relative;          
 }
 .portfolios-table tbody tr.selected td:first-child::before {
   content: "";
   position: absolute;
   left: 0; top: 0; bottom: 0;
-  width: 4px;                    /* Thickness of the highlight bar */
+  width: 4px;                    
   background: var(--primary);
   border-top-left-radius: 4px;   
   border-bottom-left-radius: 4px; 

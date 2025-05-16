@@ -1,6 +1,6 @@
 import os
 from datetime import timedelta
-from sqlalchemy.pool import StaticPool  # ✅ Added for in-memory DB sharing
+from sqlalchemy.pool import StaticPool  # Added for in-memory DB sharing
 
 basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 

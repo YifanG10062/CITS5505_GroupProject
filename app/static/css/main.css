@@ -583,27 +583,3 @@ input:checked + .toggle-slider.toggle-sm:before {
 input:checked + .toggle-slider.toggle-lg:before {
   transform: translateX(30px);
 }
-
-/* PLACEHOLDER: Modal styling */
-/* Common modal styles will be added here */
-
-/* PLACEHOLDER: Dropdown styling */
-/* Common dropdown styles will be added here */
-
-/* PLACEHOLDER: Alert styling */
-/* Common alert styles will be added here */
-
-/* PLACEHOLDER: Progress bar styling */
-/* Common progress bar styles will be added here */
-
-/* PLACEHOLDER: Tooltip styling */
-/* Common tooltip styles will be added here */
-
-/* PLACEHOLDER: Pagination styling */
-/* Common pagination styles will be added here */
-
-/* PLACEHOLDER: Card variants */
-/* Additional card variants will be added here */
-
-/* PLACEHOLDER: Responsive utilities */
-/* Additional responsive utilities will be added here */
