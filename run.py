@@ -3,8 +3,12 @@ from app.models.asset import Price
 from app.services.fetch_price import fetch_all_history
 from sqlalchemy import func
 from datetime import date, timedelta
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 app = create_app()
+app.logger.setLevel(logging.INFO)
 
 if __name__ == '__main__':
     with app.app_context():
