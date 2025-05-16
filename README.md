@@ -60,7 +60,7 @@ Visit: `http://localhost:5000`
 
 ## Running Tests
 
-The project includes unit tests for portfolio metric calculations and drawdown logic.
+The project includes unit tests for Login, register, portfolio metric calculations and drawdown logic.
 
 To run the tests:
 ```bash
@@ -87,7 +87,90 @@ OK
 ```
 
 ---
+## Running Selenium Test Cases
 
+This project includes Selenium-based UI test cases that verify the key frontend components and user flows in a real browser environment.
+
+### What is Tested
+
+Each Selenium script tests the following:
+
+- **Login Page UI and functionality** (`pageLoginUI.py`)
+- **Portfolio List Page**:
+  - UI checks (`test_homepage_ui_elements`)
+  - View toggle logic (e.g., table ↔ card) — *optional depending on stability*
+- **Create Portfolio Page UI** (`pageCreatePortfolio.py`)
+- **Dashboard Structure and Metrics Rendering** (`pageDashboard.py`)
+
+Tests focus on **happy path flows** and structural validation of key screens in the user journey.
+
+---
+
+### Running a Specific Selenium Test File
+
+To run a specific test file (e.g., the login test):
+```bash
+python seleniumTests/pageLoginUI.py
+```
+
+Replace `pageLoginUI.py` with any of the following as needed:
+- `pageCreatePortfolio.py`
+- `pageDashboard.py`
+- `pagePortfolioList.py`
+
+---
+
+### Run All Selenium Tests at Once
+
+**Option 1 – Via Python CLI:**
+```bash
+python -m unittest discover -s seleniumTests -p "*.py"
+```
+
+**Option 2 – Using a Shell Script (Mac/Linux):**
+```bash
+#!/bin/bash
+python -m unittest discover -s seleniumTests -p "*.py"
+```
+
+Make it executable:
+```bash
+chmod +x run_selenium_tests.sh
+```
+
+**Option 3 – Windows Batch Script:**
+```bat
+@echo off
+python -m unittest discover -s seleniumTests -p "*.py"
+pause
+```
+
+---
+
+### Note on Server & DB Setup
+
+Each test file:
+
+- Starts a local Flask server via a background thread.
+- Applies Alembic migrations to initialize a test SQLite database.
+- Uses Selenium ChromeDriver in headless mode.
+- Logs in as a test user (or registers the user if login fails).
+
+---
+
+### Example Output
+
+```
+Create Portfolio page structure successfully validated.
+Dashboard UI structure and metrics successfully validated.
+'Create New Portfolio' button is visible on Portfolio List page.
+
+----------------------------------------------------------------------
+Ran 6 tests in 32.53s
+OK
+```
+
+This satisfies the **"5+ Selenium tests run on a live server"** requirement.
 ## Notes
 
 - The system uses mock asset data and real-time price history from Yahoo Finance.

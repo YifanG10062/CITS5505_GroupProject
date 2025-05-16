@@ -15,9 +15,21 @@ export function renderPortfolioSummary(
         if (el) el.textContent = `${prefix}${value}${suffix}`;
       };
 
-      set("netWorth", data.netWorth.toLocaleString(), "$");
-      set("initial", data.initial.toLocaleString(), "$");
-      set("profit", data.profit.toLocaleString(), "$");
+      set(
+        "netWorth",
+        data.netWorth.toLocaleString(undefined, { maximumFractionDigits: 0 }),
+        "$"
+      );
+      set(
+        "initial",
+        data.initial.toLocaleString(undefined, { maximumFractionDigits: 0 }),
+        "$"
+      );
+      set(
+        "profit",
+        data.profit.toLocaleString(undefined, { maximumFractionDigits: 0 }),
+        "$"
+      );
 
       // Correctly convert decimal values to percentages
       set(

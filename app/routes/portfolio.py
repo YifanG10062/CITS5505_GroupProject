@@ -211,46 +211,21 @@ def list():
                           latest_date=latest_date,
                           share_alert=share_alert)
 
+from app.models.asset import Asset  # Import existing model
+
 def get_assets():
-    """Get assets directly from database without caching"""
+    """Get assets using SQLAlchemy instead of raw sqlite3, to support memory DB."""
     try:
-        # Get database path from app config
-        db_uri = current_app.config['SQLALCHEMY_DATABASE_URI']
-        
-        # Extract SQLite file path from URI
-        if db_uri.startswith('sqlite:///'):
-            db_path = db_uri.replace('sqlite:///', '')
-        else:
-            # If not using SQLite, raise exception
-            raise Exception("Only SQLite database is supported for direct connection")
-            
-        conn = sqlite3.connect(db_path)
-        cursor = conn.cursor()
-
-        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='assets'")
-        if not cursor.fetchone():
-            print("Error: 'assets' table does not exist in the database")
-            conn.close()
-            return []
-
-        cursor.execute("""
-            SELECT asset_code, display_name, full_name, logo_url 
-            FROM assets
-            WHERE type != 'etf'
-        """)
-        
-        assets = []
-        for row in cursor.fetchall():
-            assets.append({
-                'code': row[0],
-                'name': row[1],
-                'company': row[2],
-                'logo_url': row[3]
-            })
-
-        conn.close()
-        return assets
-
+        results = Asset.query.filter(Asset.type != 'etf').all()
+        return [
+            {
+                'code': asset.asset_code,
+                'name': asset.display_name,
+                'company': asset.full_name,
+                'logo_url': asset.logo_url
+            }
+            for asset in results
+        ]
     except Exception as db_error:
         print(f"Database error when fetching assets: {str(db_error)}")
         print(traceback.format_exc())

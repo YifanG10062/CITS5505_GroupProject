@@ -104,13 +104,23 @@ body {
     opacity: 0;
     transform: translateY(8px);
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+} 
+
+@media (max-width: 768px) {
+  .login-page {
+      flex-direction: column;
+      gap: 20px;
+  }
+} 
+
+@media (max-width: 768px) {
+  .login-page {
+      flex-direction: column;
+      gap: 20px;
   }
 }
 
-/* Right Form Panel */
+
 .login-wrap {
   background-color: #1e1e2f;
   width: 50%;
@@ -295,3 +305,4 @@ input:-webkit-autofill {
     display: none;
   }
 }
+
