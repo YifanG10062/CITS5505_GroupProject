@@ -72,10 +72,18 @@ def fetch_all_history():
     end_date = datetime.today().strftime("%Y-%m-%d")
     print(f"Fetching price data from {start_date} to {end_date}...")
 
+    # Ensure data directory exists
+    data_dir = 'data'
+    if not os.path.exists(data_dir):
+        os.makedirs(data_dir)
+        print(f"Created data directory: {data_dir}")
+
     # Download and insert historical price data
     for ticker in asset_metadata:
         print(f"📈 Fetching: {ticker}")
         df = None
+        data_source = None
+        
         # Primary: yfinance
         try:
             df = yf.download(
@@ -88,6 +96,7 @@ def fetch_all_history():
             )
             if df.empty or "Close" not in df:
                 raise ValueError("No 'Close' data returned")
+            data_source = "yfinance"
         except Exception as e:
             print(f"✘ yfinance failed for {ticker}: {e}")
             # Fallback 1: Stooq
@@ -105,6 +114,7 @@ def fetch_all_history():
                     usecols=["Date", "Close"]
                 )
                 print(f"Using Stooq data source for {ticker}")
+                data_source = "stooq"
             except Exception as e1:
                 print(f"✘ Stooq failed for {ticker}: {e1}")
                 # Fallback 2: Local CSV cache
@@ -119,6 +129,7 @@ def fetch_all_history():
                         df.index.name = "Date" 
                         df.rename(columns={"close_price": "Close"}, inplace=True)
                         print(f"Loaded cache for {ticker} from {cache_file}")
+                        data_source = "cache"
                     except Exception as e2:
                         print(f"✘ Loading cache failed for {ticker}: {e2}")
                 else:
@@ -128,12 +139,21 @@ def fetch_all_history():
             print(f"Skipped {ticker}, no 'Close' data available.")
             continue
 
-        df = df.reset_index()[["Date", "Close"]]
-        df.columns = ["date", "close_price"]
-        df["asset_code"] = ticker
-        df["date"] = pd.to_datetime(df["date"]).dt.date
+        # Save successful data fetch to cache for future use
+        if data_source in ["yfinance", "stooq"]:  # Only save if we didn't load from cache
+            cache_file = os.path.join('data', f"{ticker}.csv")
+            df_to_save = df.reset_index()[["Date", "Close"]]
+            df_to_save.columns = ["date", "close_price"]
+            df_to_save.to_csv(cache_file, index=False)
+            print(f"✓ Saved {ticker} data to cache: {cache_file}")
 
-        for _, row in df.iterrows():
+        # Process for database storage
+        df_for_db = df.reset_index()[["Date", "Close"]]
+        df_for_db.columns = ["date", "close_price"]
+        df_for_db["asset_code"] = ticker
+        df_for_db["date"] = pd.to_datetime(df_for_db["date"]).dt.date
+
+        for _, row in df_for_db.iterrows():
             price = Price(
                 asset_code=row["asset_code"],
                 date=row["date"],
