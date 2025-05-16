@@ -52,12 +52,14 @@ def resetrequest():
     if form.validate_on_submit():
         user = User.query.filter_by(user_email=form.Email.data).first()
         if user:
-            x = uuid.uuid1()
-            uid = str(uuid.uuid5(x, form.Email.data))
-            _sendEmail = sendemail(user.id, user.user_email, uid)
-            if _sendEmail == '1':
-                flash("Thank you for providing your email address. We'll send you a verification code shortly.", "success")
-                return render_template('user/changepassword.html', form=ChangePasswordForm(), hide_footer=True)
+            # generate token but not send email
+            reset_token = uuid.uuid4().hex
+            user.user_token = reset_token
+            db.session.commit()
+            
+            # show maintenance message instead of sending email
+            flash("The password reset function is currently being upgraded. Please try again later.", "success")
+            return render_template("user/resetrequest.html", form=form, hide_footer=True)
         else:
             flash("Email not found.", "error")
     return render_template("user/resetrequest.html", form=form, hide_footer=True)
@@ -67,19 +69,13 @@ def changepassword():
     form = ChangePasswordForm()
     if form.validate_on_submit():
         user = User.query.filter_by(user_email=form.Email.data).first()
-        if user and user.user_token == form.UserToken.data:
-            if form.Password.data == form.ConfirmPassword.data:
-                hashed_password = generate_password_hash(form.Password.data)
-                user.user_pswd = hashed_password
-                user.user_token = None
-                db.session.commit()
-                flash("Password has been reset successfully.", "success")
-                return redirect(url_for('user.login'))
-            else:
-                flash("Passwords do not match.", "error")
+        if user:
+            # System maintenance message
+            flash("The password reset function is currently being upgraded. Please try again later.", "success")
+            return render_template("user/changepassword.html", form=form, hide_footer=True)
         else:
-            flash("Invalid Token, please re-enter.", "error")
-    return render_template("user/changepassword.html", form=form, hide_footer=True)  # Updated template path
+            flash("Email not found or invalid token.", "error")
+    return render_template("user/changepassword.html", form=form, hide_footer=True)
 
 @user.route("/update", methods=["POST"])
 @login_required
@@ -112,14 +108,7 @@ def delete(id):
 @user.route("/email/<emailID>/", methods=["GET", "POST"])
 def email(emailID):
     try:
-        message = Message(
-            subject='Hello',
-            sender='pythonuserflask@gmail.com',
-            recipients=[emailID]
-        )
-        message.body = "This is a test to " + emailID
-        mail.send(message)
-        flash("Email sent successfully.", 'success')
+        flash("Email function is currently unavailable.", "success")
         return redirect(url_for('user.account'))
     except Exception as e:
         flash(str(e), "error")
@@ -139,15 +128,6 @@ def index():
 def sendemail(userid, email, uid):
     try:
         user = User.query.filter_by(id=userid).first()
-        message = Message(
-            subject='Password Reset Token',
-            sender='pythonuserflask@gmail.com',
-            recipients=[email]
-        )
-        message.body = "<table cellpadding='0' cellspacing='0' width='100%' bgcolor='#fafafa' style='background-color: #fafafa; border-radius: 10px; border-collapse: separate;font-size:18px; color:grey; font-family:calibri'><tbody class='ui-droppable'><tr class='ui-draggable'><td align='left' class='esd-block-text es-p20 esd-frame esd-hover esd-draggable esd-block esdev-enable-select' esd-handler-name='textElementHandler'><div class='esd-block-btn esd-no-block-library'><div class='esd-more'><a><span class='es-icon-dot-3'></span></a></div><div class='esd-move ui-draggable-handle' title='Move'><a><span class='es-icon-move'></span></a></div><div class='esd-copy ui-draggable-handle' title='Copy'><a><span class='es-icon-copy'></span></a></div><div class='esd-delete' title='Delete'><a><span class='es-icon-delete'></span></a></div></div><h3>Welcome &nbsp;" + user.user_fName + " " + user.user_lName +",</h3><p><br></p><p style=''>You're receiving this message because you recently reset your password&nbsp;for a account.<br><br>Please copy the below token and confirm your email address for resetting your password. This step adds extra security to your business by verifying the token and email.</p>    <br></td></tr><tr><td>This is your password reset token:<br></td></tr><tr><td><b>"+ uid + "</b></td></tr></tbody></table>"
-        message.html = message.body
-        mail.send(message)
-
         user.user_token = uid
         db.session.commit()
         return '1'
