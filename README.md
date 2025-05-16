@@ -1,21 +1,33 @@
 # CITS5505 Group Project – The Richverse
 
-**The Richverse** is an interactive web application built with **Flask** that allows users to track, compare, and analyze investment portfolios over time. Users can create portfolios, view cumulative returns, benchmark against SPY and explore key performance metrics via interactive charts.
+## Application Purpose and Design
 
-The application is designed to support retail investors, students, and finance enthusiasts in understanding the impact of asset allocation over time to support future investments. The dashboard visualizations are inspired by industry tear sheets, with a modern UI powered by Chart.js.
+**The Richverse** is an interactive web application built with **Flask** that allows users to track, compare, analyze and share investment portfolios. The platform combines powerful analytics with an intuitive interface, enabling data-driven investment decisions through visual insights.
 
----
+The application is inspired by professional financial analysis tools but made accessible for everyday investors, students, and finance enthusiasts. The modern UI, powered by Chart.js, delivers clean and informative portfolio visualizations with a focus on user experience.
+
+## Key Features
+
+- **Portfolio Management**: Create, compare and share investment portfolios with customizable allocations
+- **Performance Analytics**: Track and compare key metrics including returns, volatility, Sharpe ratio, and more
+- **Visual Insights**: Interactive dashboards with dynamic charts for data-driven decisions
+- **Benchmark Comparison**: Measure portfolio performance against market indices
+- **Data Integration**: Powered by Yahoo Finance API for real historical asset prices
+
+## Target Users
+
+- **Retail Investors**: Seeking insights to optimize existing portfolios
+- **Finance Students**: Learning investment strategies through hands-on analysis
+- **Investment Enthusiasts**: Exploring market trends and portfolio construction
 
 ## Group Members - Masters Group 30
 
-| UWA ID     | Name                      |
-|------------|---------------------------|
-| 24365906   | Aoli Wang                 |
-| 24509011   | Farah Warnakulasuriya     |
-| 23966753   | Yifan Gao                 |
-| 23866945   | Pavan Kumar Potukuchi     |
-
----
+| UWA ID     | Name                      | GitHub Username |
+|------------|---------------------------|-----------------|
+| 24365906   | Aoli Wang                 | aolilfn         |
+| 24509011   | Farah Warnakulasuriya     | KiwiFarah       |
+| 23966753   | Yifan Gao                 | YifanG10062     |
+| 23866945   | Pavan Kumar Potukuchi     | Pavan23866945   |
 
 ## Launch Instructions
 
@@ -48,31 +60,59 @@ pip install -r requirements.txt
 flask db upgrade
 ```
 
-### 5. Check historical price data and Run the application
-This will fetch any missing price data from 2015 to today for the assets and then start the Flask server.
+### 5. Launch the application
+The application will automatically fetch any missing price data and start the Flask server:
 ```bash
 python run.py
 ```
 
 Visit: `http://localhost:5000`
 
----
-
 ## Running Tests
 
-The project includes unit tests for Login, register, portfolio metric calculations and drawdown logic.
+The project includes both unit tests and Selenium UI tests that verify the key frontend components and user flows in a real browser environment.
 
-To run the tests:
+### What is Tested
+
+#### Unit Tests
+The unit test suite covers the following components:
+- **Login & Registration** (`test_login.py`, `test_register_server.py`): Tests for user authentication
+- **Portfolio Management** (`test_portfolio.py`): Tests for portfolio creation and management
+- **Calculations** (`test_calculation.py`): Tests for financial calculations and metrics
+- **Data Fetching** (`test_fetch_price.py`): Tests for price data retrieval
+- **Visualizations** (`test_visualization.py`): Tests for chart data generation
+
+#### Selenium UI Tests
+Each Selenium script tests the following:
+- **Login Page** (`pageLoginUI.py`): Tests login interface and authentication
+- **Portfolio List Page** (`pagePortfolioList.py`): Tests portfolio listing and management UI
+- **Create Portfolio Page** (`pageCreatePortfolio.py`): Tests portfolio creation interface
+- **Dashboard Page** (`pageDashboard.py`): Tests dashboard visualization and metrics display
+
+All Selenium tests extend from a base test class (`selenium_base.py`) that handles server setup and teardown. They focus on **happy path flows** and structural validation of key screens in the user journey.
+
+### Note on Server & DB Setup
+
+Each test file:
+- Starts a local Flask server via a background thread
+- Uses an in-memory SQLite database with shared connection pool
+- Uses Selenium ChromeDriver in headless mode
+- Logs in as a test user (or registers the user if login fails)
+
+### Running All Tests
+
+1. Run all Selenium UI tests:
 ```bash
-python -m unittest tests/test_visualization.py
+python -m unittest discover -s tests/seleniumTests -p "*.py"
 ```
 
-> **Note:** Replace `test_visualization.py` with the actual test file name you want to run, e.g.:
-> ```bash
-> python -m unittest tests/test_file_name.py
-> ```
+2. Run all unit tests:
+```bash
+python tests/run_unit_tests.py
+```
 
-Expected output:
+### Example Unit Test Output
+
 ```
 ✔ Test 1 passed
 ✔ Test 2 passed
@@ -86,79 +126,7 @@ Ran 5 tests in X.XXXs
 OK
 ```
 
----
-## Running Selenium Test Cases
-
-This project includes Selenium-based UI test cases that verify the key frontend components and user flows in a real browser environment.
-
-### What is Tested
-
-Each Selenium script tests the following:
-
-- **Login Page UI and functionality** (`pageLoginUI.py`)
-- **Portfolio List Page**:
-  - UI checks (`test_homepage_ui_elements`)
-  - View toggle logic (e.g., table ↔ card) — *optional depending on stability*
-- **Create Portfolio Page UI** (`pageCreatePortfolio.py`)
-- **Dashboard Structure and Metrics Rendering** (`pageDashboard.py`)
-
-Tests focus on **happy path flows** and structural validation of key screens in the user journey.
-
----
-
-### Running a Specific Selenium Test File
-
-To run a specific test file (e.g., the login test):
-```bash
-python seleniumTests/pageLoginUI.py
-```
-
-Replace `pageLoginUI.py` with any of the following as needed:
-- `pageCreatePortfolio.py`
-- `pageDashboard.py`
-- `pagePortfolioList.py`
-
----
-
-### Run All Selenium Tests at Once
-
-**Option 1 – Via Python CLI:**
-```bash
-python -m unittest discover -s seleniumTests -p "*.py"
-```
-
-**Option 2 – Using a Shell Script (Mac/Linux):**
-```bash
-#!/bin/bash
-python -m unittest discover -s seleniumTests -p "*.py"
-```
-
-Make it executable:
-```bash
-chmod +x run_selenium_tests.sh
-```
-
-**Option 3 – Windows Batch Script:**
-```bat
-@echo off
-python -m unittest discover -s seleniumTests -p "*.py"
-pause
-```
-
----
-
-### Note on Server & DB Setup
-
-Each test file:
-
-- Starts a local Flask server via a background thread.
-- Applies Alembic migrations to initialize a test SQLite database.
-- Uses Selenium ChromeDriver in headless mode.
-- Logs in as a test user (or registers the user if login fails).
-
----
-
-### Example Output
+### Example Selenium Test Output
 
 ```
 Create Portfolio page structure successfully validated.
@@ -171,8 +139,33 @@ OK
 ```
 
 This satisfies the **"5+ Selenium tests run on a live server"** requirement.
+
 ## Notes
 
-- The system uses mock asset data and real-time price history from Yahoo Finance.
-- Unit tests are isolated from login/auth logic and use seeded mock data.
-- CLI commands (`setup-dev`, `refresh-user-info`) are provided for local development support.
+- The system uses mock asset data and real-time price history from Yahoo Finance
+- Unit tests are isolated from login/auth logic and use seeded mock data
+- CLI commands are provided for local development support:
+  - `setup-dev`: Creates test users and initializes development environment
+  - `refresh-user-info`: Updates user information in portfolio summaries
+  - `refresh-history`: Updates historical price data from Yahoo Finance
+
+## Browser Compatibility
+
+- The application works seamlessly on Chrome, Firefox, and Edge browsers
+- **Safari Users Note**: Due to Safari's strict privacy policies and CSRF cookie handling, macOS Safari users may experience issues with login and data fetching. Safari's default settings can block third-party cookies and enforce strict SameSite cookie policies. To use the application on Safari:
+  
+  ```bash
+  # Set development environment (disables strict CSRF and cookie settings)
+  export APP_ENV=development && export FLASK_ENV=development
+  
+  # Apply development database migrations
+  flask dev-db-upgrade
+  
+  # Launch the APP
+  flask run
+  ```
+  
+  After these steps, the application should work properly in Safari. The development mode relaxes some security settings that may otherwise prevent proper authentication in Safari. Other browsers do not require these special steps.
+
+## References
+
